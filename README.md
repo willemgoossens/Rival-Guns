@@ -35,6 +35,7 @@ ___
  `SELECT * FROM users WHERE id IN [0]`<br/>
  
  
+ 
  Or this:<br/>
   `$this->userModel->getByIdAndName([0, 1], 'test');`<br/>
  Will perform this query:<br/>
@@ -47,13 +48,16 @@ ___
  `SELECT * FROM users WHERE id IN [0, 1] OR name NOT IN ['test']`<br/>
  
  
+ 
  In case you would set throw in a boolean or `null` instead of an string of integer, the output would change to `variable = ?value` or `variable IS NULL`.
+ 
  
  
  If you want to go really overboard with the smart queries, you can also include parentheses:<br/>
   `$this->userModel->getByIdAnd_NameOrName2_([0], 'test', ['test2', 'test3']);`<br/>
   Which will perform the following query<br/>
   `SELECT * FROM users WHERE id IN [0] AND (name IN ['test'] OR name2 IN ['test2', 'test3'])`
+  
   
   
   `getBy...()` will return an array of objects. But there also are:
@@ -64,10 +68,12 @@ ___
   - `getFlaggedUniqueBy...()` which will an array of objects. But in this case, the keys are a unique identifier from the database. For example the users' ids.
  
  
+ 
  Do you want to select just several variables and not all of them? Just add column names after the input values.<br/>
  `$this->userModel->getById(0, 'name', 'email');`<br/>
  Will perform this query:<br/>
  `SELECT name, email FROM users WHERE id IN [0]`<br/>
+ 
  
  
  **On top of that**, you can also add limit, offset, groupBy<br/>
