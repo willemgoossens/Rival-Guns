@@ -27,7 +27,7 @@ The attached database already contains 3 accounts that you can use to log in. Ot
 ___
  
  ## Good to know!
- The models all extend the `Model` class. It has been designed in such a way that it uses PHP's magic functions.
+ The models all extend the `Model` class. The `Model` class makes use of the PHP magic functions to avoid to amount of queries that have to be written. (If you want to use the database anyways, it's stored in the `$db`-variable of each model.)
  
  For example:<br/>
  `$this->userModel->getById(0);`<br/>
