@@ -1,0 +1,54 @@
+html,
+body {
+  height:100%;
+}
+
+div.textarea.form-control.is-invalid {
+  border-color: #dc3545 !important;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+div.textarea.form-control.is-valid {
+  border-color: #28a745 !important;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.nav-link .fa {
+  font-size: 20px;
+  margin-top: 3px;
+}
+
+.card-link:hover .border-info {
+  border-color: #127a8b !important;
+}
+
+.card-link:hover .text-info {
+  color: #127a8b !important;
+}
+
+.footer {
+  flex-shrink: none;
+}
+
+.container {
+  flex: 1 0 auto;
+}
+
+.ql-container {
+  min-height: 20vh;
+}
+
+.mh-vh-70 {
+  max-height: 70vh !important;
+}
+
+.debugger {
+  max-height: 300px;
+  overflow: scroll;
+  width: 100%;
+  resize: vertical;
+  background-color: #F0FFFF;
+  display: block;
+}

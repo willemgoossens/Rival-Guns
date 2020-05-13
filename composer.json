@@ -1,0 +1,7 @@
+{
+    "require": {
+        "erusev/parsedown": "^1.7",
+        "league/html-to-markdown": "^4.8",
+        "robmorgan/phinx": "^0.11.4"
+    }
+}
