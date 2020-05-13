@@ -27,6 +27,7 @@ The attached database already contains 3 accounts that you can use to log in. Ot
 ___
  
  ## Good to know!
+ ### The Database helper functions of the model
  The models all extend the `Model` class. The `Model` class makes use of the PHP magic functions to avoid to amount of queries that have to be written. (If you want to use the database anyways, it's stored in the `$db`-variable of each model.)
  
  For example:<br/>
@@ -89,3 +90,23 @@ $this->userModel->orderBy('variable1', 'DESC')
  ```
  Will perform this query:<br/>
  `SELECT * FROM users WHERE id IN [0] ORDER BY variable1 DESC, variable2 ASC, FIELD(variable3, 0,1,2)`
+
+
+### Executables
+The crimes that the player can commit have been added in the database. However, since each of the have a unique storyline, each of them has a separate PHP file as well. These are stored in `executables\crimes`. CrimeExecutable.php is the basic model with helper functions that is extended by all the crimes. The executables are designed in such a way that they are standalone scripts.
+
+
+Execute them as following:
+```php
+  // Import the file and start the class
+  $className = 'Crime' . $crime->id;
+  require_once APPROOT . '/executables/crimes/' . $className . '.php';
+  // This crime will only need the user object
+  $crime = new $className($user);
+  // Run the crime
+  $crime->init();
+  // Get the summary
+  $summary = $crime->returnSummary();
+```
+
+The summary can then be used for display purposes or to make database changes.
