@@ -33,3 +33,42 @@ ___
  `$this->userModel->getById(0);`
  Will perform this query:
  `SELECT * FROM users WHERE id IN [0]`
+ 
+ Or this:
+  `$this->userModel->getByIdAndName([0, 1], 'test');`
+ Will perform this query:
+ `SELECT * FROM users WHERE id IN [0, 1] AND name IN ['test']`
+ 
+ 
+ Or this:
+  `$this->userModel->getByIdOrNotName([0, 1], 'test');`
+ Will perform this query:
+ `SELECT * FROM users WHERE id IN [0, 1] OR name NOT IN ['test']`
+ 
+ In case you would set throw in a boolean or `null` instead of an string of integer, the output would change to `variable = ?value` or `variable IS NULL`.
+ 
+ If you want to go really overboard with the smart queries, you can also include parentheses:
+  `$this->userModel->getByIdAnd_NameOrName2_([0], 'test', ['test2', 'test3']);`
+  Which will perform the following query
+  `SELECT * FROM users WHERE id IN [0] AND (name IN ['test'] OR name2 IN ['test2', 'test3'])`
+  
+  `getBy...()` will return an array of objects. But there also are:
+  - `existsBy...()` which will return true or false.
+  - `countBy...()` which will return an integer.
+  - `getSingleBy...()` which will return as single object  
+  - `getArrayBy...()` which will return an array of arrays.
+  - `getFlaggedUniqueBy...()` which will an array of objects. But in this case, the keys are a unique identifier from the database. For example the users' ids.
+ 
+ Do you want to select just several variables and not all of them? Just add column names after the input values.
+ `$this->userModel->getById(0, 'name', 'email');`
+ Will perform this query:
+ `SELECT name, email FROM users WHERE id IN [0]`
+ 
+ **On top of that**, you can also add limit, offset, groupBy
+  `$this->userModel->limit(1)->offset(3)->groupBy('email')->getById(0);`
+ Will perform this query:
+ `SELECT * FROM users WHERE id IN [0] LIMIT 1 OFFSET 3 GROUP BY email`
+ And of course, orderBy:
+`$this->userModel->orderBy('variable1', 'DESC')->orderBy('variable2', 'ASC')->orderBy('variable3', 'FIELD', [0,1,2])->getById(0);`
+ Will perform this query:
+ `SELECT * FROM users WHERE id IN [0] ORDER BY variable1 DESC, variable2 ASC, FIELD(variable3, 0,1,2)`
