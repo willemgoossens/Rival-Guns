@@ -50,7 +50,7 @@ ___
  In case you would set throw in a boolean or `null` instead of an string of integer, the output would change to `variable = ?value` or `variable IS NULL`.
  
  
- If you want to go really overboard with the smart queries, you can also include parentheses:
+ If you want to go really overboard with the smart queries, you can also include parentheses:<br/>
   `$this->userModel->getByIdAnd_NameOrName2_([0], 'test', ['test2', 'test3']);`<br/>
   Which will perform the following query<br/>
   `SELECT * FROM users WHERE id IN [0] AND (name IN ['test'] OR name2 IN ['test2', 'test3'])`
@@ -75,6 +75,11 @@ ___
  Will perform this query:<br/>
  `SELECT * FROM users WHERE id IN [0] LIMIT 1 OFFSET 3 GROUP BY email`<br/>
  And of course, orderBy:<br/>
-`$this->userModel->orderBy('variable1', 'DESC')->orderBy('variable2', 'ASC')->orderBy('variable3', 'FIELD', [0,1,2])->getById(0);`<br/>
+```
+$this->userModel->orderBy('variable1', 'DESC')
+                ->orderBy('variable2', 'ASC')
+                ->orderBy('variable3', 'FIELD', [0,1,2])
+                ->getById(0);
+ ```
  Will perform this query:<br/>
- `SELECT * FROM users WHERE id IN [0] ORDER BY variable1 DESC, variable2 ASC, FIELD(variable3, 0,1,2)`<br/>
+ `SELECT * FROM users WHERE id IN [0] ORDER BY variable1 DESC, variable2 ASC, FIELD(variable3, 0,1,2)`
