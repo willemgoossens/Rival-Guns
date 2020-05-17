@@ -1,6 +1,8 @@
 <?php
-  class Posts extends Controller {
-    public function __construct() {
+  class Posts extends Controller 
+  {
+    public function __construct() 
+    {
         $this->userModel = $this->model('User');
         $this->postModel = $this->model('Post');
         $this->adminRoleModel = $this->model('AdminRole');
@@ -12,7 +14,8 @@
         $this->data['user']->conversationUpdates = $this->conversationModel->countUnreadConversations($_SESSION['userId']);
     }
 
-    public function index(int $page = null) {
+    public function index(int $page = null) 
+    {
       // Get the total post count
       $postsCount = $this->postModel->count();
       // Make sure it's higher than 1

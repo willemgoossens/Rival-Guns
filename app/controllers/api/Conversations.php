@@ -51,7 +51,7 @@
           if($message->userId != $userId)
           {
             $conversationPartner = $this->userModel->getSingleById($message->userId, 'name');
-            $message->name = ucfirst($conversationPartner->name);
+            $message->name = $conversationPartner->name;
           }
           else
           {

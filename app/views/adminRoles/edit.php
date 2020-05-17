@@ -31,13 +31,13 @@
             </thead>
             <tbody>
               <?php foreach($data['admins'] as $key => $admin): ?>
-                <form method="post" action="<?php echo URLROOT; ?>/adminRoles/add" id="form-<?php echo ucfirst($admin->name); ?>">
+                <form method="post" action="<?php echo URLROOT; ?>/adminRoles/edit" id="form-<?php echo $admin->name; ?>">
                   <tr>
                     <th scope="row"><?php echo $key + 1; ?></th>
-                    <td><span style="color: <?php echo $data['adminRoles'][$admin->adminRole]->colorCode; ?>"><?php echo ucfirst($admin->name); ?></span></td>
+                    <td><span style="color: <?php echo $data['adminRoles'][$admin->adminRole]->colorCode; ?>"><?php echo $admin->name; ?></span></td>
                     <td>
                       <input type="text" name="adminId" value="<?php echo $admin->id; ?>" hidden>
-                      <select class="custom-select custom-select-sm" id="selector-<?php echo ucfirst($admin->name); ?>" name="changeToRole">
+                      <select class="custom-select custom-select-sm" id="selector-<?php echo $admin->name; ?>" name="changeToRole">
                         <option value="0">Remove Admin Rights</option>
                         <?php foreach($data['adminRoles'] as $id => $adminRole): ?>
                           <option value="<?php echo $id; ?>" <?php if($id == $admin->adminRole) echo "selected"; ?>><?php echo $adminRole->name; ?></option>
@@ -46,7 +46,7 @@
                     </td>
                     <td>
                       <button type="button" class="btn btn-success btn-sm changeAdmins" data-toggle="modal" data-target="#changeModal"
-                              data-admin-name="<?php echo ucfirst($admin->name); ?>"
+                              data-admin-name="<?php echo $admin->name; ?>"
                               data-admin-old-role="<?php echo $data['adminRoles'][$admin->adminRole]->name; ?>">
                         Change admin rights
                       </button>
@@ -72,7 +72,7 @@
             <p class="card-text">
               Here you can make some new an admin!
             </p>
-            <form method="post" class="form-inline" action="<?php echo URLROOT; ?>/adminRoles/add">
+            <form method="post" class="form-inline" action="<?php echo URLROOT; ?>/adminRoles/edit">
               <input type="text" class="form-control mb-2 mr-sm-2"  placeholder="Enter Username" name="username" required>
 
               <select class="form-control mb-2 mr-sm-2" name="adminRole" required>
@@ -135,7 +135,7 @@
                 <?php endforeach; ?>
               </select>
 
-              <form method="post" id="editRoleForm" class="form-inline mt-5" action="<?php echo URLROOT; ?>/adminRoles/add">
+              <form method="post" id="editRoleForm" class="form-inline mt-5" action="<?php echo URLROOT; ?>/adminRoles/edit">
                 <input type="number" name="roleId" value="0" hidden>
                 <input type="text" class="form-control mb-2 mr-sm-2" placeholder="Enter Role name" name="roleName" required>
                 <input type="color" class="form-control mb-2 mr-sm-2 col-md-2" name="colorCode" value="#000000" required>

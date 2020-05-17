@@ -45,6 +45,15 @@
               <li class="nav-item">
                 <a class="nav-link" href="<?php echo URLROOT; ?>/crimes">Crimes</a>
               </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Locations
+                </a>
+                <div class="dropdown-menu" aria-labelledby="adminDropdown">
+                    <a class="dropdown-item" href="<?php echo URLROOT; ?>/locations/bank">Bank</a>
+                    <a class="dropdown-item" href="<?php echo URLROOT; ?>/locations/hospital">Hospital</a>
+                </div>
+              </li>
             <?php
               endif;
             ?>
@@ -53,7 +62,7 @@
         <ul class="navbar-nav ml-auto">
           <?php if(isset($this->data['user'])) : ?>
           <li class="nav-item">
-              <a class="nav-link" href="#">Welcome <?php echo ucfirst($data['user']->name); ?></a>
+              <a class="nav-link" href="#">Welcome <?php echo $data['user']->name; ?></a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="<?php echo URLROOT; ?>/conversations">

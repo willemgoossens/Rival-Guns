@@ -16,16 +16,17 @@
 
       if(strtotime($this->user->inJailUntil) > $now->getTimestamp())
       {
+        // In prison
         if($this->controller != "prisons"
            || ($this->controller == "prisons" && $this->method == "index"))
         {
-            redirect(MIDDLEWARE_PRISONCHECK_INPRISONREDIRECT);
+            redirect('prison');
         }
       }else
       {
         if($this->controller == "prisons" && $this->method != "index")
         {
-            redirect(MIDDLEWARE_PRISONCHECK_OUTPRISONREDIRECT);
+            redirect('prison/index');
         }
       }
 

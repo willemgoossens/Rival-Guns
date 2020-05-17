@@ -1,10 +1,9 @@
 <?php
     class Punishments extends Controller
     {
+        
         public function __construct()
         {
-            $this->defaultMethod = 'permanent';
-
             $this->userModel = $this->model('User');
             $this->adminRightModel = $this->model('AdminRight');
             $this->adminRoleModel = $this->model('AdminRole');

@@ -37,7 +37,7 @@
             <?php foreach($data['conversationReports'] as $report): ?>
               <tr>
                 <td scope="row"><?php echo $report->conversation->subject; ?></td>
-                <td><?php echo ucfirst($report->reportedBy->name); ?></td>
+                <td><?php echo $report->reportedBy->name; ?></td>
                 <td>
                   <?php if(!$data['classified']): ?>
                     <a href="<?php echo URLROOT . '/ConversationReports/process/' . $report->id; ?>">
@@ -47,7 +47,7 @@
                     </a>
                   <?php
                     else:
-                      echo ucfirst($report->handledBy->name);
+                      echo $report->handledBy->name;
                     endif;
                   ?>
                 </td>

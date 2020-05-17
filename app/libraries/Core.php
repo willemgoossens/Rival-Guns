@@ -43,32 +43,44 @@
       // Check for second part of url; the method
       // Require the controller
       require_once APPROOT . '/controllers/' . $this->apiText . $this->currentController . '.php';
-      // Instantiate controller class
-      $this->currentController = new $this->currentController;
-
-      // If this controllor has a defaultMethod that is different from 'index'
-      // Set it as the currentMethod (as a failsafe)
-      if(!method_exists($this->currentController, $this->currentController->defaultMethod)){
-        // If 'defaultMethod' has been set, we change the
-        throw new \Exception("Yo, the defaultMethod of this Controller (" . get_class($this->currentController) . ") doesn't exist, please solve this issue first.", 1);
-      }
-      else
-      {
-        $this->currentMethod = $this->currentController->defaultMethod;
-      }
 
       // Check for second part of url
-      if(isset($url[1])){
+      if(isset($url[1]))
+      {
         // Check to see if method exists in controller
         // If the method does indeed exist, replace it
-        if(method_exists($this->currentController, $url[1])){
+        if(method_exists($this->currentController, $url[1]))
+        {
           $this->currentMethod = $url[1];
           // Unset 1 index
           unset($url[1]);
         }
+        elseif(method_exists($this->currentController, 'index'))
+        {
+          $this->currentMethod = 'index';
+        }
+        else
+        {          
+          $this->error("404");
+        }
       }
-
+      else
+      {
+        // Check to see if method exists in controller
+        // If the method does indeed exist, replace it
+        if(method_exists($this->currentController, 'index'))
+        {
+          $this->currentMethod = 'index';
+        }
+        else
+        {          
+          $this->error("404");
+        }
+      }
+      
       $this->loadBeforeMiddleware();
+
+      $this->currentController = new $this->currentController();
 
       // Do some extra filtering for the Get Parameters (they might be used as db input)
       // And assign them
@@ -141,7 +153,7 @@
       {
         require_once APPROOT . "/middleware/" . $middlewareName . ".php";
 
-        $this->middleware[$middlewareName] = new $middlewareName($this->interface, get_class($this->currentController), $this->currentMethod);
+        $this->middleware[$middlewareName] = new $middlewareName($this->interface, $this->currentController, $this->currentMethod);
 
         if(method_exists($middlewareName, "before")
            && $this->middleware[$middlewareName]->shouldRunMiddleware())

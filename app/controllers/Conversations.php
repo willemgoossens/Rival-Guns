@@ -65,11 +65,11 @@
           $sender = $this->userModel->getSingleById($user->id, 'name');
           if(isset($conversation->noReplySender))
           {
-            $conversation->lastMessage->senderName = ucfirst($sender->name) . ' on behalf of ' . $conversation->noReplySender;
+            $conversation->lastMessage->senderName = $sender->name . ' on behalf of ' . $conversation->noReplySender;
           }
           else
           {
-            $conversation->lastMessage->senderName = 'Last message from ' . ucfirst($sender->name);
+            $conversation->lastMessage->senderName = 'Last message sent by ' . $sender->name;
           }
         }
       }

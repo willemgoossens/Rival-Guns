@@ -14,5 +14,6 @@
     "crimes/(\d+)/(\d+)" => "crimes/commit/$2/$1",
     "crimes/(\d+)" => "crimes/$1",
     "crimes" => 'crimeCategories/crimes',
-    "prison(/\w*)" => 'prisons$1'
+    "prison(/\w*)" => 'prisons$1',
+    "hospitalized" => 'hospitalizations/hospitalized'
     ]);

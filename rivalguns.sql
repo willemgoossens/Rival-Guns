@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 13, 2020 at 03:20 PM
+-- Generation Time: May 17, 2020 at 03:05 PM
 -- Server version: 10.1.37-MariaDB
 -- PHP Version: 7.3.1
 
@@ -129,7 +129,8 @@ CREATE TABLE `conversations` (
 --
 
 INSERT INTO `conversations` (`id`, `userId`, `subject`, `noReply`, `noReplySender`, `createdAt`) VALUES
-(26, 2, 'Hoi', 0, NULL, '2020-05-13 14:27:58');
+(26, 2, 'Hoi', 0, NULL, '2020-05-13 14:27:58'),
+(27, 2, 'Hi there', 0, NULL, '2020-05-16 23:36:22');
 
 -- --------------------------------------------------------
 
@@ -210,6 +211,21 @@ CREATE TABLE `criminalrecords` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `hospitalizations`
+--
+
+CREATE TABLE `hospitalizations` (
+  `id` int(11) NOT NULL,
+  `userId` int(11) NOT NULL,
+  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `duration` int(11) NOT NULL,
+  `reason` enum('mugged','hospitalized','resting','bled out') NOT NULL,
+  `causedById` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `messages`
 --
 
@@ -227,7 +243,8 @@ CREATE TABLE `messages` (
 
 INSERT INTO `messages` (`id`, `conversationId`, `body`, `createdAt`, `userId`) VALUES
 (45, 26, 'How you doing?', '2020-05-13 14:27:58', 2),
-(46, 26, 'I&#039;m doing fine :)\n\n*What about you?*', '2020-05-13 14:37:20', 1);
+(46, 26, 'I&#039;m doing fine :)\n\n*What about you?*', '2020-05-13 14:37:20', 1),
+(47, 27, 'Another test message', '2020-05-16 23:36:22', 2);
 
 -- --------------------------------------------------------
 
@@ -249,6 +266,17 @@ CREATE TABLE `posts` (
 
 INSERT INTO `posts` (`id`, `userId`, `title`, `body`, `createdAt`) VALUES
 (55, 2, 'Welcome to RivalGuns', 'Hoi allemaal,\n\nDit is een nieuwspost.\n\n**Veel plezier!**\n\nWillem', '2020-05-13 13:59:11');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `properties`
+--
+
+CREATE TABLE `properties` (
+  `id` int(11) NOT NULL,
+  `userId` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -277,12 +305,15 @@ CREATE TABLE `users` (
   `id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
   `adminRole` int(2) DEFAULT NULL,
+  `bank` bigint(21) NOT NULL,
   `boxing` int(9) NOT NULL DEFAULT '0',
   `cash` bigint(20) NOT NULL DEFAULT '50',
   `charisma` int(9) NOT NULL DEFAULT '0',
+  `depositedToday` int(9) NOT NULL DEFAULT '0',
   `email` varchar(255) NOT NULL,
-  `health` decimal(5,2) NOT NULL DEFAULT '100.00',
+  `health` decimal(5,2) UNSIGNED NOT NULL DEFAULT '100.00',
   `inJailUntil` datetime NOT NULL,
+  `lastHealthCheck` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `energy` decimal(5,2) NOT NULL DEFAULT '100.00',
   `password` varchar(255) NOT NULL,
   `resetKey` varchar(100) NOT NULL,
@@ -293,10 +324,10 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `adminRole`, `boxing`, `cash`, `charisma`, `email`, `health`, `inJailUntil`, `energy`, `password`, `resetKey`, `createdAt`) VALUES
-(1, 'testaccount1', NULL, 101, 50, 0, 'test1@test.com', '100.00', '0000-00-00 00:00:00', '100.00', '$2y$10$gx/3veekeiaiGWAE8CFE0.dB0GgpHUi/5sV31lc3YSZFTTADp/uUG', '', '2019-02-16 20:14:36'),
-(2, 'admin', 4, 558, 3657, 601, 'admin@test.com', '64.95', '2020-05-04 00:00:00', '46.50', '$2y$10$eX0GEcmxokWdNbhsUpI25.GKpDqvySB1JbvUPS7Q.hS2Fdb/TlAd.', '', '2019-03-02 21:39:08'),
-(4, 'testaccount2', NULL, 0, 69, 5, 'test2@test.com', '100.00', '0000-00-00 00:00:00', '98.70', '$2y$10$kCorgsWvSQczBp16VjbIn.BK7S.nG2T/itHBEjjnVtOg9m94CREnW', 'a906e303a164fd74e00dbd2a63815bba', '2020-03-24 18:56:36');
+INSERT INTO `users` (`id`, `name`, `adminRole`, `bank`, `boxing`, `cash`, `charisma`, `depositedToday`, `email`, `health`, `inJailUntil`, `lastHealthCheck`, `energy`, `password`, `resetKey`, `createdAt`) VALUES
+(1, 'testaccount1', NULL, 0, 101, 50, 0, 0, 'test1@test.com', '100.00', '0000-00-00 00:00:00', '2020-05-15 21:02:02', '100.00', '$2y$10$gx/3veekeiaiGWAE8CFE0.dB0GgpHUi/5sV31lc3YSZFTTADp/uUG', '', '2019-02-16 20:14:36'),
+(2, 'admin', 4, 100, 558, 3593, 611, 500, 'admin@test.com', '100.00', '2020-05-04 00:00:00', '2020-05-17 14:36:07', '100.00', '$2y$10$eX0GEcmxokWdNbhsUpI25.GKpDqvySB1JbvUPS7Q.hS2Fdb/TlAd.', '', '2019-03-02 21:39:08'),
+(4, 'testaccount2', NULL, 0, 0, 69, 5, 0, 'test2@test.com', '100.00', '0000-00-00 00:00:00', '2020-05-15 17:09:13', '98.70', '$2y$10$kCorgsWvSQczBp16VjbIn.BK7S.nG2T/itHBEjjnVtOg9m94CREnW', 'a906e303a164fd74e00dbd2a63815bba', '2020-03-24 18:56:36');
 
 -- --------------------------------------------------------
 
@@ -315,7 +346,9 @@ CREATE TABLE `users_conversations` (
 
 INSERT INTO `users_conversations` (`userid`, `conversationid`) VALUES
 (1, 26),
-(2, 26);
+(2, 26),
+(4, 27),
+(2, 27);
 
 -- --------------------------------------------------------
 
@@ -334,7 +367,8 @@ CREATE TABLE `users_unread_messages` (
 --
 
 INSERT INTO `users_unread_messages` (`userid`, `messageid`, `conversationid`) VALUES
-(2, 46, 26);
+(2, 46, 26),
+(4, 47, 27);
 
 --
 -- Indexes for dumped tables
@@ -404,6 +438,14 @@ ALTER TABLE `criminalrecords`
   ADD KEY `type` (`type`);
 
 --
+-- Indexes for table `hospitalizations`
+--
+ALTER TABLE `hospitalizations`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `userId` (`userId`),
+  ADD KEY `causedById` (`causedById`);
+
+--
 -- Indexes for table `messages`
 --
 ALTER TABLE `messages`
@@ -416,6 +458,13 @@ ALTER TABLE `messages`
 --
 ALTER TABLE `posts`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `properties`
+--
+ALTER TABLE `properties`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `userId` (`userId`);
 
 --
 -- Indexes for table `punishments`
@@ -462,19 +511,19 @@ ALTER TABLE `adminrights`
 -- AUTO_INCREMENT for table `adminroles`
 --
 ALTER TABLE `adminroles`
-  MODIFY `id` int(2) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(2) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `conversationreports`
 --
 ALTER TABLE `conversationreports`
-  MODIFY `id` int(250) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(250) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `conversations`
 --
 ALTER TABLE `conversations`
-  MODIFY `id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `crimecategories`
@@ -498,13 +547,19 @@ ALTER TABLE `crimetypes`
 -- AUTO_INCREMENT for table `criminalrecords`
 --
 ALTER TABLE `criminalrecords`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=94;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `hospitalizations`
+--
+ALTER TABLE `hospitalizations`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `messages`
 --
 ALTER TABLE `messages`
-  MODIFY `id` int(250) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `id` int(250) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 
 --
 -- AUTO_INCREMENT for table `posts`
@@ -513,16 +568,22 @@ ALTER TABLE `posts`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
 
 --
+-- AUTO_INCREMENT for table `properties`
+--
+ALTER TABLE `properties`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `punishments`
 --
 ALTER TABLE `punishments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables
@@ -561,10 +622,23 @@ ALTER TABLE `criminalrecords`
   ADD CONSTRAINT `link_to_userId` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
+-- Constraints for table `hospitalizations`
+--
+ALTER TABLE `hospitalizations`
+  ADD CONSTRAINT `hospitalizations_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `hospitalizations_ibfk_2` FOREIGN KEY (`causedById`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+--
 -- Constraints for table `messages`
 --
 ALTER TABLE `messages`
   ADD CONSTRAINT `messages_ibfk_1` FOREIGN KEY (`conversationId`) REFERENCES `conversations` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `properties`
+--
+ALTER TABLE `properties`
+  ADD CONSTRAINT `properties_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `punishments`

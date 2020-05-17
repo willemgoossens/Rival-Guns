@@ -25,6 +25,7 @@
 
     public function shouldRunMiddleware()
     {
+      
       if(isset(MIDDLEWARE[get_class($this)][$this->interface]))
       {
         $paths = MIDDLEWARE[get_class($this)][$this->interface];

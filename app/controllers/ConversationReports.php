@@ -233,7 +233,7 @@
                 "subject" => "Punishment"
               ];
 
-              $message = "Dear " . ucfirst($report->conversationPartners[$key]->name) . ",\r\n\r\nYou have received a " . $input["punishmentType"] . " because of the following reason:\r\n\r\n" . $input['explanation'] . "\r\n\r\nKind regards,\r\n\r\n" . SITENAME . " Team";
+              $message = "Dear " . $report->conversationPartners[$key]->name . ",\r\n\r\nYou have received a " . $input["punishmentType"] . " because of the following reason:\r\n\r\n" . $input['explanation'] . "\r\n\r\nKind regards,\r\n\r\n" . SITENAME . " Team";
 
               $this->conversationModel->addConversation($insertConversation, $message, [$key]);
             }

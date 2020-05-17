@@ -1,7 +1,7 @@
 <?php
 
-  class Users extends Controller {
-    public $defaultMethod = 'login';
+  class Users extends Controller 
+  {
 
     public function __construct()
     {

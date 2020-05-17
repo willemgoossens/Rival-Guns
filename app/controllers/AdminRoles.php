@@ -3,7 +3,6 @@
   {
     public function __construct()
     {
-      $this->defaultMethod = "edit";
 
       $this->userModel = $this->model('User');
       $this->adminRightModel = $this->model('AdminRight');
@@ -40,9 +39,6 @@
         // Sanitize POST data
         $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
-
-
-
         //Change admin's role
         if(isset($_POST['changeAdmin']))
         {
@@ -56,7 +52,7 @@
           if($targetUser
             && $this->userModel->updateById($_POST['adminId'], ['adminRole' => $_POST['changeToRole']]))
           {
-            flash('tab1_success', 'You have changed the role of <strong>' . ucfirst($targetUser->name) . '</strong>!');
+            flash('tab1_success', 'You have changed the role of <strong>' . $targetUser->name . '</strong>!');
           }
           else
           {

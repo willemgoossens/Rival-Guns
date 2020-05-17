@@ -5,7 +5,6 @@
    */
   class Controller 
   {
-    public $defaultMethod = "index";
     public $data = [];
     // Load model
     public function model(string $model)

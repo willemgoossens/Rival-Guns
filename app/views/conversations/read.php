@@ -27,7 +27,7 @@
           <div class="card-body <?php if($message->unread) echo "text-info"; ?>">
             <?php echo MarkdownToHTML($message->body); ?>
             <p class="card-text">
-              <small class="text-muted pull-left"><?php echo isset($data['conversationData']->noReplySender) ? ucfirst($message->name) . ' - On behalf of ' . $data['conversationData']->noReplySender : ucfirst($message->name); ?></small>
+              <small class="text-muted pull-left"><?php echo isset($data['conversationData']->noReplySender) ? $message->name . ' - On behalf of ' . $data['conversationData']->noReplySender : $message->name; ?></small>
               <small class="text-muted pull-right"><?php echo $message->createdAt; ?></small>
             </p>
           </div>

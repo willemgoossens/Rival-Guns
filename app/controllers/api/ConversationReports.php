@@ -52,7 +52,7 @@
           $message->body = MarkdownToHTML($message->body);
           // We also need to conversation partner's name for the messages that had not been send by the user
           $conversationPartner = $this->userModel->getSingleById($message->userId, 'name');
-          $message->name = ucfirst($conversationPartner->name);
+          $message->name = $conversationPartner->name;
         }
 
 

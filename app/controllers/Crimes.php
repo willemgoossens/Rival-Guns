@@ -4,8 +4,6 @@
 
     public function __construct()
     {
-      $this->defaultMethod = "index";
-
       $this->userModel = $this->model('User');
       $this->crimeModel = $this->model('Crime');
       $this->crimeCategoryModel = $this->model('CrimeCategory');

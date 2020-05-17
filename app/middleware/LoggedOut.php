@@ -17,7 +17,7 @@
       }else
       {
         header("HTTP/1.1 401 Unauthorized");
-        redirect(MIDDLEWARE_LOGGEDOUT_REDIRECT);
+        redirect('posts');
       }
     }
   }

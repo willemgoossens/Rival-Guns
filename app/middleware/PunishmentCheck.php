@@ -18,7 +18,7 @@
       {
           if($this->controller != "punishments" || $this->method != "permanent")
           {
-              redirect(MIDDLEWARE_PUNISHMENTCHECK_PERMANENTREDIRECT);
+              redirect('punishments/permanent');
           }
 
           return false;
@@ -28,14 +28,14 @@
       {
         if($this->controller != "punishments" || $this->method != "temporary")
         {
-            redirect(MIDDLEWARE_PUNISHMENTCHECK_TEMPORARYREDIRECT);
+            redirect('punishments/temporary');
         }
 
         return false;
       }
       elseif($this->controller == "punishments" && ($this->method == "temporary" || $this->method == "permanent"))
       {
-          redirect(MIDDLEWARE_PUNISHMENTCHECK_NOPUNISHMENTREDIRECT);
+          redirect('posts');
       }
 
       return true;
