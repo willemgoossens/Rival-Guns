@@ -14,7 +14,7 @@
 
       // Set the sessions for the nav bar
       $this->data['user']                      = $this->userModel->getSingleById($_SESSION['userId']);
-      $this->data['user']->adminRights         = $this->adminRoleModel->getRightsForInterface($this->data['user']->adminRole);
+      $this->data['user']->adminRights         = $this->adminRoleModel->getRightNamesForRole($this->data['user']->adminRole);
       $this->data['user']->conversationUpdates = $this->conversationModel->countUnreadConversations($_SESSION['userId']);
     }
 

@@ -6,16 +6,8 @@
             $this->db = new Database;
             $this->setTableName('users');
 
-            $children = [
-              "criminalRecords" => [
-                                "foreignTable" => "criminalrecords",
-                                "foreignKey" => "userId",
-                                "currentKey" => "id",
-                                "model" => "CriminalRecord"
-                              ]
-            ];
-
-            $this->setChildren($children);
+            $this->criminalRecordModel = $this->model('CriminalRecord');
+            $this->crimeTypeModel = $this->model('CrimeType');
         }
 
         /**
@@ -111,11 +103,10 @@
          */
         public function arrest(int $userId): array
         {
-            $records = $this->child("criminalRecords")->selectArrestRecords($userId);
+            $records = $this->criminalRecordModel->selectArrestRecords($userId);
             $crimeTypeIds = array_column($records, "type");
 
-            $crimeTypes = $this->child("criminalRecords")
-                               ->parent("crimeTypes")
+            $crimeTypes = $this->crimeTypeModel
                                ->getFlaggedUniqueById($crimeTypeIds);
             
             $totalJailTime = 0;
@@ -124,7 +115,7 @@
             foreach($records as $record)
             {
                 $totalJailTime += $crimeTypes[$record->type]->jailTime;
-                $this->child("criminalRecords")->deleteById($record->id);
+                $this->criminalRecordModel->deleteById($record->id);
                 
                 if(isset($crimesNames[$crimeTypes[$record->type]->name]))
                 {

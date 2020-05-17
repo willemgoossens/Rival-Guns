@@ -6,18 +6,7 @@
     {
       $this->db = new Database;
       $this->setTableName('adminroles');
-
-      $children = [
-        "adminRights" => [
-                          "foreignTable" => "adminrights",
-                          "foreignKey" => "id",
-                          "currentKey" => "id",
-                          "connectionTable" => "adminroles_adminrights",
-                          "model" => "AdminRight"
-                        ]
-      ];
-
-      $this->setChildren($children);
+      $this->adminRightModel = $this->model('AdminRight');
     }
 
     /******************************
@@ -31,9 +20,9 @@
     *******************************/
     public function updateRightsForRole(int $roleId, array $addedRights)
     {
-      if($this->child("adminRights")->deleteAdminRightsForRole($roleId))
+      if($this->adminRightModel->deleteAdminRightsForRole($roleId))
       {
-        if($this->child("adminRights")->createAdminRightsForRole($roleId, $addedRights))
+        if($this->adminRightModel->createAdminRightsForRole($roleId, $addedRights))
         {
           return true;
         }
@@ -42,16 +31,46 @@
       return false;
     }
 
-    public function getRightsForInterface(?int $roleId)
+    public function getRightNamesForRole(?int $roleId)
     {
       if(! isset($roleId))
       {
         return [];
       }
 
-      $rightIds = $this->getManyToManyIds("adminRights", $roleId);
+      $this->db->query("SELECT adminRightId
+                    FROM adminroles_adminrights
+                    WHERE adminRoleId = :adminRoleId");
+      $this->db->bind(':adminRoleId', $roleId);
 
-      $rights = $this->child("adminRights")->getArrayById($rightIds, 'name');
+      $rightIds = $this->db->resultSetArray();
+
+      $rights = $this->adminRightModel->getArrayById($rightIds, 'name');
+
+      return $rights;
+    }
+
+
+
+    /**
+     * Get all the Rights for a specific role
+     * @param int roleId
+     */
+    public function getRightsForRole(?int $roleId)
+    {
+      if(! isset($roleId))
+      {
+        return [];
+      }
+
+      $this->db->query("SELECT adminRightId
+                    FROM adminroles_adminrights
+                    WHERE adminRoleId = :adminRoleId");
+      $this->db->bind(':adminRoleId', $roleId);
+
+      $rightIds = $this->db->resultSetArray();
+
+      $rights = $this->adminRightModel->getById($rightIds);
 
       return $rights;
     }

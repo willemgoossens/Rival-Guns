@@ -20,7 +20,7 @@
         if($this->controller != "prisons"
            || ($this->controller == "prisons" && $this->method == "index"))
         {
-            redirect('prison');
+            redirect('prison/inside');
         }
       }else
       {

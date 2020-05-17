@@ -31,7 +31,7 @@
         $offset         = (int) $offset;
         $userId         = $_SESSION['userId'];
         $user = $this->userModel->getSingleById($userId, 'adminRole');
-        $adminRights = $this->adminRoleModel->getRightsForInterface($user->adminRole);
+        $adminRights = $this->adminRoleModel->getRightNamesForRole($user->adminRole);
 
         // Check if the user has the correct rights
         if(! in_array("HandleReportedConversations", $adminRights))

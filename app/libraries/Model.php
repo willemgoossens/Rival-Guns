@@ -6,25 +6,22 @@
   *
   *
   *****************************/
-  class Model {
+  class Model 
+  {
     /* Variables */
     protected $db;
 
     private $tableName = NULL;
     private $tableColumns = [];
 
-    /*
-    ['name'] => [
-      'relationTable' =>
-      'currentKey' =>
-      'foreignKey' = >
-      'connectionTable' =>
-      'model' = >
-    ]
 
-    */
-    private $children = [];
-    private $parents = [];
+
+    public function __construct()
+    {
+      // Completely empty, just for the sake of not getting a deprication message because our we have a method named Model
+    }
+
+
 
     /***********************
     *
@@ -341,164 +338,6 @@
       $this->setTableColumns();
     }
 
-
-    /***********************
-    *
-    *
-    * set the children for this array
-    * @PARAM: table Name
-    *
-    *
-    ************************/
-    protected function setChildren(array $children)
-    {
-      // check if everything is okay
-      /*
-      ['name'] => [
-        'currentKey' =>
-        'relationTable' =>
-        'foreignKey' = >
-        'connectionTable' =>
-        'model' = >
-      ]
-
-      */
-      foreach($children as $name => $child)
-      {
-        // connectionTable is not mandatory, only many-to-many connections have this
-        if(isset($child['foreignTable'])
-          && isset($child['currentKey'])
-          && isset($child['foreignKey'])
-          && isset($child['model'])
-        ) {
-          $this->children[$name] = (object) $child;
-          $this->children[$name]->model = $this->loadModel($child['model']);
-        }
-        else
-        {
-          throw new \Exception("You should set up the children properly in class ". get_class($this), 1);
-        }
-      }
-    }
-
-
-    /**
-     * set the parents relations of this model
-     * @param array $parents
-     */
-    protected function setParents(array $parents)
-    {
-      // check if everything is okay
-      /*
-      ['name'] => [
-        'currentKey' =>
-        'relationTable' =>
-        'foreignKey' = >
-        'connectionTable' =>
-        'model' = >
-      ]
-
-      */
-      foreach($parents as $name => $parent)
-      {
-        // connectionTable is not mandatory, only many-to-many connections have this
-        if(isset($parent['foreignTable'])
-          && isset($parent['currentKey'])
-          && isset($parent['foreignKey'])
-          && isset($parent['model'])
-        ) {
-          $this->parents[$name] = (object) $parent;
-          $this->parents[$name]->model = $this->loadModel($parent['model']);
-        }
-        else
-        {
-          throw new \Exception("You should set up the parents properly in class ". get_class($this), 1);
-        }
-      }
-    }
-
-
-    /***********************
-    *
-    *
-    * return the child model
-    * @PARAM: table Name
-    *
-    *
-    ************************/
-    public function child(string $child)
-    {
-      return $this->children[$child]->model;
-    }
-
-
-    /**
-     * returns the parent model
-     * @param  string $parent parent name
-     * @return the parent model
-     */
-    public function parent(string $parent)
-    {
-      return $this->parents[$parent]->model;
-    }
-
-
-    /***********************
-    *
-    *
-    * return the child model
-    * @PARAM: string - name of the child class
-    * @PARAM: string / int - selectorValue
-    *
-    *
-    ************************/
-    public function getManyToManyIds(string $name, $selectorValue)
-    {
-      if(isset($this->children[$name]->connectionTable))
-      {
-        $relation = $this->children[$name];
-      }
-      elseif(isset($this->parents[$name]->connectionTable))
-      {
-        $relation = $this->parents[$name];
-      }
-      else
-      {
-        return false;
-      }
-
-      $selectorName = substr($this->tableName, 0, -1) . $relation->currentKey;
-      $foreignKey = substr($relation->foreignTable, 0, -1) . $relation->foreignKey;
-
-      $this->db->query("SELECT " . $foreignKey . "
-                        FROM " . $relation->connectionTable . "
-                        WHERE " . $selectorName . " = :selectorValue");
-
-      $this->db->bind(":selectorValue", $selectorValue);
-      $ids = $this->db->resultSetArray();
-
-      return $ids;
-    }
-
-
-    /***********************
-    *
-    *
-    * load another model
-    * @PARAM: model name
-    *
-    *
-    ************************/
-    private function loadModel(string $model)
-    {
-      // Require model file
-      require_once APPROOT . '/models/' . $model . '.php';
-
-      // Instatiate model
-      return new $model();
-    }
-
-
     /***********************
     *
     *
@@ -522,6 +361,27 @@
                                 return $array->COLUMN_NAME;
                               }, $columnNamesOriginal);
     }
+
+
+
+    /**
+     * load another model
+     * @param string - model
+     */
+    protected function model(string $model)
+    {
+      // Require model file
+      require_once APPROOT . '/models/' . $model . '.php';
+
+      // Instatiate model
+      return new $model();
+    }
+
+
+
+
+
+
 
 
     /***********************

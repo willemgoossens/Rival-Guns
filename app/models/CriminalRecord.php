@@ -6,16 +6,7 @@
             $this->db = new Database;
             $this->setTableName('criminalrecords');
 
-            $parents = [
-              "crimeTypes" => [
-                                "foreignTable" => "crimetypes",
-                                "foreignKey" => "id",
-                                "currentKey" => "type",
-                                "model" => "CrimeType"
-                              ]
-            ];
-      
-            $this->setParents($parents);
+            $this->crimeTypeModel = $this->model('CrimeType');
         }
 
         
@@ -91,7 +82,7 @@
             // Delete Old Records
             $this->deleteOldRecords($userId);
 
-            $crimeTypes = $this->parent("crimeTypes")->orderBy('addStarsUntil')->get();
+            $crimeTypes = $this->crimeTypeModel->orderBy('addStarsUntil')->get();
 
             $stars = 0;
             $overflow = 0;

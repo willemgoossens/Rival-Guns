@@ -1,212 +1,200 @@
 <?php
-  class Conversation extends Model
-  {
-    public function __construct()
+    class Conversation extends Model
     {
-      $this->db = new Database;
-      $this->setTableName('conversations');
+        public function __construct()
+        {
+          $this->db = new Database;
+          $this->setTableName('conversations');
 
-      $children = [
-        "messages" => [
-                          "foreignTable" => "messages",
-                          "foreignKey" => "conversationId",
-                          "currentKey" => "id",
-                          "model" => "Message"
-                        ]
-      ];
+          $this->messageModel = $this->model('Message');
+          $this->userModel = $this->model('User');
+        }
 
-      $this->setChildren($children);
+        /**
+        *
+        *
+        * count unread conversations for a specific user
+        * PARAM: int - userId
+        *
+        *
+        ****************************/
+        public function countUnreadConversations(int $userId)
+        {
+          $this->db->query("SELECT *
+                        FROM users_unread_messages
+                        WHERE userid = :userId
+                        GROUP BY conversationid");
+          // Bind Values
+          $this->db->bind(':userId', $userId);
+          // Rowcount
+          return $this->db->rowCount();
+        }
 
-      $parents = [
-        "users" => [
-                          "foreignTable" => "users",
-                          "foreignKey" => "id",
-                          "connectionTable" => "users_conversations",
-                          "currentKey" => "id",
-                          "model" => "User"
-                        ]
-      ];
+        /*************************
+        *
+        *
+        * check if conversation is unread for specific user
+        * PARAM: int - userId
+        * PARAM: int - conversationId
+        *
+        *
+        ****************************/
+        public function getIfConversationHasUnreadMessageForUser(int $userId, int $conversationId)
+        {
+          $this->limit(1)->db->query("SELECT *
+                                      FROM users_unread_messages
+                                      WHERE userid = :userId
+                                        AND conversationid = :conversationId");
+          // Bind Values
+          $this->db->bind(':userId', $userId);
+          $this->db->bind(':conversationId', $conversationId);
+          // Rowcount
+          if($this->db->rowCount() > 0)
+          {
+            return true;
+          }
+          else
+          {
+            return false;
+          }
+        }
 
-      $this->setParents($parents);
-    }
+        /*************************
+        *
+        *
+        * get the latest conversations for a specific user
+        * PARAM: int - userId
+        *
+        *
+        ****************************/
+        public function getLatestUpdatedConversationsByParticipantId(int $userId, int $limit, int $offset)
+        {
+          $conversationIds = $this->messageModel
+                                  ->limit($limit)
+                                  ->offset($offset)
+                                  ->orderBy("MAX(createdAt)", "DESC")
+                                  ->groupBy("conversationId")
+                                  ->getConversationIdInWhichUserIsInvolved($userId);
 
-    /**
-    *
-    *
-    * count unread conversations for a specific user
-    * PARAM: int - userId
-    *
-    *
-    ****************************/
-    public function countUnreadConversations(int $userId)
-    {
-      $this->db->query("SELECT *
-                    FROM users_unread_messages
-                    WHERE userid = :userId
-                    GROUP BY conversationid");
-      // Bind Values
-      $this->db->bind(':userId', $userId);
-      // Rowcount
-      return $this->db->rowCount();
-    }
+          $conversations = [];
+          if(! empty($conversationIds))
+          {        
+            $conversations = $this->orderBy("id", "FIELD", $conversationIds)
+                                  ->getById($conversationIds);
+          }
 
-    /*************************
-    *
-    *
-    * check if conversation is unread for specific user
-    * PARAM: int - userId
-    * PARAM: int - conversationId
-    *
-    *
-    ****************************/
-    public function getIfConversationHasUnreadMessageForUser(int $userId, int $conversationId)
-    {
-      $this->limit(1)->db->query("SELECT *
-                                  FROM users_unread_messages
-                                  WHERE userid = :userId
-                                    AND conversationid = :conversationId");
-      // Bind Values
-      $this->db->bind(':userId', $userId);
-      $this->db->bind(':conversationId', $conversationId);
-      // Rowcount
-      if($this->db->rowCount() > 0)
-      {
-        return true;
-      }
-      else
-      {
-        return false;
-      }
-    }
+          return $conversations;
+        }
 
-    /*************************
-    *
-    *
-    * get the latest conversations for a specific user
-    * PARAM: int - userId
-    *
-    *
-    ****************************/
-    public function getLatestUpdatedConversationsByParticipantId(int $userId, int $limit, int $offset)
-    {
-      $conversationIds = $this->child("messages")
-                              ->limit($limit)
-                              ->offset($offset)
-                              ->orderBy("MAX(createdAt)", "DESC")
-                              ->groupBy("conversationId")
-                              ->getConversationIdInWhichUserIsInvolved($userId);
+        /*************************
+        *
+        *
+        * insert user conversation connections
+        * PARAM: array - insert
+        *
+        *
+        ****************************/
+        public function insertConnections(array $insertData): bool
+        {
+          $insertString = "";
+          $insertValues = [];
+          foreach($insertData as $values)
+          {
+            $insertString .= "(?, ?),";
+            $insertValues[ count($insertValues) + 1] = $values["userId"];
+            $insertValues[ count($insertValues) + 1] = $values["conversationId"];
+          }
+          $insertString = rtrim($insertString, ",");
 
-      $conversations = [];
-      if(! empty($conversationIds))
-      {        
-        $conversations = $this->orderBy("id", "FIELD", $conversationIds)
-                              ->getById($conversationIds);
-      }
+          $this->db->query("INSERT INTO users_conversations
+                            (userid, conversationid)
+                            VALUES " . $insertString);
 
-      return $conversations;
-    }
+          $this->db->bindArray($insertValues);
 
-    /*************************
-    *
-    *
-    * insert user conversation connections
-    * PARAM: array - insert
-    *
-    *
-    ****************************/
-    public function insertConnections(array $insertData): bool
-    {
-      $insertString = "";
-      $insertValues = [];
-      foreach($insertData as $values)
-      {
-        $insertString .= "(?, ?),";
-        $insertValues[ count($insertValues) + 1] = $values["userId"];
-        $insertValues[ count($insertValues) + 1] = $values["conversationId"];
-      }
-      $insertString = rtrim($insertString, ",");
+          return $this->db->execute();
+        }
 
-      $this->db->query("INSERT INTO users_conversations
-                        (userid, conversationid)
-                        VALUES " . $insertString);
+        /**
+        *
+        *
+        * Check if the user is a participant
+        * @param: int conversationId
+        * @param: int user id
+        *
+        *
+        **********************************/
+        public function checkIfUserIsParticipant(int $conversationId, int $userId)
+        {
+          $this->db->query("SELECT *
+                            FROM users_conversations
+                            WHERE conversationid = :conversationId
+                              AND userid = :userId");
 
-      $this->db->bindArray($insertValues);
+          $this->db->bind(':conversationId', $conversationId);
+          $this->db->bind(':userId', $userId);
 
-      return $this->db->execute();
-    }
-
-    /**
-    *
-    *
-    * Check if the user is a participant
-    * @param: int conversationId
-    * @param: int user id
-    *
-    *
-    **********************************/
-    public function checkIfUserIsParticipant(int $conversationId, int $userId)
-    {
-      $this->db->query("SELECT *
-                        FROM users_conversations
-                        WHERE conversationid = :conversationId
-                          AND userid = :userId");
-
-      $this->db->bind(':conversationId', $conversationId);
-      $this->db->bind(':userId', $userId);
-
-      return $this->db->rowCount();
-    }
+          return $this->db->rowCount();
+        }
 
 
 
-    /**
-     * This function gets all people in a conversation
-     * @param  int   $conversationId
-     * @return array                 An array with all userIds
-     */
-    public function getPeopleInConversation(int $conversationId): array
-    {
-      $userIds = $this->getManyToManyIds("users", $conversationId);
+        /**
+         * This function gets all people in a conversation
+         * @param  int   $conversationId
+         * @return array                 An array with all userIds
+         */
+        public function getPeopleInConversation(int $conversationId): array
+        {
+            $this->db->query("SELECT userId
+                              FROM users_conversations
+                              WHERE conversationId = :conversationId");
+            
+            $this->db->bind(":conversationId", $conversationId);
 
-      return $this->parent("users")->getFlaggedUniqueById($userIds);
-    }
+            $userIds = $this->db->resultSetArray();
 
-    /**
-     * This function adds the conversation, connections and the first message
-     * @param  array  $conversationInformation Array with conversation input
-     * @param  string $messageBody             The message body, will be added to the message
-     * @param  array  $participantIds          A list of all participant Ids, EXCLUDING the sender
-     * @return bool                            [description]
-     */
-    public function addConversation(array $conversationInformation, string $messageBody, array $participantIds): bool
-    {
-      $conversationId = $this->insert($conversationInformation, true);
-      if(!$conversationId)
-      {
-        die("Something went wrong while creating the conversation");
-      }
+            return $this->userModel->getFlaggedUniqueById($userIds);
+        }
 
-      // Adding the connections to the users
-      $userConversationConnections = array_map(function($val) use ($conversationId) {
+        /**
+         * This function adds the conversation, connections and the first message
+         * @param  array  $conversationInformation Array with conversation input
+         * @param  string $messageBody             The message body, will be added to the message
+         * @param  array  $participantIds          A list of all participant Ids, EXCLUDING the sender
+         * @return bool                            [description]
+         */
+        public function addConversation(array $conversationInformation, string $messageBody, array $participantIds): bool
+        {
+            $conversationId = $this->insert($conversationInformation, true);
+            if(!$conversationId)
+            {
+                die("Something went wrong while creating the conversation");
+            }
+
+            // Adding the connections to the users
+            $userConversationConnections = array_map(function($val) use ($conversationId) 
+                                            {
                                                 return ['userId' => $val, 'conversationId' => $conversationId];
-                                              }, $participantIds);
-      array_push($userConversationConnections, ['userId' => $conversationInformation['userId'], 'conversationId' => $conversationId]);
+                                            }, $participantIds);
 
-      if(!$this->insertConnections($userConversationConnections))
-      {
-        die("Something went wrong while creating the connections for the conversations");
-      }
+            array_push($userConversationConnections, ['userId' => $conversationInformation['userId'], 'conversationId' => $conversationId]);
 
-      // And create the message!
-      $insertMessageData = [
-        'conversationId' => $conversationId,
-        'body' => $messageBody,
-        'userId' => $conversationInformation['userId']
-      ];
+            if(! $this->insertConnections($userConversationConnections))
+            {
+                die("Something went wrong while creating the connections for the conversations");
+            }
 
-      $this->child("messages")->createMessage($insertMessageData);
+            // And create the message!
+            $insertMessageData = [
+                'conversationId' => $conversationId,
+                'body' => $messageBody,
+                'userId' => $conversationInformation['userId']
+            ];
 
-      return true;
+            $this->messageModel->createMessage($insertMessageData);
+
+            return true;
+        }
+
     }
-
-  }

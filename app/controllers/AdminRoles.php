@@ -11,7 +11,7 @@
 
       // Set the sessions for the nav bar
       $this->data['user']                      = $this->userModel->getSingleById($_SESSION['userId']);
-      $this->data['user']->adminRights         = $this->adminRoleModel->getRightsForInterface($this->data['user']->adminRole);
+      $this->data['user']->adminRights         = $this->adminRoleModel->getRightNamesForRole($this->data['user']->adminRole);
       $this->data['user']->conversationUpdates = $this->conversationModel->countUnreadConversations($_SESSION['userId']);
     }
 
@@ -210,8 +210,7 @@
       // We need to encode the rights to JSON
       foreach($adminRoles as $adminRole)
       {
-        $rightsForRole = $this->adminRoleModel->getManyToManyIds("adminRights", $adminRole->id);
-        $adminRights = $this->adminRightModel->getById($rightsForRole);
+        $adminRights = $this->adminRoleModel->getRightsForRole($adminRole->id);
         $adminRole->rights = json_encode($adminRights);
 
         $this->data['adminRoles'][$adminRole->id] = $adminRole;
