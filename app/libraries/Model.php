@@ -6,7 +6,7 @@
   *
   *
   *****************************/
-  class Model 
+  abstract class Model 
   {
     /* Variables */
     protected $db;

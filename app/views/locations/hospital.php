@@ -20,10 +20,10 @@
 
     <div class="row mb-2">
         <div class="col">
-            <strong>Health:</strong> &euro;<?php echo $data['user']->health; ?>
+            <strong>Health:</strong><?php echo $data['user']->health; ?>
         </div>
         <div class="col">
-            <strong>Energy:</strong> &euro;<?php echo $data['user']->energy; ?>
+            <strong>Energy:</strong><?php echo $data['user']->energy; ?>
         </div>
     </div>
 
