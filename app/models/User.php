@@ -8,6 +8,9 @@
 
             $this->criminalRecordModel = $this->model('CriminalRecord');
             $this->crimeTypeModel = $this->model('CrimeType');
+            $this->wearableCategoryModel = $this->model('WearableCategory');
+            $this->wearablesModel = $this->model('Wearable');
+            //$this->wearablesModel = $this->model('Wearables');
         }
 
         /**
@@ -17,36 +20,85 @@
         {
             $return = parent::__call($method, $arguments);
 
-            if(is_array($return))
+            if(!is_array($return))
             {
-                foreach($return as &$subObject)
-                {
-                    if(is_object($subObject))
-                    {
-                        if(isset($subObject->name))
-                        {
-                          $subObject->name = ucfirst($subObject->name);
-                        }
-                    }
-                    elseif(is_array($subObject))
-                    {
-                        if(isset($subObject["name"]))
-                        {
-                            $subObject["name"] = ucfirst($subObject["name"]);
-                        }
-                    }
-                }
+                $return = $this->countBonuses($return);
             }
-            elseif(is_object($return))
+            else 
             {
-                if(isset($return->name))
+                foreach($return as &$object)
                 {
-                  $return->name = ucfirst($return->name);
+                    $object = $this->countBonuses($object);
                 }
+    
             }
 
             return $return;
         }
+
+
+
+        /**
+         * modify Variables
+         * @param object-array $user
+         * @return object $user 
+         */
+        public function countBonuses($object)
+        {
+            $skillNames = [
+                "agilitySkills",
+                "boxingSkills",
+                "burglarySkills",
+                "carTheftSkills",
+                "charismaSkills",
+                "drivingSkills",
+                "enduranceSkills",
+                "pistolSkills",
+                "rifleSkills",
+                "robbingSkills",
+                "stealingSkills",
+                "strengthSkills"
+            ];
+
+            $keys = array_keys(get_object_vars($object));
+            $overlappingKeys = array_intersect($keys, $skillNames);
+            if(! empty($overlappingKeys))
+            {
+                $wearables = $this->wearablesModel->getArrayByUserIdAndEquipped($object->id, true, "wearableCategoryId");
+                $object->bonusesIncluded = new StdClass;
+            }
+
+            foreach($object as $key => &$value)
+            {
+                if($key == 'name')
+                {
+                    $value = ucfirst($value);
+                }
+                
+                if(in_array($key, $skillNames))
+                {
+                    $skillName = $key;
+                    if(! isset($object->bonusesIncluded->$skillName ))
+                    {
+                        $object->bonusesIncluded->$skillName = $object->$skillName;
+                    }
+
+                    $sqlQueryName = "getArrayByIdAndNot" . ucfirst($skillName) . "Bonus";
+                    $bonuses = $this->wearableCategoryModel->$sqlQueryName($wearables, NULL, $skillName . "Bonus");
+                    
+                    if(! empty($bonuses))
+                    {
+                        foreach($bonuses as $bonus)
+                        {
+                            $object->bonusesIncluded->$skillName = round( $object->$skillName * $bonus * 10 ) / 10;
+                        }
+                    }
+                }
+            }
+            return $object;
+        }
+
+
 
         /**
         *

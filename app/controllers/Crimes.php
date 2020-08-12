@@ -79,29 +79,42 @@
 
       $summary = $crime->returnSummary();
 
+
+
       $text = [];
       foreach($summary["storyline"] as $turn)
       {
         array_push($text, ["story" => $turn["story"], "class" => $turn["class"]]);
       }
 
+
+
       $updateArray = [];
       foreach($summary["userRewards"] as $name => $reward)
       {
-        if(! isset($user->$name))
+        if(! isset($user->$name) )
         {
           throw new Exception("You've tried to set an unexisting user variable?", 1);          
         }
 
         $user->$name += $reward;
         $updateArray[$name] = $user->$name;
-      }
 
+        if(substr($name, -6, 6) == "Skills")
+        {
+          unset($summary["userRewards"][$name]);
+          $abbreviatedName = substr($name, 0, -6);
+          $summary["userRewards"][$abbreviatedName] = $reward;
+        }
+      }
+      
       // Perform the database functions
       if(!empty($updateArray))
       {
         $this->userModel->updateById($user->id, $updateArray);
       }
+
+
 
       foreach($summary["crimeRecords"] as $record)
       {
@@ -119,11 +132,16 @@
         $this->criminalRecordModel->insert($insertArray);
       }
 
+
+
+
       if($summary["arrested"])
       {        
         list($user->inJailUntil, $this->data["arrestedFor"]) = $this->userModel->arrest($user->id);
       }
 
+
+      
       $this->data["arrested"] = $summary["arrested"];
       $this->data["crimeRecords"] = $summary["crimeRecords"];
       $this->data["storyline"] = $text;

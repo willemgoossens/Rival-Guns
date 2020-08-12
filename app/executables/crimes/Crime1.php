@@ -30,20 +30,20 @@
         $rewardAverage = 15;
         $rewardDeviation = 7;
 
-        $rewardAverage = round($rewardAverage * (1 + $this->user->charisma / 1000));
+        $rewardAverage = round($rewardAverage * (1 + $this->user->bonusesIncluded->charismaSkills / 1000));
         if($rewardAverage > 70)
         {
           $rewardAverage = 70;
         }
 
-        $rewardDeviation = round($rewardDeviation * (1 + $this->user->charisma / 1200));
+        $rewardDeviation = round($rewardDeviation * (1 + $this->user->bonusesIncluded->charismaSkills / 1200));
         if($rewardDeviation > 17)
         {
           $rewardDeviation = 17;
         }
 
         $moneyReward = rand($rewardAverage - $rewardDeviation , $rewardAverage + $rewardDeviation);
-        $charismaReward = ceil(5 - ( $this->user->charisma / 1000 ));
+        $charismaReward = ceil( 5 - ( $this->user->charismaSkills / 1000 ) );
 
         $random = rand(1 , 10);
         if($random >= 7)
@@ -54,7 +54,7 @@
         {
           $this->addSummary("You successfully make some good <strong>$" . $moneyReward ."</strong>", "success");
           $this->addUserReward("cash", $moneyReward);
-          $this->addUserReward("charisma", $charismaReward);
+          $this->addUserReward("charismaSkills", $charismaReward);
         }
 
         $energy = - rand(10, 20)/10;
@@ -75,23 +75,23 @@
         $moneyReward = round($moneyReward / 2);
         $charismaReward = ceil($charismaReward / 2);
         $this->addUserReward("cash", $moneyReward);
-        $this->addUserReward("charisma", $charismaReward);
+        $this->addUserReward("charismaSkills", $charismaReward);
 
         $randomNr = rand(1, 2);
 
-        if($this->user->boxing >= 100
+        if($this->user->bonusesIncluded->boxingSkills >= 100
            && $randomNr == 2)
         {
           $this->addSummary("You decide to fight the manager.", "info");
           $this->addCrimeRecord("minor assault");
 
           $managerSkills = rand(80, 300);
-          if($this->user->boxing > $managerSkills)
+          if($this->user->bonusesIncluded->boxingSkills > $managerSkills)
           {
             $this->addSummary("You smash the fucker in the face and run.", "success");
 
-            $boxing = ceil(5 - $this->user->boxing / 100);          
-            $this->addUserReward("boxing", $boxing);
+            $boxing = ceil(5 - $this->user->boxingSkills / 100);          
+            $this->addUserReward("boxingSkills", $boxingSkills);
           }
           else
           {

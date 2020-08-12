@@ -37,7 +37,7 @@
       }
 
       $this->data['crimeCategories'] = $crimeCategories;
-      $this->data['title'] = $type;
+      $this->data['title'] = ucfirst($type);
 
       $this->view('crimeCategories/index', $this->data);
     }

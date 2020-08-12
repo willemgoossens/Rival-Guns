@@ -19,7 +19,7 @@
       $url = $this->getUrl();
 
       // Check if it is a request to the API
-      if($url[0] == 'api')
+      if(!empty($url) && $url[0] == 'api')
       {
         $this->api = true;
         $this->apiText = "api/";

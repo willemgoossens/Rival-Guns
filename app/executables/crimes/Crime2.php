@@ -30,20 +30,20 @@
         $rewardAverage = 30;
         $rewardDeviation = 7;
 
-        $rewardAverage = round($rewardAverage * (1 + $this->user->charisma / 1000));
+        $rewardAverage = round($rewardAverage * (1 + $this->user->bonusesIncluded->charismaSkills / 1000));
         if($rewardAverage > 100)
         {
           $rewardAverage = 100;
         }
 
-        $rewardDeviation = round($rewardDeviation * (1 + $this->user->charisma / 1200));
+        $rewardDeviation = round($rewardDeviation * (1 + $this->user->bonusesIncluded->charismaSkills / 1200));
         if($rewardDeviation > 17)
         {
           $rewardDeviation = 17;
         }
 
         $moneyReward = rand($rewardAverage - $rewardDeviation , $rewardAverage + $rewardDeviation);
-        $charismaReward = ceil(5 - ( $this->user->charisma / 1000 ));
+        $charismaSkillsReward = ceil(5 - ( $this->user->charismaSkills / 1000 ));
 
         $random = rand(1 , 10);
         if($random >= 3)
@@ -54,9 +54,9 @@
         {
           $this->addSummary("You earn <strong>$" . $moneyReward ."</strong> from those filthy, rich bastards.", "success");
           $this->addUserReward("cash", $moneyReward);
-          if($charismaReward > 0)
+          if($charismaSkillsReward > 0)
           {
-            $this->addUserReward("charisma", $charismaReward);
+            $this->addUserReward("charismaSkills", $charismaSkillsReward);
           }  
         }
 
@@ -69,7 +69,7 @@
       /**
        * the user gets scared away
        * @param int $moneyReward
-       * @param int $charismaReward
+       * @param int $charismaSkillsReward
        */
       private function scaredAway(int $moneyReward)
       {
@@ -85,7 +85,7 @@
 
         $randomNr = rand(1, 2);
 
-        if($this->user->boxing >= 300
+        if($this->user->bonusesIncluded->boxingSkills >= 300
            && $randomNr == 2)
         {
             if($guardAmount == 1)
@@ -104,7 +104,7 @@
 
             $securitySkills = rand(200, 400) * $guardAmount ^ 1.5;
             $badluckfactor = rand(1, 2);
-            $difference = $securitySkills - $this->user->boxing;
+            $difference = $securitySkills - $this->user->bonusesIncluded->boxingSkills;
 
             if($difference < 0)
             {
@@ -118,10 +118,10 @@
                 }
                 $this->addUserReward("cash", $moneyReward);
 
-                $boxing = ceil(10 - $this->user->boxing / 100);   
-                if($boxing > 0)
+                $boxingSkills = ceil(10 - $this->user->boxingSkills / 100);   
+                if($boxingSkills > 0)
                 {
-                    $this->addUserReward("boxing", $boxing);
+                    $this->addUserReward("boxingSkills", $boxingSkills);
                 }  
             }
             elseif($difference > 100 || $badluckfactor == 1)
@@ -148,10 +148,10 @@
 
                 $health = -1 * rand(50, 200) / 100;
                 $this->addUserReward("health", $health);
-                $boxing = ceil(8 - $this->user->boxing / 100);
-                if($boxing > 0)
+                $boxingSkills = ceil(8 - $this->user->boxingSkills / 100);
+                if($boxingSkills > 0)
                 {
-                    $this->addUserReward("boxing", $boxing);
+                    $this->addUserReward("boxingSkills", $boxingSkills);
                 }  
             }
         }

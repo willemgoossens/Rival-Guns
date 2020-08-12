@@ -11,7 +11,7 @@
   define('ROOT', dirname(dirname(dirname(__FILE__))));
   // URL Root
   // IMPORTANT: DO *NOT* ADD A / AT THE END OF THE URL
-  define('URLROOT', 'http://localhost/Projecten/Rival_Guns');
+  define('URLROOT', '/Projecten/Rival_Guns');
   // Site Name
   define('SITENAME', 'Rival Guns');
   // App Version

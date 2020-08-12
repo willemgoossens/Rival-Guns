@@ -188,10 +188,10 @@
       $methodStrippedFromUnderscores = str_replace("_", "", $method);
       $onlyColumns = preg_split("/(And(?=[A-Z]))|(Or(?=[A-Z]))|(Not(?=[A-Z]))/", $methodStrippedFromUnderscores, -1, PREG_SPLIT_NO_EMPTY);
       $onlyColumns = array_map('lcfirst', $onlyColumns);
-
-      if(! empty(array_diff($onlyColumns, $this->tableColumns)))
+      $different = array_diff($onlyColumns, $this->tableColumns);
+      if(! empty($different))
       {
-        throw new \Exception("One of or more of the columns that you try to select by doesn't exist in database table: " . $this->tableName, 1);
+        throw new \Exception("One of or more of the columns (" . print_r($different) . ") that you try to select by doesn't exist in database table: " . $this->tableName, 1);
       }
 
       if(count($onlyColumns) > count($arguments))
@@ -304,7 +304,13 @@
       } while ($i++ < count($selectors) - 1);
 
 
-      if(! empty($returnVariables)){
+      if(! empty($returnVariables))
+      {
+        if(! in_array("id", $returnVariables))
+        {
+          array_unshift($returnVariables, "id");
+        }
+
         $returnVariables = implode(",", $returnVariables);
       }
       else {
@@ -334,8 +340,14 @@
     protected function setTableName($value)
     {
       $this->tableName = $value;
-      // Get a list of the table Columns
-      $this->setTableColumns();
+
+      $this->db->query("SELECT 1 FROM " . $this->tableName . " LIMIT 1");
+      // Check if the table exists
+      if($this->db->execute())
+      {
+        // Get a list of the table Columns
+        $this->setTableColumns();
+      }
     }
 
     /***********************
