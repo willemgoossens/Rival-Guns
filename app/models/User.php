@@ -75,7 +75,7 @@
                     $value = ucfirst($value);
                 }
                 
-                if(in_array($key, $skillNames))
+                if(isset($object->bonusesIncluded) && in_array($key, $skillNames))
                 {
                     $skillName = $key;
                     if(! isset($object->bonusesIncluded->$skillName ))
@@ -84,7 +84,7 @@
                     }
 
                     $sqlQueryName = "getArrayByIdAndNot" . ucfirst($skillName) . "Bonus";
-                    $bonuses = $this->wearableCategoryModel->$sqlQueryName($wearables, NULL, $skillName . "Bonus");
+                    $bonuses = $this->wearableCategoryModel->$sqlQueryName($wearables, 1.00, $skillName . "Bonus");
                     
                     if(! empty($bonuses))
                     {
