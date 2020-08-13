@@ -90,8 +90,8 @@
           {
             $this->addSummary("You smash the fucker in the face and run.", "success");
 
-            $boxing = ceil(5 - $this->user->boxingSkills / 100);          
-            $this->addUserReward("boxingSkills", $boxingSkills);
+            $addedBoxingSkills = ceil(5 - $this->user->boxingSkills / 100);          
+            $this->addUserReward("boxingSkills", $addedBoxingSkills);
           }
           else
           {
