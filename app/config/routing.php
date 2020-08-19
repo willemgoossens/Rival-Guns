@@ -11,9 +11,9 @@
     **************************************/
     define('ROUTING', [
     "pinguins/test/(\w+)/(\d*)" => 'tests/index/$2/$1',
-    "crimes/(\d+)/(\d+)" => "crimes/commit/$2/$1",
     "crimes/(\d+)" => "crimes/$1",
     "crimes" => 'crimeCategories/crimes',
+    'mafiajobs' => 'crimeCategories/mafiajobs',
     "prison(/\w*)" => 'prisons$1',
     "hospitalized" => 'hospitalizations/hospitalized'
     ]);

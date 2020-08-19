@@ -1,5 +1,5 @@
 <?php
-  require_once APPROOT . '/executables/crimes/CrimeExecutable.php';
+  require_once APPROOT . '/executables/CrimeExecutable.php';
 
   class Crime1 extends CrimeExecutable
   {

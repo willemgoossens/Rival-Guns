@@ -42,14 +42,20 @@
 
             if(isset($_SESSION['userId'])): 
           ?>
-              <li class="nav-item">
-                <a class="nav-link" href="<?php echo URLROOT; ?>/crimes">Crimes</a>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="activitiesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Activities
+                </a>
+                <div class="dropdown-menu" aria-labelledby="activitiesDropdown">
+                    <a class="dropdown-item" href="<?php echo URLROOT; ?>/crimes">Crimes</a>
+                    <a class="dropdown-item" href="<?php echo URLROOT; ?>/mafiajobs">Mafia jobs</a>
+                </div>
               </li>
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <a class="nav-link dropdown-toggle" href="#" id="locationDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   Locations
                 </a>
-                <div class="dropdown-menu" aria-labelledby="adminDropdown">
+                <div class="dropdown-menu" aria-labelledby="locationDropdown">
                     <a class="dropdown-item" href="<?php echo URLROOT; ?>/locations/bank">Bank</a>
                     <a class="dropdown-item" href="<?php echo URLROOT; ?>/locations/hospital">Hospital</a>
                 </div>

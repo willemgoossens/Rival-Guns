@@ -30,7 +30,7 @@
               <?php echo $crime->crimeName; ?>
             </td>
             <td>
-              <a href="<?php echo URLROOT; ?>/crimes/<?php echo $data['categoryId'] . "/" . $crime->id; ?>">
+              <a href="<?php echo URLROOT; ?>/crimes/commit/<?php echo $crime->id; ?>">
                 <button type="button" class="btn btn-success">Continue</button>
               </a>
             </td>

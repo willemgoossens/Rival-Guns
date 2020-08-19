@@ -187,6 +187,12 @@
 
             $this->updateById($userId, $updateArray);
 
-            return [$endJailDate->format('Y-m-d H:i:s'), $crimesNames];
+            $returnArray = 
+            [
+                $endJailDate->format('Y-m-d H:i:s'), 
+                $crimesNames
+            ];
+
+            return $returnArray;
         }
     }

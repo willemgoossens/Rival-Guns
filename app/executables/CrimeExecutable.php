@@ -1,6 +1,6 @@
 <?php
 
-    class CrimeExecutable
+    abstract class CrimeExecutable
     {
         private $summary = [];
         private $userRewards = [];

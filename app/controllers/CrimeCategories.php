@@ -19,11 +19,19 @@
      */
     public function index($type)
     {
-      $crimeCategories = $this->crimeCategoryModel->getByMainCategory($type);
-      if(empty($crimeCategories))
+      if($type == "crimes")
+      {
+        $dbType = "Crimes";
+      }
+      elseif($type == "mafiajobs")
+      {
+        $dbType = "Mafia Jobs";
+      }
+      else 
       {
         redirect('posts');
       }
+      $crimeCategories = $this->crimeCategoryModel->getByMainCategory($dbType);
 
       $user = &$this->data['user'];
 
@@ -37,7 +45,7 @@
       }
 
       $this->data['crimeCategories'] = $crimeCategories;
-      $this->data['title'] = ucfirst($type);
+      $this->data['title'] = ucfirst($dbType);
 
       $this->view('crimeCategories/index', $this->data);
     }
