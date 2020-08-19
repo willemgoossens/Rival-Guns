@@ -10,7 +10,7 @@ ___
 
 ## Setting up the game
 
-It's quite easy. Import the sql file in your database and edit the `URL_ROOT` and `DB` settings in the Config file in `app/config/system.php`
+It's quite easy. Import the sql file in your database and edit the `URL_ROOT` and `DB` settings in the Config file in `app/config/system.php`. And edit the .htaccess files in the `public` folder.
 ___
 
 ## Logging in
