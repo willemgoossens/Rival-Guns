@@ -33,21 +33,14 @@
 
     public function getRightNamesForRole(?int $roleId)
     {
-      if(! isset($roleId))
+      $rights = $this->getRightsForRole($roleId);
+
+      if( empty($rights) )
       {
         return [];
       }
 
-      $this->db->query("SELECT adminRightId
-                    FROM adminroles_adminrights
-                    WHERE adminRoleId = :adminRoleId");
-      $this->db->bind(':adminRoleId', $roleId);
-
-      $rightIds = $this->db->resultSetArray();
-
-      $rights = $this->adminRightModel->getArrayById($rightIds, 'name');
-
-      return $rights;
+      return array_column($rights, 'name');
     }
 
 
