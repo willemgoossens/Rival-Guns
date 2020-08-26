@@ -1,5 +1,5 @@
 <?php
-  require_once APPROOT . '/executables/CrimeExecutable.php';
+  require_once dirname(__FILE__, 2) . './CrimeExecutable.php';
 
   class Crime2 extends CrimeExecutable
   {
@@ -58,6 +58,7 @@
           {
             $this->addUserReward("charismaSkills", $charismaSkillsReward);
           }  
+          $this->setEnding(1);
         }
 
         $energy = - rand(10, 20)/10;
@@ -103,9 +104,7 @@
             }
 
             $securitySkills = rand(200, 400) * $guardAmount ^ 1.5;
-            $badluckfactor = rand(1, 2);
             $difference = $securitySkills - $this->user->bonusesIncluded->boxingSkills;
-
             if($difference < 0)
             {
                 if($guardAmount == 1)
@@ -123,41 +122,50 @@
                 {
                     $this->addUserReward("boxingSkills", $boxingSkills);
                 }  
-            }
-            elseif($difference > 100 || $badluckfactor == 1)
-            {
-                if($guardAmount == 1)
-                {
-                    $this->addSummary("He punches you in the face, and calls the cops.", "danger");
-                }
-                else
-                {
-                    $this->addSummary("After kicking one of them in the crotch, they wrestle you to the ground and call the cops.", "danger");
-                }
-
-                $health = -1 * rand(50, 300) / 100;
-                $this->addUserReward("health", $health);
-                $this->arrest();
-
-                $this->addSummary("You decide to run off.", "info");
+                $this->setEnding(2);
             }
             else
             {
-                $this->addSummary("After a short beating, you manage to escape. Lucky Bastard!", "warning");
-                $this->addUserReward("cash", $moneyReward);
-
-                $health = -1 * rand(50, 200) / 100;
-                $this->addUserReward("health", $health);
-                $boxingSkills = ceil(8 - $this->user->boxingSkills / 100);
-                if($boxingSkills > 0)
+                $badluckfactor = rand(1, 4);
+                if($badluckfactor < 3)
                 {
-                    $this->addUserReward("boxingSkills", $boxingSkills);
-                }  
+                  if($guardAmount == 1)
+                  {
+                      $this->addSummary("He punches you in the face, and calls the cops.", "danger");
+                  }
+                  else
+                  {
+                      $this->addSummary("After kicking one of them in the crotch, they wrestle you to the ground and call the cops.", "danger");
+                  }
+  
+                  $health = -1 * rand(50, 300) / 100;
+                  $this->addUserReward("health", $health);
+                  $this->arrest();
+  
+                  $this->setEnding(3);
+                }    
+                else
+                {
+                    $this->addSummary("After a short beating, you manage to escape. Lucky Bastard!", "warning");
+                    $this->addUserReward("cash", $moneyReward);
+    
+                    $health = -1 * rand(50, 200) / 100;
+                    $this->addUserReward("health", $health);
+                    $boxingSkills = ceil(8 - $this->user->boxingSkills / 100);
+                    if($boxingSkills > 0)
+                    {
+                        $this->addUserReward("boxingSkills", $boxingSkills);
+                    } 
+    
+                    $this->setEnding(4);
+                }            
             }
         }
         else
         {
           $this->addSummary("You decide to leave.", "info");
+
+          $this->setEnding(5);
         }
       }
   }

@@ -7,8 +7,14 @@
         private $crimeRecords = [];
         private $items = [];
         private $arrested = false;
+        private $testPHPUnitEnding;
 
         protected $user;
+
+        protected function setEnding(int $ending)
+        {
+            $this->testPHPUnitEnding = $ending;
+        }
 
         protected function addUserReward(string $key, $value)
         {
@@ -24,11 +30,14 @@
 
 
 
-        protected function addSummary(string $story, string $class)
+        protected function addSummary(string $story, string $class = "info")
         {
-            $key = count($this->summary);
-            $this->summary[$key]["story"] = $story;
-            $this->summary[$key]["class"] = $class;
+            $array = [
+                "story" => $story,
+                "class" => $class
+            ];
+
+            array_push($this->summary, $array);
         }
 
 
@@ -85,12 +94,15 @@
          */
         public function returnSummary()
         {
+            $summary = new stdClass();
+            
             $return = [
                 "userRewards" => $this->userRewards,
                 "crimeRecords" => $this->crimeRecords,
                 "arrested" => $this->arrested,
                 "storyline" => $this->summary,
-                "items" => $this->items
+                "items" => $this->items,
+                "testPHPUnitEnding" => $this->testPHPUnitEnding
             ];
 
             return $return;

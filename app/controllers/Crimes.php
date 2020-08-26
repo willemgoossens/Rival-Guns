@@ -72,7 +72,7 @@
             }
             elseif($category->mainCategory == 'Mafia Jobs')
             {
-                $path = "./executables/mafia jobs/MafiaJob" . $crime->id . ".php";
+                $path = "./executables/mafiaJobs/MafiaJob" . $crime->id . ".php";
                 $className = 'MafiaJob' . $crime->id;
             }
 

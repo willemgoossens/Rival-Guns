@@ -1,5 +1,5 @@
 <?php
-  require_once APPROOT . '/executables/CrimeExecutable.php';
+  require_once dirname(__FILE__, 2) . './CrimeExecutable.php';
 
   class MafiaJob3 extends CrimeExecutable
   {
@@ -20,6 +20,9 @@
        */
       public function init()
       {
+        $energy = - rand(5, 20)/10;
+        $this->addUserReward("energy", $energy);
+        
         $this->addSummary("You enter the nightstore.", "info");
 
         if( $this->checkArrested() )
@@ -29,7 +32,7 @@
 
         $this->addSummary("You make the nightstore clerk an offer he can't refuse.", "info");
 
-        $calculate = $this->user->strengthSkills * 0.5 + $this->user->charismaSkills;
+        $calculate = $this->user->bonusesIncluded->strengthSkills * 0.5 + $this->user->bonusesIncluded->charismaSkills;
 
         if( $calculate > 400 )
         {
@@ -53,10 +56,8 @@
             $this->addUserReward("charismaSkills", $charismaReward);
 
             $this->success();
+            $this->setEnding(1);
         }
-
-        $energy = - rand(5, 20)/10;
-        $this->addUserReward("energy", $energy);
       }
 
 
@@ -70,7 +71,7 @@
 
             $randomNr = rand(1, 3);
 
-            if( $this->user->boxingSkills > 100 
+            if( $this->user->bonusesIncluded->boxingSkills > 100 
                 || $randomNr == 3)
             {
                 $this->addSummary("You grab the hard liquor display and throw it on the ground.", "info");
@@ -78,7 +79,7 @@
                 $clerkBoxingSkills = rand(50, 300);
                 $luck = rand(1, 5);
 
-                if( $this->user->boxingSkills > $clerkBoxingSkills
+                if( $this->user->bonusesIncluded->boxingSkills > $clerkBoxingSkills
                     && $luck != 7)
                 {
                     $this->addSummary("The nightstore clerk tries to push you out.", "info");
@@ -88,6 +89,7 @@
                     $this->addUserReward("boxingSkills", $addedBoxingSkills);
 
                     $this->success();
+                    $this->setEnding(2);
                 }
                 else 
                 {
@@ -101,6 +103,7 @@
 
 
                     $this->addSummary("You decide to run off.", "info");
+                    $this->setEnding(3);
                 }
             }
             else
@@ -109,6 +112,7 @@
                 $this->addSummary("You decide to run off.", "info");
 
                 $this->addCrimeRecord("participation in organized crime");
+                $this->setEnding(4);
             }
         }
 

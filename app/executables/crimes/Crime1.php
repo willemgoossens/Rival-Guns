@@ -1,5 +1,5 @@
 <?php
-  require_once APPROOT . '/executables/CrimeExecutable.php';
+  require_once dirname(__FILE__, 2) . './CrimeExecutable.php';
 
   class Crime1 extends CrimeExecutable
   {
@@ -55,6 +55,7 @@
           $this->addSummary("You successfully make some good <strong>$" . $moneyReward ."</strong>", "success");
           $this->addUserReward("cash", $moneyReward);
           $this->addUserReward("charismaSkills", $charismaReward);
+          $this->setEnding(1);
         }
 
         $energy = - rand(10, 20)/10;
@@ -92,6 +93,7 @@
 
             $addedBoxingSkills = ceil(5 - $this->user->boxingSkills / 100);          
             $this->addUserReward("boxingSkills", $addedBoxingSkills);
+            $this->setEnding(2);
           }
           else
           {
@@ -101,11 +103,13 @@
             $this->addUserReward("health", $health);
 
             $this->addSummary("You decide to run off.", "info");
+            $this->setEnding(3);
           }
         }
         else
         {
           $this->addSummary("You decide to leave.", "info");
+          $this->setEnding(4);
         }
       }
   }
