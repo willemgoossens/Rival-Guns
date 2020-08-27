@@ -89,13 +89,23 @@
     {
       $messageId = $this->insert($messageData, true);
 
-      $this->db->query("SELECT userid
-                        FROM users_conversations
-                        WHERE conversationid = :conversationId
-                          AND userid != :userId");
+      if( isset($messageData['userId']) )
+      {
+          $this->db->query("SELECT userid
+                            FROM users_conversations
+                            WHERE conversationid = :conversationId
+                              AND userid != :userId");
+
+          $this->db->bind(":userId", $messageData['userId']);
+      }
+      else
+      {
+          $this->db->query("SELECT userid
+                            FROM users_conversations
+                            WHERE conversationid = :conversationId");
+      }
 
       $this->db->bind(":conversationId", $messageData['conversationId']);
-      $this->db->bind(":userId", $messageData['userId']);
 
       $conversationPartners = $this->db->resultSetArray();
 

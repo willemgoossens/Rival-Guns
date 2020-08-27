@@ -25,11 +25,26 @@
       <?php if($message->userId != $_SESSION['userId']) : ?>
         <div class="card mb-3 col-10 <?php if($message->unread) echo "border-info"; ?>">
           <div class="card-body <?php if($message->unread) echo "text-info"; ?>">
-            <?php echo MarkdownToHTML($message->body); ?>
-            <p class="card-text">
-              <small class="text-muted pull-left"><?php echo isset($data['conversationData']->noReplySender) ? $message->name . ' - On behalf of ' . $data['conversationData']->noReplySender : $message->name; ?></small>
-              <small class="text-muted pull-right"><?php echo $message->createdAt; ?></small>
-            </p>
+              <?php echo MarkdownToHTML($message->body); ?>
+              <p class="card-text">
+                  <small class="text-muted pull-left">
+                      <?php 
+                          if( isset($data['conversationData']->noReplySender) && isset($message->name) )
+                          {
+                              echo $message->name . ' - On behalf of ' . $data['conversationData']->noReplySender;
+                          }
+                          elseif( isset($message->name) )
+                          {
+                              echo $message->name;
+                          }
+                          elseif( isset($data['conversationData']->noReplySender) )
+                          {
+                              echo 'On behalf of ' . $data['conversationData']->noReplySender;
+                          }
+                      ?>
+                  </small>
+                  <small class="text-muted pull-right"><?php echo $message->createdAt; ?></small>
+              </p>
           </div>
         </div>
       <?php else: ?>

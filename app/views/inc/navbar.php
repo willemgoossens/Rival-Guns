@@ -58,6 +58,7 @@
                 <div class="dropdown-menu" aria-labelledby="locationDropdown">
                     <a class="dropdown-item" href="<?php echo URLROOT; ?>/locations/bank">Bank</a>
                     <a class="dropdown-item" href="<?php echo URLROOT; ?>/locations/hospital">Hospital</a>
+                    <a class="dropdown-item" href="<?php echo URLROOT; ?>/locations/hoovers">Harry's Hoovers</a>
                 </div>
               </li>
             <?php

@@ -22,7 +22,8 @@
                                 'sequenced' => [
                                                     'PunishmentCheck',
                                                     'HealthCheck',
-                                                    'PrisonCheck'
+                                                    'PrisonCheck',
+                                                    'WorkCheck'
                                                ]
                                 ],
         'LoggedOut'          => ['interface' => ['default' => false,

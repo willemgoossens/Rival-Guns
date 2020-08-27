@@ -10,7 +10,7 @@
             $this->crimeTypeModel = $this->model('CrimeType');
             $this->wearableCategoryModel = $this->model('WearableCategory');
             $this->wearablesModel = $this->model('Wearable');
-            //$this->wearablesModel = $this->model('Wearables');
+            $this->hospitalizationModel = $this->model('Hospitalization');
         }
 
         /**
@@ -179,10 +179,13 @@
                 }
             }
 
+
+
             $endJailDate = new DateTime("+" . $totalJailTime . " seconds");
             
             $updateArray = [
-                'inJailUntil' => $endJailDate->format('Y-m-d H:i:s')
+                'inJailUntil' => $endJailDate->format('Y-m-d H:i:s'),
+                'workingUntil' => null
             ];
 
             $this->updateById($userId, $updateArray);
@@ -194,5 +197,28 @@
             ];
 
             return $returnArray;
+        }
+
+
+        /**
+         * Hospitalize
+         * @param int userId
+         * @param string reason
+         */
+        public function hospitalize(int $userId, int $duration, string $reason): void
+        {
+            $insertArray = [
+                'userId' => $userId,
+                'duration' => $duration,
+                'reason' => $reason
+            ];
+
+            $this->hospitalizationModel->insert($insertArray);
+
+            $updateArray = [
+                'workingUntil' => null
+            ];
+
+            $this->updateById($userId, $updateArray);
         }
     }

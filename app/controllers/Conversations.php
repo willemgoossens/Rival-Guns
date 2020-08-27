@@ -271,12 +271,15 @@
 
       foreach($messages as &$message)
       {
-        $sender = $this->userModel->getSingleById($message->userId, 'name');
-        $message->name = $sender->name;
+          if( isset($message->userId) )
+          {
+              $sender = $this->userModel->getSingleById($message->userId, 'name');
+              $message->name = $sender->name;
+          }
 
-        $message->unread = $this->messageModel->isUnreadForUser($message->id, $user->id);
-        // Set as unread
-        $this->messageModel->readMessageForConversation($message->id, $user->id);
+          $message->unread = $this->messageModel->isUnreadForUser($message->id, $user->id);
+          // Set as unread
+          $this->messageModel->readMessageForConversation($message->id, $user->id);
       }
       // Create the data array
       $this->data['messagesData'] = $messages;

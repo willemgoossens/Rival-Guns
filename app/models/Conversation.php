@@ -178,8 +178,11 @@
                                                 return ['userId' => $val, 'conversationId' => $conversationId];
                                             }, $participantIds);
 
-            array_push($userConversationConnections, ['userId' => $conversationInformation['userId'], 'conversationId' => $conversationId]);
-
+            if( isset($conversationInformation['userId']))
+            {
+              array_push($userConversationConnections, ['userId' => $conversationInformation['userId'], 'conversationId' => $conversationId]);
+            }
+            
             if(! $this->insertConnections($userConversationConnections))
             {
                 die("Something went wrong while creating the connections for the conversations");
@@ -189,7 +192,7 @@
             $insertMessageData = [
                 'conversationId' => $conversationId,
                 'body' => $messageBody,
-                'userId' => $conversationInformation['userId']
+                'userId' => $conversationInformation['userId'] ?? null
             ];
 
             $this->messageModel->createMessage($insertMessageData);
