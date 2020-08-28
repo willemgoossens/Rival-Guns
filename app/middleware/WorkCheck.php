@@ -42,7 +42,7 @@
                 $this->userModel->updateById($this->user->id, $updateArray);
 
                 $message = 
-                "Dear " . ucfirst($this->user->name) . ",\r\n\r\nThank you for working with Harry\'s Hoovers!\r\nBy selling " . $amountOfVacuums . " vacuum cleaner(s), you made $" . $earnings . ".\r\nYou also earned " . $amountOfVacuums . " charisma points. The money has been deposited in your bank account.\r\n\r\nKind regards,\r\nHarry";
+                "Dear " . ucfirst($this->user->name) . ",\r\n\r\nThank you for working with Harry's Hoovers!\r\nBy selling " . $amountOfVacuums . " vacuum cleaner(s), you made $" . $earnings . ".\r\nYou also earned " . $amountOfVacuums . " charisma points. The money has been deposited in your bank account.\r\n\r\nKind regards,\r\nHarry";
 
                 if( $amountOfVacuums == 0 )
                 {
