@@ -6,37 +6,62 @@
     **************************************/
 
     /**
-     * When set to true, the middleware will run
-     * e.g. The login check will only run for the pages where it's true
-     *      The logout check will only run for the pages where it's true
+     * When setByDefault is true, the middleware will run
+     * You can add exceptions. Either a controller name or a controller/method.
+     * To add and api exception use api/controller/method
+     * Sequenced middleware will run directly after the parent middleware has ran (with the same exceptions)
      */
     define('MIDDLEWARE', [
-        'LoggedIn'          => ['interface' => ['default' => true,
-                                                'except'  => ['pages' => ['default' => false],
-                                                                'users' => ['default' => true,
-                                                                            'except'  => ['login', 'register', 'forgottenpassword']],
-                                                                'tests' => ['default' => false]
-                                                                ]
-                                                ],
-                                'api'       => ['default' => true],
-                                'sequenced' => [
-                                                    'PunishmentCheck',
-                                                    'HealthCheck',
-                                                    'PrisonCheck',
-                                                    'WorkCheck'
-                                               ]
-                                ],
-        'LoggedOut'          => ['interface' => ['default' => false,
-                                                'except'  => ['users' => [
-                                                                            'default' => false,
-                                                                            'except'  => ['login', 'register', 'forgottenpassword']
-                                                                        ],
-                                                                'pages' => [
-                                                                            'default' => false,
-                                                                            'except'  => ['index']
-                                                                            ]
-                                                                ]
-                                                ]
-                                ],
-        'DebuggingToolbar' =>  ['interface' => ['default' => (ENVIRONMENT == "development") ? true : false]]
+        'DebuggingToolbar' =>
+            [
+                'runByDefault' => (ENVIRONMENT == "development") ? true : false
+            ],
+        'LoggedIn' =>   
+            [
+                'runByDefault' => true,
+                'exceptions' => 
+                    [
+                        'pages',
+                        'users/login',
+                        'users/register',
+                        'users/forgottenPassword',
+                        'tests'
+                    ],
+                'sequenced' => 
+                    [
+                        'PunishmentCheck',
+                        'WorkCheck'
+                    ]
+            ],
+        'HealthCheck' => 
+            [
+                'runByDefault' => true,
+                'exceptions' =>
+                    [
+                        'pages',
+                        'users/login',
+                        'users/register',
+                        'users/forgottenPassword',
+                        'users/editProfile',
+                        'users/logout',
+                        'tests',
+                        'adminRoles',
+                        'conversationReports'
+                    ],
+                'sequenced' => 
+                    [
+                        'PrisonCheck'
+                    ]
+            ],
+        'LoggedOut' =>
+            [
+                'runByDefault' => false,
+                'exceptions' =>
+                    [
+                        'users/login',
+                        'users/register',
+                        'users/forgottenPassword',
+                        'pages'
+                    ]
+            ]
     ]);
