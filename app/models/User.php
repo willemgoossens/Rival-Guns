@@ -9,7 +9,7 @@
             $this->criminalRecordModel = $this->model('CriminalRecord');
             $this->crimeTypeModel = $this->model('CrimeType');
             $this->wearableCategoryModel = $this->model('WearableCategory');
-            $this->wearablesModel = $this->model('Wearable');
+            $this->wearableModel = $this->model('Wearable');
             $this->hospitalizationModel = $this->model('Hospitalization');
         }
 
@@ -64,7 +64,7 @@
             $overlappingKeys = array_intersect($keys, $skillNames);
             if(! empty($overlappingKeys))
             {
-                $wearables = $this->wearablesModel->getArrayByUserIdAndEquipped($object->id, true, "wearableCategoryId");
+                $wearables = $this->wearableModel->getArrayByUserIdAndEquipped($object->id, true, "wearableCategoryId");
                 $object->bonusesIncluded = new StdClass;
             }
 
