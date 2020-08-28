@@ -160,8 +160,8 @@
         public function arrest(int $userId): array
         {
             $records = $this->criminalRecordModel->selectArrestRecords($userId);
-            $crimeTypeIds = array_column($records, "type");
 
+            $crimeTypeIds = array_column($records, "type");
             $crimeTypes = $this->crimeTypeModel
                                ->getFlaggedUniqueById($crimeTypeIds);
             
@@ -171,6 +171,7 @@
             foreach($records as $record)
             {
                 $totalJailTime += $crimeTypes[$record->type]->jailTime;
+
                 $this->criminalRecordModel->deleteById($record->id);
                 
                 if(isset($crimesNames[$crimeTypes[$record->type]->name]))
@@ -182,8 +183,6 @@
                     $crimesNames[$crimeTypes[$record->type]->name] = 1;
                 }
             }
-
-
 
             $endJailDate = new DateTime("+" . $totalJailTime . " seconds");
             
