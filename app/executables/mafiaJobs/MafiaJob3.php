@@ -121,7 +121,7 @@
          */
         private function success()
         {
-            $moneyReward = 50;
+            $moneyReward = 35;
 
             $this->addSummary("The mafia pays you <strong>$" . $moneyReward ."</strong> for your efforts.", "success");
 
