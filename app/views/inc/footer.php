@@ -26,7 +26,7 @@
   
   if(file_exists(ROOT . '/public/js/' .  $view . '.js'))
   {
-      echo "<script src=\"" . URLROOT . "/js/" . $view . ".js\"></script>";
+      echo "<script type=\"module\" src=\"" . URLROOT . "/js/" . $view . ".js\"></script>";
   }
 
   runQuillEditor();
