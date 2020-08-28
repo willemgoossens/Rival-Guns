@@ -190,8 +190,22 @@
 
             $this->updateById($userId, $updateArray);
 
-            $returnArray = 
-            [
+
+            $wearables = $this->wearableModel->getByUserIdAndEquipped($userId, 1);
+            if( !empty($wearables) )
+            {
+                foreach($wearables as $wearable)
+                {
+                    $isIllegal = $this->wearableCategoryModel->existsByIdAndIllegal($wearable->wearableCategoryId, true);
+
+                    if($isIllegal)
+                    {
+                        $this->wearableModel->deleteById($wearable->id);
+                    }
+                }
+            }
+
+            $returnArray = [
                 $endJailDate->format('Y-m-d H:i:s'), 
                 $crimesNames
             ];
