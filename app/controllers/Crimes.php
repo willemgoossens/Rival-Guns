@@ -83,7 +83,7 @@
             {
                 redirect('posts');
             }
-            echo APPROOT . $path;
+            
             require_once APPROOT . $path;
             $crime = new $className($user);
             $crime->init();
