@@ -75,22 +75,26 @@
                     $value = ucfirst($value);
                 }
                 
-                if(isset($object->bonusesIncluded) && in_array($key, $skillNames))
+                if(in_array($key, $skillNames))
                 {
                     $skillName = $key;
+                    
                     if(! isset($object->bonusesIncluded->$skillName ))
                     {
                         $object->bonusesIncluded->$skillName = $object->$skillName;
                     }
 
-                    $sqlQueryName = "getArrayByIdAndNot" . ucfirst($skillName) . "Bonus";
-                    $bonuses = $this->wearableCategoryModel->$sqlQueryName($wearables, 1.00, $skillName . "Bonus");
-                    
-                    if(! empty($bonuses))
+                    if( !empty($wearables))
                     {
-                        foreach($bonuses as $bonus)
+                        $sqlQueryName = "getArrayByIdAndNot" . ucfirst($skillName) . "Bonus";
+                        $bonuses = $this->wearableCategoryModel->$sqlQueryName($wearables, 1.00, $skillName . "Bonus");
+                        
+                        if(! empty($bonuses))
                         {
-                            $object->bonusesIncluded->$skillName = round( $object->$skillName * $bonus * 10 ) / 10;
+                            foreach($bonuses as $bonus)
+                            {
+                                $object->bonusesIncluded->$skillName = round( $object->$skillName * $bonus * 10 ) / 10;
+                            }
                         }
                     }
                 }
