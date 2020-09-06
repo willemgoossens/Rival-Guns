@@ -28,7 +28,7 @@
             $crimeCategory = $this->crimeCategoryModel->getSingleById($categoryId);
             if(!$crimeCategory)
             {
-              redirect('posts');
+              redirect('profile');
             }
 
             $user = &$this->data['user'];
@@ -81,7 +81,7 @@
                 || $user->energy < 5
                 || !file_exists(APPROOT . $path))
             {
-                redirect('posts');
+                redirect('profile');
             }
             
             require_once APPROOT . $path;

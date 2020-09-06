@@ -105,7 +105,7 @@
             {
                 if($userHasProperties)
                 {
-                    redirect('/posts');
+                    redirect('profile');
                 }
                 else
                 {
@@ -136,7 +136,7 @@
                     || $user->energy < 20)
                 {
                     // The user is already working or his energy is too low, this shouldn't be possible
-                    redirect('posts');
+                    redirect('');
                 }
                 else
                 {

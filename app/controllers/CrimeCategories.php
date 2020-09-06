@@ -29,7 +29,7 @@
       }
       else 
       {
-        redirect('posts');
+        redirect('profile');
       }
       $crimeCategories = $this->crimeCategoryModel->getByMainCategory($dbType);
 

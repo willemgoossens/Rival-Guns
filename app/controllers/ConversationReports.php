@@ -28,7 +28,7 @@
       // If user isn't allow to access page, redirect
       if(! in_array("HandleReportedConversations", $user->adminRights))
       {
-        redirect('posts');
+        redirect('profile');
       }
 
       $this->data['totalReports'] = $this->conversationReportModel->countByClassified($classified);
@@ -132,7 +132,7 @@
       if(! in_array("HandleReportedConversations", $user->adminRights)
           || !$report)
       {
-        redirect('posts');
+        redirect('profile');
       }
 
       $this->data['addButton'] = false;

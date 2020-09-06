@@ -67,7 +67,7 @@
 
             if($this->controller == "hospitalizations")
             {
-                redirect('posts');
+                redirect('');
             }
 
             $user->lastHealthCheck = strtotime($user->lastHealthCheck);

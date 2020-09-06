@@ -35,7 +35,7 @@
       }
       elseif($this->controller == "punishments" && ($this->method == "temporary" || $this->method == "permanent"))
       {
-          redirect('posts');
+          redirect('');
       }
 
       return true;

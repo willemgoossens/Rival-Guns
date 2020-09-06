@@ -237,7 +237,7 @@
 
         public function createUserSession($user){
           $_SESSION['userId'] = $user->id;
-          redirect('posts');
+          redirect('');
         }
 
         public function logout(){

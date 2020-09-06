@@ -26,7 +26,7 @@
     {
       if(! in_array("EditAdminRoles", $this->data['user']->adminRights))
       {
-        redirect('posts');
+        redirect('profile');
       }
 
       // In this variable the data is stored
