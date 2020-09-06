@@ -283,7 +283,7 @@
               $repeater = count($selectorValues[$valuesIteration]) - 1;
               if($repeater < 0)
               {
-                $placeholders = '';
+                $placeholders = 'NULL';
               }
               else
               {

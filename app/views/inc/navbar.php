@@ -69,7 +69,7 @@
         <ul class="navbar-nav ml-auto">
           <?php if(isset($this->data['user'])) : ?>
           <li class="nav-item">
-              <a class="nav-link" href="#">Welcome <?php echo $data['user']->name; ?></a>
+              <a class="nav-link" href="<?php echo URLROOT; ?>/profile">Welcome <?php echo $data['user']->name; ?></a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="<?php echo URLROOT; ?>/conversations">

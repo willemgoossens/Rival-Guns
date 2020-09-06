@@ -52,3 +52,16 @@ div.textarea.form-control.is-valid {
   background-color: #F0FFFF;
   display: block;
 }
+
+.table > tbody > tr:first-child > td {
+  border: none;
+}
+
+.table > tbody > tr:first-child > th {
+  border: none;
+}
+
+/* Include the border when there's a header */
+.table > thead + tbody > tr:first-child > td {
+  border-top: 1px solid #ddd;
+}
