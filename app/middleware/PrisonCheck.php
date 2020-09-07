@@ -1,35 +1,60 @@
 <?php
 
-  class PrisonCheck extends Middleware
-  {
-    public function __construct(string ...$setup)
+    class PrisonCheck extends Middleware
     {
-      $this->setVariables(...$setup);
-    }
-
-    public function before(): bool
-    {
-      $this->userModel = $this->model('User');
-      $this->user = $this->userModel->getSingleById($_SESSION["userId"], 'inJailUntil');
-      
-      $now = new DateTime();
-
-      if(strtotime($this->user->inJailUntil) > $now->getTimestamp())
-      {
-        // In prison
-        if($this->controller != "prisons"
-           || ($this->controller == "prisons" && $this->method == "index"))
+        public function __construct(string ...$setup)
         {
-            redirect('prison/inside');
+            $this->setVariables(...$setup);
         }
-      }else
-      {
-        if($this->controller == "prisons" && $this->method != "index")
-        {
-            redirect('prison/index');
-        }
-      }
 
-      return true;
+        public function before(): bool
+        {
+            $this->imprisonmentModel = $this->model('Imprisonment');
+            $this->criminalRecordModel = $this->model('CriminalRecord');
+            $this->crimeTypeModel = $this->model('CrimeType');
+
+
+            $imprisonment = $this->imprisonmentModel->getSingleByUserId($_SESSION["userId"]);
+            if(empty($imprisonment))
+            {
+                return true;
+            }
+
+            $criminalRecords = $this->criminalRecordModel->getByImprisonmentId($imprisonment->id);
+
+            $crimeTypeIds = array_column($criminalRecords, "type");
+            $crimeTypes = $this->crimeTypeModel
+                               ->getFlaggedUniqueById($crimeTypeIds);
+
+            $interval = 0;
+            foreach($criminalRecords as $record)
+            {                
+                $interval += $crimeTypes[$record->type]->jailTime;
+            }
+            $interval = new DateInterval('PT' . $interval . 'S');            
+            $releaseDate = new DateTime($imprisonment->createdAt);
+            $releaseDate->add($interval);
+
+            $now = new DateTime();
+
+            if($releaseDate > $now)
+            {
+                // In prison
+                if( $this->controller != "prisons"
+                    || ($this->controller == "prisons" && $this->method == "index"))
+                {
+                    redirect('prison/inside');
+                }
+            }else
+            {
+                $this->imprisonmentModel->deleteById($imprisonment->id);
+
+                if($this->controller == "prisons" && $this->method != "index")
+                {
+                    redirect('prison/index');
+                }
+            }
+
+            return true;
+        }
     }
-  }

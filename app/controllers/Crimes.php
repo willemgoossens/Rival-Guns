@@ -154,7 +154,9 @@
 
             if($summary["arrested"])
             {        
-                list($user->inJailUntil, $this->data["arrestedFor"]) = $this->userModel->arrest($user->id);
+                $arrestData = $this->userModel->arrest($user->id);
+                $user->prisonReleaseDate = $arrestData['prisonReleaseDate'];
+                $this->data['arrestedFor'] = $arrestData['arrestedFor'];
             }
 
 

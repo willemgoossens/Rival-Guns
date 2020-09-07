@@ -11,6 +11,7 @@
             $this->wearableCategoryModel = $this->model('WearableCategory');
             $this->wearableModel = $this->model('Wearable');
             $this->hospitalizationModel = $this->model('Hospitalization');
+            $this->imprisonmentModel = $this->model('Imprisonment');
         }
 
         /**
@@ -154,43 +155,28 @@
 
 
         /**
+         *
+         * 
          * arrest the user
          * @param int userId
+         * 
+         * 
          */
         public function arrest(int $userId): array
         {
             $records = $this->criminalRecordModel->selectArrestRecords($userId);
 
-            $crimeTypeIds = array_column($records, "type");
-            $crimeTypes = $this->crimeTypeModel
-                               ->getFlaggedUniqueById($crimeTypeIds);
+
+            $imprisonmentInsertArray = [
+                'userId' => $userId,
+                'department' => 'minimum'
+            ];
+            $imprisonmentId = $this->imprisonmentModel->insert($imprisonmentInsertArray, true);
             
-            $totalJailTime = 0;
-            $crimesNames = [];
 
-            foreach($records as $record)
-            {
-                $totalJailTime += $crimeTypes[$record->type]->jailTime;
-
-                $this->criminalRecordModel->deleteById($record->id);
-                
-                if(isset($crimesNames[$crimeTypes[$record->type]->name]))
-                {
-                    $crimesNames[$crimeTypes[$record->type]->name] += 1;
-                }
-                else
-                {
-                    $crimesNames[$crimeTypes[$record->type]->name] = 1;
-                }
-            }
-
-            $endJailDate = new DateTime("+" . $totalJailTime . " seconds");
-            
             $updateArray = [
-                'inJailUntil' => $endJailDate->format('Y-m-d H:i:s'),
                 'workingUntil' => null
             ];
-
             $this->updateById($userId, $updateArray);
 
 
@@ -208,9 +194,34 @@
                 }
             }
 
+
+            $crimeTypeIds = array_column($records, "type");
+            $crimeTypes = $this->crimeTypeModel
+                               ->getFlaggedUniqueById($crimeTypeIds); 
+            $crimesNames = [];
+            $totalJailTime = 0;
+
+            foreach($records as $record)
+            {
+                $this->criminalRecordModel->updateById($record->id, ['imprisonmentId' => $imprisonmentId]);
+                
+                if(isset($crimesNames[$crimeTypes[$record->type]->name]))
+                {
+                    $crimesNames[$crimeTypes[$record->type]->name] += 1;
+                }
+                else
+                {
+                    $crimesNames[$crimeTypes[$record->type]->name] = 1;
+                }
+
+                $totalJailTime += $crimeTypes[$record->type]->jailTime;
+            }
+
+            $prisonReleaseDate = new DateTime("+" . $totalJailTime . " seconds");
+
             $returnArray = [
-                $endJailDate->format('Y-m-d H:i:s'), 
-                $crimesNames
+                'prisonReleaseDate' => $prisonReleaseDate->format('Y-m-d H:i:s'), 
+                'arrestedFor' => $crimesNames
             ];
 
             return $returnArray;

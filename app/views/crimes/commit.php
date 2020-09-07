@@ -13,7 +13,7 @@
       if($data['arrested']):
     ?>
       <div class="col-12 alert alert-danger text-center">
-        You've been arrested until <strong><?php echo $data["user"]->inJailUntil; ?></strong>
+        You've been arrested until <strong><?php echo $data["user"]->prisonReleaseDate; ?></strong>
         <ul class="list-group mt-3">
           <li class="list-group-item text-dark font-weight-bold">On the grounds of:</li>
           <?php foreach($data["arrestedFor"] as $arrestedFor => $amount): ?>

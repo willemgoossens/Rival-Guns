@@ -21,7 +21,8 @@
                               FROM criminalrecords r
                               INNER JOIN crimetypes t ON r.type = t.id
                               WHERE r.createdAt < DATE_SUB(NOW(), INTERVAL t.expiredByTime SECOND)
-                                AND userId = :userId");
+                                AND userId = :userId
+                                AND imprisonmentId IS NULL");
             
             $this->db->bind(':userId', $userId);
             
