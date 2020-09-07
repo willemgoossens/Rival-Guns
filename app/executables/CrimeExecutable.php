@@ -76,7 +76,7 @@
             $luck = rand(0, $luckUpperLimit);
             $stars = $this->user->stars * 100;
 
-            if($stars > $luck)
+            if($stars < $luck)
             {
                 return false;
             }
