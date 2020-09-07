@@ -76,7 +76,7 @@
             {
                 $this->addSummary("You grab the hard liquor display and throw it on the ground.", "info");
 
-                $clerkBoxingSkills = rand(50, 300);
+                $clerkBoxingSkills = rand(50, 500);
                 $luck = rand(1, 5);
 
                 if( $this->user->bonusesIncluded->boxingSkills > $clerkBoxingSkills
