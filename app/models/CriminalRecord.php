@@ -12,8 +12,12 @@
         
 
         /**
+         * 
+         * 
          * This function deletes all overdue crime records
          * @param int userId
+         * 
+         * 
          */
         public function deleteOldRecords(int $userId)
         {
@@ -32,51 +36,63 @@
 
 
         /**
+         * 
+         * 
          * This function selects records for your arrest
          * @param int userId
+         * 
+         * 
          */
         public function selectArrestRecords(int $userId)
         {
+            $alwaysConvictIds = $this->crimeTypeModel->getArrayByAlwaysConvict(1);
+            $alwaysConvictString = implode(',', $alwaysConvictIds);
             // Select last record(s) by default -> use a subquery
             // Select a random selection of other records.
             $this->db->query("SELECT *
                               FROM criminalrecords
                               WHERE userId = :userId
-                                AND createdAt = (SELECT createdAt
+                                    AND(createdAt = (SELECT createdAt
                                                  FROM criminalrecords
                                                  WHERE userId = :userId
                                                  ORDER BY createdAt DESC
-                                                 LIMIT 1)");
+                                                 LIMIT 1)
+                                        OR type IN (:type))");
             $this->db->bind(':userId', $userId);
+            $this->db->bind(':type', $alwaysConvictString);
 
-            $lastRecords = $this->db->resultSet();
+            $arrestedForRecords = $this->db->resultSet();
+            $arrestedForRecordsCount = count($arrestedForRecords);
+
             $totalAmountOfRecords = $this->countByUserId($userId);
 
             $randomSelectionOfOthersForWhichConvicted = [];
-            if(count($lastRecords) < $totalAmountOfRecords)
+            if($arrestedForRecordsCount < $totalAmountOfRecords)
             {
-                $lastInputIds = array_column($lastRecords, 'id');
-                $offset = count($lastRecords);
+                $arrestedForRecordsIds = array_column($arrestedForRecords, 'id');
 
-                $maxLimit = $totalAmountOfRecords - $offset;
-                $minLimit = ceil(($totalAmountOfRecords - $offset) / 2);
+                $maxLimit = $totalAmountOfRecords - $arrestedForRecordsCount;
+                $minLimit = ceil(($totalAmountOfRecords - $arrestedForRecordsCount) / 2);
                 $limit = rand($minLimit, $maxLimit);
 
                 $randomSelectionOfOthersForWhichConvicted = $this->orderBy("RAND()")
                                                                  ->limit($limit)
-                                                                 ->offset($offset)
-                                                                 ->getByUserIdAndNotId($userId, $lastInputIds);
+                                                                 ->getByUserIdAndNotId($userId, $arrestedForRecordsIds);
             }
 
-            $return = array_merge($lastRecords, $randomSelectionOfOthersForWhichConvicted);
+            $return = array_merge($arrestedForRecords, $randomSelectionOfOthersForWhichConvicted);
             return $return;
         }
 
 
 
         /**
+         * 
+         * 
          * This function calculates the wanted level of a user
          * @param int userId
+         * 
+         * 
          */
         public function calculateStars(int $userId): float
         {
