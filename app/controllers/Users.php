@@ -12,6 +12,7 @@
             $this->wearableCategoryModel = $this->model('WearableCategory');
             $this->criminalRecordModel = $this->model('CriminalRecord');
             $this->postModel = $this->model('Post');
+            $this->notificationModel = $this->model('Notification');
 
             if($this->userModel->isLoggedIn())
             {
@@ -19,6 +20,8 @@
                 $this->data['user']                      = $this->userModel->getSingleById($_SESSION['userId']);
                 $this->data['user']->adminRights         = $this->adminRoleModel->getRightNamesForRole($this->data['user']->adminRole);
                 $this->data['user']->conversationUpdates = $this->conversationModel->countUnreadConversations($_SESSION['userId']);
+                $this->data['user']->notifications = $this->notificationModel->getUnreadNotifications($_SESSION['userId']);
+
             }
         }
 

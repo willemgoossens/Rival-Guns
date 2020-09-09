@@ -350,6 +350,20 @@
       }
     }
 
+
+    /**
+     * 
+     * 
+     * getTableName
+     * @return string tableName
+     * 
+     * 
+     */
+    protected function getTableName()
+    {
+        return $this->tableName;
+    }
+
     /***********************
     *
     *

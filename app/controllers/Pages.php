@@ -7,6 +7,7 @@
       $this->userModel = $this->model('User');
       $this->adminRoleModel = $this->model('AdminRole');
       $this->conversationModel = $this->model('Conversation');
+      $this->notificationModel = $this->model('Notification');
     }
 
     public function index(){
@@ -31,6 +32,8 @@
         $this->data['user']                      = $this->userModel->getSingleById($_SESSION['userId']);
         $this->data['user']->adminRights         = $this->adminRoleModel->getRightNamesForRole($this->data['user']->adminRole);
         $this->data['user']->conversationUpdates = $this->conversationModel->countUnreadConversations($_SESSION['userId']);
+        $this->data['user']->notifications = $this->notificationModel->getUnreadNotifications($_SESSION['userId']);
+
       }
 
       $this->view('pages/about', $this->data);
