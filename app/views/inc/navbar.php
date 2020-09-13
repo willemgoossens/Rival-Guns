@@ -43,6 +43,15 @@
             if(isset($_SESSION['userId'])): 
           ?>
               <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="personalDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Personal
+                </a>
+                <div class="dropdown-menu" aria-labelledby="personalDropdown">
+                    <a class="dropdown-item" href="<?php echo URLROOT; ?>/profile">My profile</a>
+                    <a class="dropdown-item" href="<?php echo URLROOT; ?>/properties">My properties</a>
+                </div>
+              </li>
+              <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="activitiesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   Activities
                 </a>
@@ -59,6 +68,7 @@
                     <a class="dropdown-item" href="<?php echo URLROOT; ?>/locations/bank">Bank</a>
                     <a class="dropdown-item" href="<?php echo URLROOT; ?>/locations/hospital">Hospital</a>
                     <a class="dropdown-item" href="<?php echo URLROOT; ?>/locations/hoovers">Harry's Hoovers</a>
+                    <a class="dropdown-item" href="<?php echo URLROOT; ?>/locations/realEstate">Real Estate Office</a>
                 </div>
               </li>
             <?php

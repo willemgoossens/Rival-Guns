@@ -9,6 +9,7 @@
             $this->adminRoleModel = $this->model('AdminRole');
             $this->conversationModel = $this->model('Conversation');
             $this->propertyModel = $this->model('Property');
+            $this->propertyCategoryModel = $this->model('PropertyCategory');
             $this->hospitalizationModel = $this->model('Hospitalization');
             $this->notificationModel = $this->model('Notification');
 
@@ -139,7 +140,7 @@
                     || $user->energy < 20)
                 {
                     // The user is already working or his energy is too low, this shouldn't be possible
-                    redirect('');
+                    redirect('profile');
                 }
                 else
                 {
@@ -192,5 +193,100 @@
             }
 
             $this->view('locations/hoovers', $this->data);
+        }
+
+
+        /**
+         * realEstate
+         */
+        public function realEstate()
+        {
+            $user = &$this->data['user'];
+
+            $propertyCategories = $this->propertyCategoryModel->get(true);
+
+            if($_SERVER['REQUEST_METHOD'] == 'POST')
+            {
+                // Sanitize POST data
+                $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+                if(! isset($_POST['propertyCategoryId']))
+                {
+                    echo "property category not set";
+                    //redirect('profile');
+                }
+                $propertyCategoryId = (int) $_POST['propertyCategoryId'];
+
+                $paymentByBank = true;
+                if(! isset($_POST['payByBank']))
+                {
+                    $paymentByBank = false;
+                }
+
+                if(! isset($propertyCategories[$propertyCategoryId]))
+                {
+                    echo "not the right propertycategr";
+                    //redirect('profile');
+                }
+
+                $propertyCategory = $propertyCategories[$propertyCategoryId];
+
+                if($paymentByBank == false && !$propertyCategory->allowPaymentByCash)
+                {
+                    //wrong payment type
+                    redirect('profile');
+                }
+
+
+                if($paymentByBank == true)
+                {
+                    if($propertyCategory->price > $user->bank)
+                    {
+                        $error = 'You don\'t have enough money in your bank account!';
+                    }
+                    else 
+                    {
+                        $user->bank -= $propertyCategory->price; 
+                    }
+                }
+                else
+                {
+                    if($propertyCategory->price > $user->cash)
+                    {
+                        $error = 'You don\'t have enough cash money!';
+                    }
+                    else 
+                    {
+                        $user->cash -= $propertyCategory->price; 
+                    }
+                }
+
+                if(empty($error))
+                {
+                    $updateArray = [
+                        'cash' => $user->cash,
+                        'bank' => $user->bank
+                    ];
+
+                    $this->userModel->updateById($user->id, $updateArray);
+
+                    $insertArray = [
+                        'userId' => $user->id,
+                        'propertyCategoryId' => $propertyCategoryId
+                    ];
+
+                    $propertyId = $this->propertyModel->insert($insertArray, true);
+
+                    flash('realEstate_buy', 'You\'ve successfully bought a ' . $propertyCategory->name . '! Have fun!');
+                    redirect('properties/' . $propertyId);
+                }
+                else
+                {
+                    flash('realEstate_buy', $error, 'alert alert-danger');
+                }
+            }
+
+            $this->data['propertyCategories'] = $propertyCategories;
+            $this->view('locations/realEstate', $this->data);
         }
     }
