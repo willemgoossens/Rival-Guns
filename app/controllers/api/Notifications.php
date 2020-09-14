@@ -1,4 +1,7 @@
 <?php
+    namespace App\Controllers\Api;
+    use App\Libraries\REST_Controller as REST_Controller;
+    
     class Notifications extends REST_Controller
     {
         public function __construct()

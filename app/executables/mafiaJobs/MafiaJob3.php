@@ -1,5 +1,6 @@
 <?php
-    require_once dirname(__FILE__, 2) . './CrimeExecutable.php';
+    namespace App\Executables\MafiaJobs;
+    use App\Executables\CrimeExecutable as CrimeExecutable;
 
     class MafiaJob3 extends CrimeExecutable
     {

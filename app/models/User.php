@@ -1,4 +1,8 @@
 <?php
+    namespace App\Models;
+    use App\Libraries\Model as Model;
+    use App\Libraries\Database as Database;
+
     class User extends Model 
     {
         public function __construct()
@@ -70,7 +74,7 @@
             if(! empty($overlappingKeys) )
             {
                 $wearables = $this->wearableModel->getArrayByUserIdAndEquipped($object->id, true, "wearableCategoryId");
-                $object->bonusesIncluded = new StdClass;
+                $object->bonusesIncluded = new \StdClass;
             }
 
             foreach( $object as $key => &$value )
@@ -226,7 +230,7 @@
                 $totalJailTime += $crimeTypes[$record->type]->jailTime;
             }
 
-            $prisonReleaseDate = new DateTime("+" . $totalJailTime . " seconds");
+            $prisonReleaseDate = new \DateTime("+" . $totalJailTime . " seconds");
 
             $returnArray = [
                 'prisonReleaseDate' => $prisonReleaseDate->format('Y-m-d H:i:s'), 

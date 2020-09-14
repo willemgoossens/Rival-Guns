@@ -1,4 +1,5 @@
 <?php
+    namespace App\Libraries;
     /*
     * App Core Class
     * Creates URL & loads core controller
@@ -7,11 +8,12 @@
     class Core 
     {
         protected $currentController = 'Pages';
+        protected $currentControllerWithNamespace = CONTROLLER_NAMESPACE . 'Pages';
+        protected $instantiatedController;
         protected $currentMethod = 'index';
         protected $params = [];
 
         private $api = false;
-        private $apiText = "";
 
         public function __construct()
         {
@@ -30,74 +32,74 @@
                 header("Content-Type: application/json");
 
                 array_shift( $url );
-            }
-            // If exists, set as controller
-            $this->currentController = isset($url[0]) ? ucwords($url[0]) : $this->currentController;
 
-            if( ! file_exists(APPROOT . '/controllers/' . $this->apiText . $this->currentController . '.php') )
+                $this->currentController = isset($url[0]) ? lcfirst($url[0]) : $this->currentController;
+                $this->currentControllerWithNamespace = API_CONTROLLER_NAMESPACE . $this->currentController;
+            }
+            else
+            {                
+                $this->currentController = isset($url[0]) ? lcfirst($url[0]) : $this->currentController;
+                $this->currentControllerWithNamespace = CONTROLLER_NAMESPACE . $this->currentController;
+            }
+            
+            if( ! class_exists($this->currentControllerWithNamespace) )
             {
                 $this->error("404");
             }
-            // Unset The $currentController
-            unset( $url[0] );
-            // Check for second part of url; the method
-            // Require the controller
-            require_once APPROOT . '/controllers/' . $this->apiText . $this->currentController . '.php';
-
-            // Check for second part of url
-            if( isset($url[1]) )
+            else
             {
-                // Check to see if method exists in controller
-                // If the method does indeed exist, replace it
-                if( method_exists($this->currentController, $url[1]) )
-                {
-                    $this->currentMethod = $url[1];
-                    // Unset 1 index
-                    unset($url[1]);
-                }
-                elseif( method_exists($this->currentController, 'index') )
-                {
-                    $this->currentMethod = 'index';
-                }
-                else
-                {          
-                    $this->error("404");
-                }
+                unset($url[0]);
+            }
+
+            $this->currentMethod = isset($url[1]) ? lcfirst($url[1]) : $this->currentMethod;
+            if( method_exists($this->currentControllerWithNamespace, $this->currentMethod) )
+            {
+                unset($url[1]);
+            }
+            elseif( method_exists($this->currentControllerWithNamespace, 'index') )
+            {
+                $this->currentMethod = 'index';
             }
             else
             {
-                // Check to see if method exists in controller
-                // If the method does indeed exist, replace it
-                if( method_exists($this->currentController, 'index') )
-                {
-                    $this->currentMethod = 'index';
-                }
-                else
-                {          
-                    $this->error("404");
-                }
+                $this->error("404");
             }
-            
-            $this->loadBeforeMiddleware();
 
-            $this->currentController = new $this->currentController();
-
-            // Do some extra filtering for the Get Parameters (they might be used as db input)
-            // And assign them
             $url = $url ? array_values($url) : [];
             $this->params = filter_var_array($url, FILTER_SANITIZE_STRING);
+            
 
-            // We need to make sure we get the required amount of GET variables
-            // For this we use Reflection
-            // https://www.php.net/manual/en/reflectionfunctionabstract.getnumberofrequiredparameters.php
-            $r  = new \ReflectionMethod($this->currentController, $this->currentMethod);
+            $this->loadBeforeMiddleware();
+
+            $this->instantiatedController = new $this->currentControllerWithNamespace;
+
+            $r  = new \ReflectionMethod($this->currentControllerWithNamespace, $this->currentMethod);
             if( $r->getNumberOfRequiredParameters() > count($this->params) )
             {
-                $this->error(400);
+                $this->error("400");
             }
 
+            if( ! empty($this->params) )
+            {
+                $rParams = $r->getParameters();
+                foreach( $this->params as $key => &$urlVar )
+                {
+                    $type = $rParams[$key]->getType()->getName();
+                    if( strtolower( $type ) == 'int')
+                    {
+                        if( ! ctype_digit($urlVar) )
+                        {
+                            $this->error("400");
+                        }
+                        else
+                        {
+                            $urlVar = (int) $urlVar;
+                        }
+                    }
+                }
+            }
             // Call a callback with array of params
-            call_user_func_array( [$this->currentController, $this->currentMethod], $this->params );
+            call_user_func_array( [$this->instantiatedController, $this->currentMethod], $this->params );
 
             $this->loadAfterMiddleware();
         }
@@ -121,6 +123,8 @@
                 $url = explode('/', $url);
                 return $url;
             }
+
+            return null;
         }
 
 
@@ -156,8 +160,7 @@
         {
             foreach( MIDDLEWARE as $middlewareName => $executionUrls )
             {
-                require_once APPROOT . "/middleware/" . $middlewareName . ".php";
-
+                $middlewareName = MIDDLEWARE_NAMESPACE . $middlewareName;
                 $this->middleware[$middlewareName] = new $middlewareName($this->api, $this->currentController, $this->currentMethod);
 
                 if( 

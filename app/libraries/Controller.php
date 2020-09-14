@@ -1,4 +1,5 @@
 <?php
+    namespace App\Libraries;
     /*
     * Base Controller
     * Loads the models and views
@@ -18,10 +19,7 @@
          */
         public function model (String $model): Object
         {
-            // Require model file
-            require_once '../app/models/' . $model . '.php';
-
-            // Instatiate model
+            $model = MODEL_NAMESPACE . $model;
             return new $model();
         }
 

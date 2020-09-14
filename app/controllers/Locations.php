@@ -1,4 +1,7 @@
 <?php
+    namespace App\Controllers;
+    use App\Libraries\Controller as Controller;
+    
     class Locations extends Controller
     {
 
@@ -164,7 +167,7 @@
                 }
                 else
                 {
-                    $futureTimestamp = new DateTime();
+                    $futureTimestamp = new \DateTime();
                     $futureTimestamp->modify( '+15 minutes' );
 
                     $user->workingUntil = $futureTimestamp->format( 'Y-m-d H:i:s' );

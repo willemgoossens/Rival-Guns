@@ -1,4 +1,6 @@
 <?php
+    namespace App\Middleware;
+    use App\Libraries\Middleware as Middleware;
 
     class PunishmentCheck extends Middleware
     {
@@ -21,7 +23,7 @@
             $this->punishmentModel = $this->model('Punishment');
             $this->permanentBan = $this->punishmentModel->getPermanentBanForUser($_SESSION["userId"]);
             $this->temporaryBan = $this->punishmentModel->getLastTemporaryBanForUser($_SESSION["userId"]);
-            $now = new DateTime();
+            $now = new \DateTime();
             
             if( $this->permanentBan )
             {

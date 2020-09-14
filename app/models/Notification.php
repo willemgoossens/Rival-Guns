@@ -1,4 +1,8 @@
 <?php
+    namespace App\Models;
+    use App\Libraries\Model as Model;
+    use App\Libraries\Database as Database;
+    
     class Notification extends Model
     {
         public function __construct()
@@ -86,7 +90,7 @@
                 return false;
             }
             
-            $now = new DateTime;
+            $now = new \DateTime;
             $now = $now->format('Y-m-d H:i:s');
 
             foreach( $notifications as $notification )

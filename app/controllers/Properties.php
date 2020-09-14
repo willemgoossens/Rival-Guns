@@ -1,4 +1,7 @@
 <?php
+    namespace App\Controllers;
+    use App\Libraries\Controller as Controller;
+    
     class Properties extends Controller
     {
         public function __construct()
@@ -53,6 +56,21 @@
             $this->data['propertiesPerPage'] = $limit;
 
             $this->view('properties/index', $this->data);
+        }
+
+
+        /**
+         * 
+         * 
+         * Show
+         * @param Int propertyId
+         * @return Void
+         * 
+         * 
+         */
+        public function show(Int $propertyId): Void
+        {
+            echo $propertyId;
         }
 
     }

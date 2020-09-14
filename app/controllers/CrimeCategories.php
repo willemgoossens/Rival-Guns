@@ -1,4 +1,7 @@
 <?php
+    namespace App\Controllers;
+    use App\Libraries\Controller as Controller;
+    
     class crimeCategories extends Controller
     {
         public function __construct()
@@ -28,7 +31,7 @@
         public function index( String $type ): Void
         {
             $user = &$this->data['user'];
-
+            
             if( $type == "crimes" )
             {
                 $dbType = "Crimes";

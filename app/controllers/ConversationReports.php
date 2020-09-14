@@ -1,4 +1,7 @@
 <?php
+    namespace App\Controllers;
+    use App\Libraries\Controller as Controller;
+    
     class ConversationReports extends Controller
     {
         public function __construct()

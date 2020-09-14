@@ -1,4 +1,8 @@
 <?php
+    namespace App\Models;
+    use App\Libraries\Model as Model;
+    use App\Libraries\Database as Database;
+    
     class Punishment extends Model
     {
 
@@ -96,11 +100,11 @@
                 }
                 else
                 {
-                    $date = DateTime::createFromFormat('m/d/Y h:i A', $input['datePicker']);
+                    $date = \DateTime::createFromFormat('m/d/Y h:i A', $input['datePicker']);
 
                     if(
                         ! $date 
-                        || new DateTime() >= $date
+                        || new \DateTime() >= $date
                     ) {
                         $error = true;
 
@@ -120,14 +124,14 @@
             // Check if the user already has a temporary ban, and perhaps add up the times
             if( $input['punishment'] == "temporaryBan" )
             {
-                $now = new DateTime();
-                $datePicker = new DateTime($input['datePicker']);
+                $now = new \DateTime();
+                $datePicker = new \DateTime($input['datePicker']);
                 
                 $lastTempBan = $this->getLastTemporaryBanForUser($input['userId']);
 
                 if( $lastTempBan )
                 {
-                    $lastTempBan->endsAt = new DateTime($lastTempBan->endsAt);
+                    $lastTempBan->endsAt = new \DateTime($lastTempBan->endsAt);
                     if( $lastTempBan->endsAt > $now )
                     {
                         $interval = $now->diff($lastTempBan->endsAt);

@@ -1,4 +1,6 @@
 <?php
+    namespace App\Middleware;
+    use App\Libraries\Middleware as Middleware;
 
     class LoggedOut extends Middleware
     {

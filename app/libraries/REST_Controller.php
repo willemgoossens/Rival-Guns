@@ -1,4 +1,6 @@
 <?php
+    namespace App\Libraries;
+    
     class REST_Controller 
     {
         public $defaultMethod = "index";
@@ -15,10 +17,7 @@
          */
         public function model (string $model): Object
         {
-          // Require model file
-          require_once '../app/models/' . $model . '.php';
-
-          // Instatiate model
+          $model = MODEL_NAMESPACE . $model;
           return new $model();
         }
 

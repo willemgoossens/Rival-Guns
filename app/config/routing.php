@@ -16,5 +16,6 @@
         "crimes" => 'crimeCategories/crimes',
         'mafiajobs' => 'crimeCategories/mafiajobs',
         "prison(/\w*)" => 'prisons$1',
-        "hospitalized" => 'hospitalizations/hospitalized'
+        "hospitalized" => 'hospitalizations/hospitalized',
+        "properties/(\d+)" => 'properties/show/$1'
     ]);

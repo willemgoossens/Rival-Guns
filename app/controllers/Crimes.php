@@ -1,4 +1,7 @@
 <?php
+    namespace App\Controllers;
+    use App\Libraries\Controller as Controller;
+    
     class Crimes extends Controller
     {
         public function __construct()
@@ -79,25 +82,21 @@
 
             if( $category->mainCategory == 'Crimes' )
             {
-                $path = "./executables/crimes/Crime" . $crime->id . ".php";
-                $className = 'Crime' . $crime->id;
+                $className = EXECUTABLE_NAMESPACE . 'crimes\Crime' . $crime->id;
             }
             elseif( $category->mainCategory == 'Mafia Jobs' )
             {
-                $path = "./executables/mafiaJobs/MafiaJob" . $crime->id . ".php";
-                $className = 'MafiaJob' . $crime->id;
+                $className = EXECUTABLE_NAMESPACE . 'mafiaJobs\MafiaJob' . $crime->id;
             }
 
             if( 
                 ! $crime
                 || $user->health < 5
                 || $user->energy < 5
-                || !file_exists(APPROOT . $path)
             ) {
                 redirect('profile');
             }
-            
-            require_once APPROOT . $path;
+
             $crime = new $className( $user );
             $crime->init();
 

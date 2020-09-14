@@ -1,4 +1,7 @@
 <?php
+    namespace App\Controllers;
+    use App\Libraries\Controller as Controller;
+    
     class Hospitalizations extends Controller
     {
 
@@ -33,10 +36,10 @@
 
             $hospitalization = $this->hospitalizationModel->getSingleByUserId( $user->id );
 
-            $endDate = new DateTime($hospitalization->createdAt);
+            $endDate = new \DateTime($hospitalization->createdAt);
             $endDate->modify('+' . $hospitalization->duration . ' seconds');
 
-            $now = new DateTime();
+            $now = new \DateTime();
 
             $this->data['interval'] =  $endDate->getTimestamp() - $now->getTimestamp();
 

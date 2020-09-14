@@ -1,4 +1,5 @@
 <?php
+    namespace App\Executables;
 
     abstract class CrimeExecutable
     {
@@ -146,9 +147,7 @@
          * 
          */
         public function returnSummary (): array
-        {
-            $summary = new stdClass();
-            
+        {            
             $return = [
                 "userRewards" => $this->userRewards,
                 "crimeRecords" => $this->crimeRecords,

@@ -1,4 +1,6 @@
 <?php
+    namespace App\Middleware;
+    use App\Libraries\Middleware as Middleware;
 
     class PrisonCheck extends Middleware
     {
@@ -39,11 +41,11 @@
             {                
                 $interval += $crimeTypes[$record->type]->jailTime;
             }
-            $interval = new DateInterval('PT' . $interval . 'S');            
-            $releaseDate = new DateTime($imprisonment->createdAt);
+            $interval = new \DateInterval('PT' . $interval . 'S');            
+            $releaseDate = new \DateTime($imprisonment->createdAt);
             $releaseDate->add($interval);
 
-            $now = new DateTime();
+            $now = new \DateTime();
 
             if( $releaseDate > $now )
             {

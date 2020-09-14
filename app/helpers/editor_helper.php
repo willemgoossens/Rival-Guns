@@ -126,7 +126,7 @@
     // https://github.com/erusev/parsedown
     function MarkdownToHTML(String $markdown): String
     {
-        $Parsedown = new Parsedown();
+        $Parsedown = new \Parsedown();
         $Parsedown->setSafeMode(true);
         return $Parsedown->text($markdown);
     }

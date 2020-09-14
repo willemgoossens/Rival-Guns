@@ -1,4 +1,6 @@
 <?php
+  namespace App\Controllers;
+  use App\Libraries\Controller as Controller;
 
   class Tests extends Controller
   {

@@ -1,4 +1,5 @@
 <?php
+    namespace App\Libraries;
     /****************************
     *
     *
@@ -423,10 +424,7 @@
          */
         protected function model(String $model): Object
         {
-            // Require model file
-            require_once APPROOT . '/models/' . $model . '.php';
-
-            // Instatiate model
+            $model = MODEL_NAMESPACE . $model;
             return new $model();
         }
 

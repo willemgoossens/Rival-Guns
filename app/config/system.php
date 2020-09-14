@@ -19,6 +19,13 @@
     // Environment - development or production
     define('ENVIRONMENT', 'development');
 
+    //Namespaces
+    define('CONTROLLER_NAMESPACE', 'App\\Controllers\\');
+    define('API_CONTROLLER_NAMESPACE', 'App\\Controllers\\API\\');
+    define('EXECUTABLE_NAMESPACE', 'App\\Executables\\');
+    define('MODEL_NAMESPACE', 'App\\Models\\');
+    define('MIDDLEWARE_NAMESPACE', 'App\\Middleware\\');
+
     // Encrypt Salt
     // This string is use as a salt for encrypting keys
     // E.g. the resetKey

@@ -1,4 +1,7 @@
 <?php
+    namespace App\Controllers;
+    use App\Libraries\Controller as Controller;
+    
     class Posts extends Controller 
     {
         public function __construct() 
@@ -187,7 +190,7 @@
          * 
          * 
          */
-        public function edit (int $postId): void
+        public function edit (Int $postId): Void
         {
             $user = &$this->data["user"];
 
@@ -246,7 +249,7 @@
                         'body' => $this->data['body']
                     ];
 
-                    if($this->postModel->updateById($id, $updateData))
+                    if($this->postModel->updateById($postId, $updateData))
                     {
                         flash('post_message', 'Post updated!');
                         redirect('posts');

@@ -1,4 +1,6 @@
 <?php
+    namespace App\Middleware;
+    use App\Libraries\Middleware as Middleware;
 
     class WorkCheck extends Middleware
     {
@@ -22,8 +24,8 @@
             $this->notificationModel = $this->model('Notification');
             $this->user = $this->userModel->getSingleById($_SESSION["userId"], 'id', 'workingUntil', 'charismaSkills', 'name', 'bank');
             
-            $now = new DateTime();
-
+            $now = new \DateTime();
+            
             if( 
                 isset($this->user->workingUntil)
                 && strtotime($this->user->workingUntil) <= $now->getTimestamp()

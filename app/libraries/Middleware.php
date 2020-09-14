@@ -1,4 +1,5 @@
 <?php
+    namespace App\Libraries;
     /*
     * Base Controller
     * Loads the models and views
@@ -19,9 +20,7 @@
          */
         protected function model(String $model): Object
         {
-            // Require model file
-            require_once APPROOT . '/models/' . $model . '.php';
-
+            $model = MODEL_NAMESPACE . $model;
             // Instatiate model
             return new $model();
         }
@@ -58,9 +57,10 @@
          */
         public function shouldRunMiddleware (): bool
         {
-            $shouldRun = MIDDLEWARE[get_class($this)]['runByDefault'];
+            $middlewareName = (new \ReflectionClass($this))->getShortName();
+            $shouldRun = MIDDLEWARE[$middlewareName]['runByDefault'];
 
-            if(! isset(MIDDLEWARE[get_class($this)]['exceptions']) )
+            if(! isset(MIDDLEWARE[$middlewareName]['exceptions']) )
             {
                 return $shouldRun;
             }
@@ -71,8 +71,8 @@
             $controllerMethodName = $apiText . $this->controller . '/' . $this->method;
             
             if( 
-                in_array( $controllerName, MIDDLEWARE[get_class($this)]['exceptions']) 
-                || in_array( $controllerMethodName , MIDDLEWARE[get_class($this)]['exceptions']) 
+                in_array( $controllerName, MIDDLEWARE[$middlewareName]['exceptions']) 
+                || in_array( $controllerMethodName , MIDDLEWARE[$middlewareName]['exceptions']) 
             ) {
                 $shouldRun = !$shouldRun;
             }
@@ -92,12 +92,12 @@
          */
         public function runSequencedMiddleware(string $stage): bool
         {
-            if( isset(MIDDLEWARE[get_class($this)]["sequenced"]) )
+            $middlewareName = (new \ReflectionClass($this))->getShortName();
+            if( isset(MIDDLEWARE[$middlewareName]["sequenced"]) )
             {
-                foreach( MIDDLEWARE[get_class($this)]["sequenced"] as $sequenced )
+                foreach( MIDDLEWARE[$middlewareName]["sequenced"] as $sequenced )
                 {
-                    require_once APPROOT . "/middleware/" . $sequenced . ".php";
-          
+                    $sequenced = MIDDLEWARE_NAMESPACE . $sequenced;
                     $sequencedMiddleware = new $sequenced($this->api, $this->controller, $this->method);
           
                     if( method_exists($sequencedMiddleware, $stage) )

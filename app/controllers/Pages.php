@@ -1,4 +1,7 @@
 <?php
+    namespace App\Controllers;
+
+    use App\Libraries\Controller as Controller;
     class Pages extends Controller 
     {
         public function __construct ()
