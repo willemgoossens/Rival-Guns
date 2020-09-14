@@ -4,18 +4,6 @@
     
     class ConversationReports extends REST_Controller
     {
-        public function __construct()
-        {
-            $this->defaultMethod = "getMessages";
-
-            $this->userModel = $this->model('User');
-            $this->adminRoleModel = $this->model('AdminRole');
-            $this->messageModel = $this->model('Message');
-            $this->conversationModel = $this->model('Conversation');
-            $this->conversationReportModel = $this->model('conversationReport');
-        }
-
-
         /**
          * 
          * 

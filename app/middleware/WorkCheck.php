@@ -20,8 +20,6 @@
          */
         public function before(): Bool
         {
-            $this->userModel = $this->model('User');
-            $this->notificationModel = $this->model('Notification');
             $this->user = $this->userModel->getSingleById($_SESSION["userId"], 'id', 'workingUntil', 'charismaSkills', 'name', 'bank');
             
             $now = new \DateTime();

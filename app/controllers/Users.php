@@ -6,15 +6,6 @@
     {
         public function __construct()
         {
-            $this->userModel = $this->model('User');
-            $this->conversationModel = $this->model('Conversation');
-            $this->adminRoleModel = $this->model('AdminRole');
-            $this->wearableModel = $this->model('Wearable');
-            $this->wearableCategoryModel = $this->model('WearableCategory');
-            $this->criminalRecordModel = $this->model('CriminalRecord');
-            $this->postModel = $this->model('Post');
-            $this->notificationModel = $this->model('Notification');
-
             if($this->userModel->isLoggedIn())
             {
                 // Set the sessions for the nav bar

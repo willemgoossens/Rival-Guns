@@ -11,6 +11,30 @@
         
         /**
          * 
+         * 
+         * __get
+         * @param String $name
+         * @return Object
+         * 
+         * 
+         */
+        public function __get(String $name): Object
+        {
+            if(substr($name, -5) == "Model")
+            {
+                $modelName = substr($name, 0, -5);
+                $model = $this->model($modelName);
+
+                $this->$name = $model;
+                return $this->$name;
+            }
+
+            throw new \Exception("Uh Oh! " . $name . " is not a real variable for this class (" . get_class($this) . ")" , 1);
+        }
+
+        
+        /**
+         * 
          * Model
          * @param String Model
          * @return Object class

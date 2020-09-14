@@ -9,8 +9,6 @@
         {
             $this->db = new Database;
             $this->setTableName('criminalrecords');
-
-            $this->crimeTypeModel = $this->model('CrimeType');
         }
 
         

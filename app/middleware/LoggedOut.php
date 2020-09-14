@@ -19,8 +19,6 @@
          */
         public function before(): Bool
         {
-            $this->userModel = $this->model('User');
-
             if( ! $this->userModel->isLoggedIn())
             {
                 return true;

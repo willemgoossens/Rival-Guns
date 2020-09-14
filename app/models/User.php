@@ -9,13 +9,6 @@
         {
             $this->db = new Database;
             $this->setTableName('users');
-
-            $this->criminalRecordModel = $this->model('CriminalRecord');
-            $this->crimeTypeModel = $this->model('CrimeType');
-            $this->wearableCategoryModel = $this->model('WearableCategory');
-            $this->wearableModel = $this->model('Wearable');
-            $this->hospitalizationModel = $this->model('Hospitalization');
-            $this->imprisonmentModel = $this->model('Imprisonment');
         }
 
         /**

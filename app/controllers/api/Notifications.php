@@ -4,15 +4,6 @@
     
     class Notifications extends REST_Controller
     {
-        public function __construct()
-        {
-            $this->defaultMethod = "getMessages";
-
-            $this->userModel = $this->model('User');
-            $this->notificationModel = $this->model('Notification');
-        }
-
-
         /**
          * 
          * 

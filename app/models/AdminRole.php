@@ -9,7 +9,6 @@
         {
             $this->db = new Database;
             $this->setTableName('adminroles');
-            $this->adminRightModel = $this->model('AdminRight');
         }
 
 

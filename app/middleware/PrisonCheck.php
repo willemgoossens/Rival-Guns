@@ -19,11 +19,6 @@
          */
         public function before(): Bool
         {
-            $this->imprisonmentModel = $this->model('Imprisonment');
-            $this->criminalRecordModel = $this->model('CriminalRecord');
-            $this->crimeTypeModel = $this->model('CrimeType');
-
-
             $imprisonment = $this->imprisonmentModel->getSingleByUserId($_SESSION["userId"]);
             if( empty($imprisonment) )
             {

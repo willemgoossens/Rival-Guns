@@ -3,16 +3,7 @@
 
     use App\Libraries\Controller as Controller;
     class Pages extends Controller 
-    {
-        public function __construct ()
-        {
-            $this->userModel = $this->model('User');
-            $this->adminRoleModel = $this->model('AdminRole');
-            $this->conversationModel = $this->model('Conversation');
-            $this->notificationModel = $this->model('Notification');
-        }
-
-        
+    {        
         /**
          * 
          * 

@@ -20,7 +20,6 @@
          */
         public function before(): Bool
         {
-            $this->punishmentModel = $this->model('Punishment');
             $this->permanentBan = $this->punishmentModel->getPermanentBanForUser($_SESSION["userId"]);
             $this->temporaryBan = $this->punishmentModel->getLastTemporaryBanForUser($_SESSION["userId"]);
             $now = new \DateTime();

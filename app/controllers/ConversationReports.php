@@ -6,14 +6,6 @@
     {
         public function __construct()
         {
-            $this->userModel = $this->model('User');
-            $this->adminRoleModel = $this->model('AdminRole');
-            $this->conversationModel = $this->model('Conversation');
-            $this->conversationReportModel = $this->model('ConversationReport');
-            $this->punishmentModel = $this->model('punishment');
-            $this->messageModel = $this->model('Message');
-            $this->notificationModel = $this->model('Notification');
-
             // Set the sessions for the nav bar
             $this->data['user']                      = $this->userModel->getSingleById($_SESSION['userId']);
             $this->data['user']->adminRights         = $this->adminRoleModel->getRightNamesForRole($this->data['user']->adminRole);

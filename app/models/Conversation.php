@@ -9,9 +9,6 @@
         {
             $this->db = new Database;
             $this->setTableName('conversations');
-
-            $this->messageModel = $this->model('Message');
-            $this->userModel = $this->model('User');
         }
 
 

@@ -20,10 +20,7 @@
          */
         public function before(): Bool
         {
-            $this->userModel = $this->model('User');
             $user = $this->userModel->getSingleById($_SESSION["userId"]);
-
-            $this->hospitalizationModel = $this->model('Hospitalization');
             $hospitalization = $this->hospitalizationModel->getSingleByUserId($_SESSION["userId"]);
             
             $now = new \DateTime();

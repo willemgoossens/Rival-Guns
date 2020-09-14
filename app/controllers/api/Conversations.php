@@ -4,16 +4,6 @@
     
     class Conversations extends REST_Controller 
     {
-        public function __construct()
-        {
-            $this->defaultMethod = "getMessages";
-
-            $this->userModel = $this->model('User');
-            $this->messageModel = $this->model('Message');
-            $this->conversationModel = $this->model('Conversation');
-        }
-
-
         /**
          * 
          * 
