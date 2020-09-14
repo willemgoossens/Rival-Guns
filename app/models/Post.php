@@ -1,10 +1,10 @@
 <?php
-  class Post extends Model {
+    class Post extends Model 
+    {
+        public function __construct()
+        {
+          $this->db = new Database;
+          $this->setTableName('posts');
+        }
 
-    public function __construct(){
-      $this->db = new Database;
-      $this->setTableName('posts');
     }
-
-  }
- ?>

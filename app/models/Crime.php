@@ -1,11 +1,10 @@
 <?php
-  class Crime extends Model
-  {
-    public function __construct()
+    class Crime extends Model
     {
-      $this->db = new Database;
-      $this->setTableName('crimes');
+        public function __construct()
+        {
+            $this->db = new Database;
+            $this->setTableName('crimes');
+        }
 
     }
-
-  }

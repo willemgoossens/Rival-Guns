@@ -21,13 +21,13 @@
         {
             $return = parent::__call($method, $arguments);
 
-            if(!is_array($return))
+            if( is_object($return) )
             {
                 $return = $this->countBonuses($return);
             }
-            else 
+            elseif( is_array($return) )
             {
-                foreach($return as &$object)
+                foreach( $return as &$object )
                 {
                     $object = $this->countBonuses($object);
                 }
@@ -40,11 +40,15 @@
 
 
         /**
+         * 
+         * 
          * modify Variables
-         * @param object-array $user
-         * @return object $user 
+         * @param Object $user
+         * @return Object $user 
+         * 
+         * 
          */
-        public function countBonuses($object)
+        public function countBonuses(Object $object): Object
         {
             $skillNames = [
                 "agilitySkills",
@@ -63,36 +67,36 @@
 
             $keys = array_keys(get_object_vars($object));
             $overlappingKeys = array_intersect($keys, $skillNames);
-            if(! empty($overlappingKeys))
+            if(! empty($overlappingKeys) )
             {
                 $wearables = $this->wearableModel->getArrayByUserIdAndEquipped($object->id, true, "wearableCategoryId");
                 $object->bonusesIncluded = new StdClass;
             }
 
-            foreach($object as $key => &$value)
+            foreach( $object as $key => &$value )
             {
                 if($key == 'name')
                 {
                     $value = ucfirst($value);
                 }
                 
-                if(in_array($key, $skillNames))
+                if( in_array($key, $skillNames) )
                 {
                     $skillName = $key;
                     
-                    if(! isset($object->bonusesIncluded->$skillName ))
+                    if(! isset($object->bonusesIncluded->$skillName) )
                     {
                         $object->bonusesIncluded->$skillName = $object->$skillName;
                     }
 
-                    if( !empty($wearables))
+                    if( !empty($wearables) )
                     {
                         $sqlQueryName = "getArrayByIdAndNot" . ucfirst($skillName) . "Bonus";
                         $bonuses = $this->wearableCategoryModel->$sqlQueryName($wearables, 1.00, $skillName . "Bonus");
                         
-                        if(! empty($bonuses))
+                        if(! empty($bonuses) )
                         {
-                            foreach($bonuses as $bonus)
+                            foreach( $bonuses as $bonus )
                             {
                                 $object->bonusesIncluded->$skillName = round( $object->$skillName * $bonus * 10 ) / 10;
                             }
@@ -107,13 +111,15 @@
 
         /**
         *
-        * login
-        * @param: email
-        * @param: password
-        * @return: get users
         *
-        ***/
-        public function login(string $email, string $password)
+        * Login
+        * @param String email
+        * @param String password
+        * @return Mixed False or array
+        *
+        *
+        */
+        public function login(String $email, String $password)
         {
             $user = $this->getSingleByEmail($email);
 
@@ -132,11 +138,13 @@
 
         /**
         *
-        * is Logged in
-        * @return: bool
         *
-        ***/
-        public function isLoggedIn()
+        * isLoggedIn
+        * @return Bool
+        *
+        *
+        */
+        public function isLoggedIn(): Bool
         {
           // Check if session_id has been set
             if(isset($_SESSION['userId']))
@@ -157,12 +165,13 @@
         /**
          *
          * 
-         * arrest the user
-         * @param int userId
+         * Arrest
+         * @param Int userId
+         * @return Array
          * 
          * 
          */
-        public function arrest(int $userId): array
+        public function arrest(Int $userId): Array
         {
             $records = $this->criminalRecordModel->selectArrestRecords($userId);
 
@@ -181,13 +190,13 @@
 
 
             $wearables = $this->wearableModel->getByUserIdAndEquipped($userId, 1);
-            if( !empty($wearables) )
+            if( ! empty($wearables) )
             {
-                foreach($wearables as $wearable)
+                foreach( $wearables as $wearable )
                 {
                     $isIllegal = $this->wearableCategoryModel->existsByIdAndIllegal($wearable->wearableCategoryId, true);
 
-                    if($isIllegal)
+                    if( $isIllegal )
                     {
                         $this->wearableModel->deleteById($wearable->id);
                     }
@@ -201,11 +210,11 @@
             $crimesNames = [];
             $totalJailTime = 0;
 
-            foreach($records as $record)
+            foreach( $records as $record )
             {
                 $this->criminalRecordModel->updateById($record->id, ['imprisonmentId' => $imprisonmentId]);
                 
-                if(isset($crimesNames[$crimeTypes[$record->type]->name]))
+                if( isset($crimesNames[$crimeTypes[$record->type]->name]) )
                 {
                     $crimesNames[$crimeTypes[$record->type]->name] += 1;
                 }
@@ -229,11 +238,17 @@
 
 
         /**
+         * 
+         * 
          * Hospitalize
-         * @param int userId
-         * @param string reason
+         * @param Int userId
+         * @param Int $duration
+         * @param String reason
+         * @return Void
+         * 
+         * 
          */
-        public function hospitalize(int $userId, int $duration, string $reason): void
+        public function hospitalize(Int $userId, Int $duration, String $reason): Void
         {
             $insertArray = [
                 'userId' => $userId,
@@ -248,5 +263,20 @@
             ];
 
             $this->updateById($userId, $updateArray);
+        }
+
+        /**
+         * 
+         * 
+         * createUserSession
+         * @param Object User
+         * @return Void
+         * 
+         * 
+         */
+        public function createUserSession (Object $user): Void
+        {
+            $_SESSION['userId'] = $user->id;
+            redirect('');
         }
     }

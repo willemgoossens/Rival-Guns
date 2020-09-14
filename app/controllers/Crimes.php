@@ -1,7 +1,6 @@
 <?php
     class Crimes extends Controller
     {
-
         public function __construct()
         {
             $this->userModel = $this->model('User');
@@ -18,34 +17,39 @@
             $this->data['user']->adminRights         = $this->adminRoleModel->getRightNamesForRole($this->data['user']->adminRole);
             $this->data['user']->conversationUpdates = $this->conversationModel->countUnreadConversations($_SESSION['userId']);
             $this->data['user']->notifications = $this->notificationModel->getUnreadNotifications($_SESSION['userId']);
-
         }
 
 
         
         /**
-         * index
+         * 
+         * 
+         * Index
+         * @param Int categoryId
+         * @return Void
+         * 
+         * 
          */
-        public function index(int $categoryId)
+        public function index( Int $categoryId ): Void
         {
-            $crimeCategory = $this->crimeCategoryModel->getSingleById($categoryId);
-            if(!$crimeCategory)
+            $crimeCategory = $this->crimeCategoryModel->getSingleById( $categoryId );
+            if( ! $crimeCategory )
             {
-              redirect('profile');
+                redirect('profile');
             }
 
             $user = &$this->data['user'];
-            if($user->health < 5)
+            if( $user->health < 5 )
             {
                 $this->data['lowHealthWarning'] = true;
             }
-            if($user->energy < 5)
+            if( $user->energy < 5 )
             {
                 $this->data['lowEnergyWarning'] = true;
             }
 
 
-            $crimes = $this->crimeModel->getByCrimeCategoryId($categoryId);
+            $crimes = $this->crimeModel->getByCrimeCategoryId( $categoryId );
 
             $this->data['crimes'] = $crimes;
             $this->data['title'] = $crimeCategory->name;
@@ -56,90 +60,92 @@
 
 
         /**
-         * commit a crime
-         * @param  int    $crimeId [description]
+         * 
+         * 
+         * Commit
+         * @param Int $crimeId
+         * @return Void
+         * 
+         * 
          */
-        public function commit(int $crimeId)
+        public function commit( Int $crimeId ): Void
         {
-
             $user = &$this->data['user'];
-            $user->stars = $this->criminalRecordModel->calculateStars($user->id);
 
-            $crime = $this->crimeModel->getSingleById($crimeId);
-            $category = $this->crimeCategoryModel->getSingleById($crime->crimeCategoryId);
+            $user->stars = $this->criminalRecordModel->calculateStars( $user->id );
 
-            if($category->mainCategory == 'Crimes')
+            $crime = $this->crimeModel->getSingleById( $crimeId );
+            $category = $this->crimeCategoryModel->getSingleById( $crime->crimeCategoryId );
+
+            if( $category->mainCategory == 'Crimes' )
             {
                 $path = "./executables/crimes/Crime" . $crime->id . ".php";
                 $className = 'Crime' . $crime->id;
             }
-            elseif($category->mainCategory == 'Mafia Jobs')
+            elseif( $category->mainCategory == 'Mafia Jobs' )
             {
                 $path = "./executables/mafiaJobs/MafiaJob" . $crime->id . ".php";
                 $className = 'MafiaJob' . $crime->id;
             }
 
-            if( !$crime
+            if( 
+                ! $crime
                 || $user->health < 5
                 || $user->energy < 5
-                || !file_exists(APPROOT . $path))
-            {
+                || !file_exists(APPROOT . $path)
+            ) {
                 redirect('profile');
             }
             
             require_once APPROOT . $path;
-            $crime = new $className($user);
+            $crime = new $className( $user );
             $crime->init();
 
             $summary = $crime->returnSummary();
 
 
-
+            //Preparing the storyline for the view
             $text = [];
-            foreach($summary["storyline"] as $turn)
+            foreach( $summary["storyline"] as $turn )
             {
                 array_push($text, ["story" => $turn["story"], "class" => $turn["class"]]);
             }
 
 
-
             $updateArray = [];
-            foreach($summary["userRewards"] as $name => $reward)
+            foreach( $summary["userRewards"] as $name => $reward )
             {
-                if(! isset($user->$name) )
+                if( ! isset($user->$name) )
                 {
                     throw new Exception("You've tried to set an unexisting user variable?", 1);          
                 }
 
-                if( $reward == 0)
+                if( $reward == 0 )
                 {
-                    unset($summary["userRewards"][$name]);
+                    unset( $summary["userRewards"][$name] );
                     break;
                 }
 
                 $user->$name += $reward;
                 $updateArray[$name] = $user->$name;
 
-                if(substr($name, -6, 6) == "Skills")
+                if( substr($name, -6, 6) == "Skills" )
                 {
-                    unset($summary["userRewards"][$name]);
-                    $abbreviatedName = substr($name, 0, -6);
+                    unset( $summary["userRewards"][$name] );
+                    $abbreviatedName = substr( $name, 0, -6 );
                     $summary["userRewards"][$abbreviatedName] = $reward;
                 }
-            }
-            
-            // Perform the database functions
-            if(!empty($updateArray))
+            }      
+            if(! empty($updateArray) )
             {
-                $this->userModel->updateById($user->id, $updateArray);
+                $this->userModel->updateById( $user->id, $updateArray );
             }
 
 
-
-            foreach($summary["crimeRecords"] as $record)
+            foreach( $summary["crimeRecords"] as $record )
             {
-                $crimeType = $this->crimeTypeModel->getSingleByName($record, 'id');
-                if(! $crimeType)
+                $crimeType = $this->crimeTypeModel->getSingleByName( $record, 'id' );
+                if( ! $crimeType )
                 {
                     throw new Exception("Yeah, well, this crime doesn't exist.", 1);          
                 }
@@ -149,28 +155,25 @@
                     "type" => $crimeType->id
                 ];
 
-                $this->criminalRecordModel->insert($insertArray);
+                $this->criminalRecordModel->insert( $insertArray );
             }
 
 
-
-
-            if($summary["arrested"])
+            if( $summary["arrested"] )
             {        
-                $arrestData = $this->userModel->arrest($user->id);
+                $arrestData = $this->userModel->arrest( $user->id );
                 $user->prisonReleaseDate = $arrestData['prisonReleaseDate'];
                 $this->data['arrestedFor'] = $arrestData['arrestedFor'];
             }
 
-
             
             $this->data["arrested"] = $summary["arrested"];
             $this->data["crimeRecords"] = $summary["crimeRecords"];
-            $this->data["storyline"] = $text;
-            
+            $this->data["storyline"] = $text;            
             $this->data["title"] = $category->name;
             $this->data["userRewards"] = $summary["userRewards"];
 
-            $this->view('crimes/commit', $this->data);
+            $this->view( 'crimes/commit', $this->data );
         }
+
     }

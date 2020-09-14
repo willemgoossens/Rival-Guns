@@ -14,15 +14,32 @@
             $this->data['user']->adminRights         = $this->adminRoleModel->getRightNamesForRole($this->data['user']->adminRole);
             $this->data['user']->conversationUpdates = $this->conversationModel->countUnreadConversations($_SESSION['userId']);
             $this->data['user']->notifications = $this->notificationModel->getUnreadNotifications($_SESSION['userId']);
-
         }
 
-        public function index ()
+        
+        /**
+         * 
+         * 
+         * Index
+         * @return Void
+         * 
+         * 
+         */
+        public function index (): void
         {
             echo "welcome to the prison page";
         }
 
-        public function inside ()
+
+        /**
+         * 
+         * 
+         * Inside
+         * @return Void
+         * 
+         * 
+         */
+        public function inside (): void
         {
             echo "You're in prison";
         }

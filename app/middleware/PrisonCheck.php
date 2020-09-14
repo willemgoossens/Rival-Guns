@@ -7,7 +7,15 @@
             $this->setVariables(...$setup);
         }
 
-        public function before(): bool
+        /**
+         * 
+         * 
+         * Before
+         * @return Bool
+         * 
+         * 
+         */
+        public function before(): Bool
         {
             $this->imprisonmentModel = $this->model('Imprisonment');
             $this->criminalRecordModel = $this->model('CriminalRecord');
@@ -15,7 +23,7 @@
 
 
             $imprisonment = $this->imprisonmentModel->getSingleByUserId($_SESSION["userId"]);
-            if(empty($imprisonment))
+            if( empty($imprisonment) )
             {
                 return true;
             }
@@ -27,7 +35,7 @@
                                ->getFlaggedUniqueById($crimeTypeIds);
 
             $interval = 0;
-            foreach($criminalRecords as $record)
+            foreach( $criminalRecords as $record )
             {                
                 $interval += $crimeTypes[$record->type]->jailTime;
             }
@@ -37,20 +45,24 @@
 
             $now = new DateTime();
 
-            if($releaseDate > $now)
+            if( $releaseDate > $now )
             {
                 // In prison
-                if( $this->controller != "prisons"
-                    || ($this->controller == "prisons" && $this->method == "index"))
-                {
+                if( 
+                    $this->controller != "prisons"
+                    || ($this->controller == "prisons" && $this->method == "index")
+                ) {
                     redirect('prison/inside');
                 }
-            }else
+            }
+            else
             {
                 $this->imprisonmentModel->deleteById($imprisonment->id);
 
-                if($this->controller == "prisons" && $this->method != "index")
-                {
+                if(
+                    $this->controller == "prisons" 
+                    && $this->method != "index"
+                ) {
                     redirect('prison/index');
                 }
             }

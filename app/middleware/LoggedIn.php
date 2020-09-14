@@ -1,23 +1,33 @@
 <?php
 
-  class LoggedIn extends Middleware
-  {
-    public function __construct(string ...$setup)
+    class LoggedIn extends Middleware
     {
-      $this->setVariables(...$setup);
-    }
+        public function __construct(string ...$setup)
+        {
+            $this->setVariables(...$setup);
+        }
 
-    public function before(): bool
-    {
-      $this->userModel = $this->model('User');
 
-      if($this->userModel->isLoggedIn())
-      {
-        return true;
-      }else
-      {
-        header("HTTP/1.1 401 Unauthorized");
-        redirect('users/login');
-      }
+        /**
+         * 
+         * 
+         * Before
+         * @return Bool
+         * 
+         * 
+         */
+        public function before(): Bool
+        {
+            $this->userModel = $this->model('User');
+
+            if( $this->userModel->isLoggedIn() )
+            {
+                return true;
+            }
+            else
+            {
+                header("HTTP/1.1 401 Unauthorized");
+                redirect('users/login');
+            }
+        } 
     }
-  }

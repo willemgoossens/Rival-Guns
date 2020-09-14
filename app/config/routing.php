@@ -10,11 +10,11 @@
     *
     **************************************/
     define('ROUTING', [
-    'profile' => 'users/myProfile',
-    "pinguins/test/(\w+)/(\d*)" => 'tests/index/$2/$1',
-    "crimes/(\d+)" => "crimes/$1",
-    "crimes" => 'crimeCategories/crimes',
-    'mafiajobs' => 'crimeCategories/mafiajobs',
-    "prison(/\w*)" => 'prisons$1',
-    "hospitalized" => 'hospitalizations/hospitalized'
+        'profile' => 'users/myProfile',
+        "pinguins/test/(\w+)/(\d*)" => 'tests/index/$2/$1',
+        "crimes/(\d+)" => "crimes/$1",
+        "crimes" => 'crimeCategories/crimes',
+        'mafiajobs' => 'crimeCategories/mafiajobs',
+        "prison(/\w*)" => 'prisons$1',
+        "hospitalized" => 'hospitalizations/hospitalized'
     ]);

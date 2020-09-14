@@ -12,12 +12,12 @@
          * 
          * 
          * deleteOldNotifications
-         * @param int userId
-         * @return void
+         * @param Int userId
+         * @return Void
          * 
          * 
          */
-        public function deleteOldNotifications(int $userId): void
+        public function deleteOldNotifications(Int $userId): Void
         {
             $this->db->query("DELETE
                                 FROM " . $this->getTableName() . "
@@ -36,15 +36,15 @@
          * 
          * 
          * getUnreadNotifications
-         * @param int userId
-         * @return int array
+         * @param Int userId
+         * @return Array
          * 
          * 
          */
-        public function getUnreadNotifications(int $userId): array
+        public function getUnreadNotifications(Int $userId): ?Array
         {
-            $count = $this->getByUserIdAndReadAt($userId, NULL);
-            return $count;
+            $return = $this->getByUserIdAndReadAt($userId, NULL);
+            return $return;
         }
 
 
@@ -52,13 +52,13 @@
          * 
          * 
          * readForUser
-         * @param int userId
-         * @param int offset
-         * @param int limit
-         * @return boolean success
+         * @param Int userId
+         * @param Int offset
+         * @param Int limit
+         * @return Boolean success
          * 
          */
-        public function readForUser(int $userId): bool
+        public function readForUser (Int $userId): Bool
         {
             $this->db->query('UPDATE ' . $this->getTableName() . '
                                 SET readAt = NOW()
@@ -74,14 +74,14 @@
          * 
          * 
          * readForNotificationIds
-         * @param array notifications
-         * @return boolean success
+         * @param Array notifications
+         * @return Bool success
          * 
          * 
          */
-        public function readForNotificationIds(array $notifications): bool
+        public function readForNotificationIds(Array $notifications): Bool
         {
-            if(empty($notifications))
+            if( empty($notifications) )
             {
                 return false;
             }
@@ -89,7 +89,7 @@
             $now = new DateTime;
             $now = $now->format('Y-m-d H:i:s');
 
-            foreach($notifications as $notification)
+            foreach( $notifications as $notification )
             {
                 $updateArray = [
                     'readAt' => $now
@@ -105,16 +105,16 @@
          * 
          * 
          * add
-         * @param int userId
-         * @param string body
-         * @param string link
-         * @param string class
+         * @param Int userId
+         * @param String body
+         * @param String link
+         * @param String class
          * 
-         * @return boolean success
+         * @return Boolean success
          * 
          * 
          */
-        public function add(int $userId, string $body, string $link = '#', string $class = 'alert-primary'): boolean
+        public function add(Int $userId, String $body, String $link = '#', String $class = 'alert-primary'): Bool
         {
             $insert = [
                 'userId' => $userId,

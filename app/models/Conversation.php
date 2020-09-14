@@ -3,133 +3,140 @@
     {
         public function __construct()
         {
-          $this->db = new Database;
-          $this->setTableName('conversations');
+            $this->db = new Database;
+            $this->setTableName('conversations');
 
-          $this->messageModel = $this->model('Message');
-          $this->userModel = $this->model('User');
+            $this->messageModel = $this->model('Message');
+            $this->userModel = $this->model('User');
         }
 
+
         /**
-        *
-        *
-        * count unread conversations for a specific user
-        * PARAM: int - userId
-        *
-        *
-        ****************************/
-        public function countUnreadConversations(int $userId)
+         * 
+         * 
+         * CountUnreadConversations
+         * @param Int userId
+         * @return Int
+         * 
+         * 
+         */
+        public function countUnreadConversations (Int $userId): Int
         {
           $this->db->query("SELECT *
-                        FROM users_unread_messages
-                        WHERE userid = :userId
-                        GROUP BY conversationid");
-          // Bind Values
+                              FROM users_unread_messages
+                              WHERE userid = :userId
+                              GROUP BY conversationid");
           $this->db->bind(':userId', $userId);
-          // Rowcount
+
           return $this->db->rowCount();
         }
 
-        /*************************
-        *
-        *
-        * check if conversation is unread for specific user
-        * PARAM: int - userId
-        * PARAM: int - conversationId
-        *
-        *
-        ****************************/
-        public function getIfConversationHasUnreadMessageForUser(int $userId, int $conversationId)
+        
+        /**
+         * 
+         * 
+         * getIfConversationsHasUnreadMessagesForUser
+         * @param Int UserId
+         * @param Int conversationId
+         * @return Bool
+         * 
+         * 
+         */
+        public function getIfConversationHasUnreadMessageForUser (Int $userId, Int $conversationId): Bool
         {
-          $this->limit(1)->db->query("SELECT *
-                                      FROM users_unread_messages
-                                      WHERE userid = :userId
-                                        AND conversationid = :conversationId");
-          // Bind Values
-          $this->db->bind(':userId', $userId);
-          $this->db->bind(':conversationId', $conversationId);
-          // Rowcount
-          if($this->db->rowCount() > 0)
-          {
-            return true;
-          }
-          else
-          {
-            return false;
-          }
+            $this->limit(1)
+                  ->db->query("SELECT *
+                                  FROM users_unread_messages
+                                  WHERE userid = :userId
+                                    AND conversationid = :conversationId");
+            $this->db->bind(':userId', $userId);
+            $this->db->bind(':conversationId', $conversationId);
+            
+            if( $this->db->rowCount() > 0 )
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
-        /*************************
-        *
-        *
-        * get the latest conversations for a specific user
-        * PARAM: int - userId
-        *
-        *
-        ****************************/
-        public function getLatestUpdatedConversationsByParticipantId(int $userId, int $limit, int $offset)
+        /**
+         * 
+         * 
+         * getLatestUpdatedConversationsByParticipantId
+         * @param Int userId
+         * @param Int limit
+         * @param Int offset
+         * @return Array
+         * 
+         * 
+         */
+        public function getLatestUpdatedConversationsByParticipantId(Int $userId, Int $limit, Int $offset): ?Array
         {
-          $conversationIds = $this->messageModel
-                                  ->limit($limit)
-                                  ->offset($offset)
-                                  ->orderBy("MAX(createdAt)", "DESC")
-                                  ->groupBy("conversationId")
-                                  ->getConversationIdInWhichUserIsInvolved($userId);
+            $conversationIds = $this->messageModel
+                                    ->limit($limit)
+                                    ->offset($offset)
+                                    ->orderBy("MAX(createdAt)", "DESC")
+                                    ->groupBy("conversationId")
+                                    ->getConversationIdInWhichUserIsInvolved($userId);
 
-          $conversations = [];
-          if(! empty($conversationIds))
-          {        
-            $conversations = $this->orderBy("id", "FIELD", $conversationIds)
-                                  ->getById($conversationIds);
-          }
+            $conversations = [];
+            if(! empty($conversationIds) )
+            {        
+                $conversations = $this->orderBy("id", "FIELD", $conversationIds)
+                                      ->getById($conversationIds);
+            }
 
-          return $conversations;
+            return $conversations;
         }
 
-        /*************************
-        *
-        *
-        * insert user conversation connections
-        * PARAM: array - insert
-        *
-        *
-        ****************************/
-        public function insertConnections(array $insertData): bool
+        /**
+         * 
+         * 
+         * insertConnections
+         * @param Array insertData
+         * @return Bool
+         */
+        public function insertConnections (Array $insertData): Bool
         {
-          $insertString = "";
-          $insertValues = [];
-          foreach($insertData as $values)
-          {
-            $insertString .= "(?, ?),";
-            $insertValues[ count($insertValues) + 1] = $values["userId"];
-            $insertValues[ count($insertValues) + 1] = $values["conversationId"];
-          }
-          $insertString = rtrim($insertString, ",");
+            $insertString = "";
+            $insertValues = [];
+            foreach( $insertData as $values )
+            {
+                $insertString .= "(?, ?),";
+                $insertValues[ count($insertValues) + 1] = $values["userId"];
+                $insertValues[ count($insertValues) + 1] = $values["conversationId"];
+            }
+            $insertString = rtrim($insertString, ",");
 
-          $this->db->query("INSERT INTO users_conversations
-                            (userid, conversationid)
-                            VALUES " . $insertString);
+            $this->db->query("INSERT INTO users_conversations
+                                (userid, conversationid)
+                                VALUES " . $insertString);
 
-          $this->db->bindArray($insertValues);
+            $this->db->bindArray($insertValues);
 
-          return $this->db->execute();
+            return $this->db->execute();
         }
+
 
         /**
         *
         *
         * Check if the user is a participant
-        * @param: int conversationId
-        * @param: int user id
+        * @param Int conversationId
+        * @param Int userId
+        * @return Int
         *
         *
-        **********************************/
-        public function checkIfUserIsParticipant(int $conversationId, int $userId)
+        */
+        public function checkIfUserIsParticipant (Int $conversationId, Int $userId): Int
         {
           $this->db->query("SELECT *
-                            FROM users_conversations
-                            WHERE conversationid = :conversationId
-                              AND userid = :userId");
+                              FROM users_conversations
+                              WHERE conversationid = :conversationId
+                                AND userid = :userId");
 
           $this->db->bind(':conversationId', $conversationId);
           $this->db->bind(':userId', $userId);
@@ -138,17 +145,18 @@
         }
 
 
-
         /**
+         * 
+         * 
          * This function gets all people in a conversation
-         * @param  int   $conversationId
-         * @return array                 An array with all userIds
+         * @param Int conversationID
+         * @return Array An array with all user IDs
          */
         public function getPeopleInConversation(int $conversationId): array
         {
             $this->db->query("SELECT userId
-                              FROM users_conversations
-                              WHERE conversationId = :conversationId");
+                                FROM users_conversations
+                                WHERE conversationId = :conversationId");
             
             $this->db->bind(":conversationId", $conversationId);
 
@@ -157,33 +165,39 @@
             return $this->userModel->getFlaggedUniqueById($userIds);
         }
 
+
         /**
+         * 
+         * 
          * This function adds the conversation, connections and the first message
-         * @param  array  $conversationInformation Array with conversation input
-         * @param  string $messageBody             The message body, will be added to the message
-         * @param  array  $participantIds          A list of all participant Ids, EXCLUDING the sender
-         * @return bool                            [description]
+         * @param  Array  $conversationInformation Array with conversation input
+         * @param  String $messageBody             The message body, will be added to the message
+         * @param  Array  $participantIds          A list of all participant Ids, EXCLUDING the sender
+         * @return Bool                            [description]
+         * 
+         * 
          */
-        public function addConversation(array $conversationInformation, string $messageBody, array $participantIds): bool
+        public function addConversation(Array $conversationInformation, String $messageBody, Array $participantIds): Bool
         {
             $conversationId = $this->insert($conversationInformation, true);
-            if(!$conversationId)
+            if( ! $conversationId )
             {
                 die("Something went wrong while creating the conversation");
             }
 
             // Adding the connections to the users
-            $userConversationConnections = array_map(function($val) use ($conversationId) 
-                                            {
-                                                return ['userId' => $val, 'conversationId' => $conversationId];
-                                            }, $participantIds);
+            $userConversationConnections = array_map(
+                function($val) use ($conversationId) 
+                {
+                    return ['userId' => $val, 'conversationId' => $conversationId];
+                }, $participantIds);
 
-            if( isset($conversationInformation['userId']))
+            if( isset($conversationInformation['userId']) )
             {
-              array_push($userConversationConnections, ['userId' => $conversationInformation['userId'], 'conversationId' => $conversationId]);
+                array_push($userConversationConnections, ['userId' => $conversationInformation['userId'], 'conversationId' => $conversationId]);
             }
             
-            if(! $this->insertConnections($userConversationConnections))
+            if( ! $this->insertConnections($userConversationConnections) )
             {
                 die("Something went wrong while creating the connections for the conversations");
             }

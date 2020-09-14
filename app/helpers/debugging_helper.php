@@ -1,10 +1,10 @@
 <?php
 
-  /****************
-  This helper has functions that can be used for debugging
-  *****************/
+    /****************
+    This helper has functions that can be used for debugging
+    *****************/
 
-  function variablePrint($var)
-  {
-    return '<pre>' . var_export($var, true) . '</pre>';
-  }
+    function variablePrint ($var)
+    {
+      return '<pre>' . var_export($var, true) . '</pre>';
+    }

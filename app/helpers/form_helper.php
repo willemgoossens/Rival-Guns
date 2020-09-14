@@ -1,17 +1,26 @@
 <?php
 
-  function getValidationClass ($inputError)
-  {
-    if(!isset($inputError))
+    /**
+     * 
+     * 
+     * getValidationClass
+     * @param Bool inputError
+     * @return String
+     * 
+     * 
+     */
+    function getValidationClass (?bool $inputError): String
     {
-      return "";
+        if(! isset($inputError))
+        {
+            return "";
+        }
+        elseif(!$inputError)
+        {
+            return "is-valid";
+        }
+        else
+        {
+            return "is-invalid";
+        }
     }
-    elseif(!$inputError)
-    {
-      return "is-valid";
-    }
-    else
-    {
-      return "is-invalid";
-    }
-  }

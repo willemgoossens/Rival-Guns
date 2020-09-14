@@ -10,16 +10,16 @@
         }
 
         
-
         /**
          * 
          * 
          * This function deletes all overdue crime records
-         * @param int userId
+         * @param Int userId
+         * @return Bool
          * 
          * 
          */
-        public function deleteOldRecords(int $userId)
+        public function deleteOldRecords(Int $userId): Bool
         {
             $this->db->query("DELETE r.* 
                               FROM criminalrecords r
@@ -34,16 +34,16 @@
         }
 
 
-
         /**
          * 
          * 
          * This function selects records for your arrest
-         * @param int userId
+         * @param Int userId
+         * @return Array selectedRecords
          * 
          * 
          */
-        public function selectArrestRecords(int $userId)
+        public function selectArrestRecords (Int $userId): Array
         {
             $alwaysConvictIds = $this->crimeTypeModel->getArrayByAlwaysConvict(1);
             $alwaysConvictString = implode(',', $alwaysConvictIds);
@@ -67,7 +67,7 @@
             $totalAmountOfRecords = $this->countByUserId($userId);
 
             $randomSelectionOfOthersForWhichConvicted = [];
-            if($arrestedForRecordsCount < $totalAmountOfRecords)
+            if( $arrestedForRecordsCount < $totalAmountOfRecords )
             {
                 $arrestedForRecordsIds = array_column($arrestedForRecords, 'id');
 
@@ -90,11 +90,12 @@
          * 
          * 
          * This function calculates the wanted level of a user
-         * @param int userId
+         * @param Int userId
+         * @return Float stars
          * 
          * 
          */
-        public function calculateStars(int $userId): float
+        public function calculateStars(Int $userId): Float
         {
             // Delete Old Records
             $this->deleteOldRecords($userId);
@@ -104,16 +105,16 @@
             $stars = 0;
             $overflow = 0;
 
-            foreach($crimeTypes as $type)
+            foreach( $crimeTypes as $type )
             {
                 $records = $this->countByType($type->id);
                 $starsAddition = $records * $type->addStars;
                 
-                if($stars < $type->addStarsUntil)
+                if( $stars < $type->addStarsUntil )
                 {
                     $stars += $starsAddition;
 
-                    if($stars > $type->addStarsUntil)
+                    if( $stars > $type->addStarsUntil )
                     {
                         $overflow += $stars - $type->addStarsUntil;
                         $stars = $type->addStarsUntil;
@@ -125,7 +126,7 @@
             // However, it's divided by 10 to reduce it's importance
             $stars += ceil($overflow / 10 * 100) / 100;
 
-            if($stars > GAME_MAX_STARS)
+            if( $stars > GAME_MAX_STARS )
             {
                 $stars = GAME_MAX_STARS;
             }

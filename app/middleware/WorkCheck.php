@@ -7,7 +7,16 @@
             $this->setVariables(...$setup);
         }
 
-        public function before(): bool
+
+        /**
+         * 
+         * 
+         * Before
+         * @return Bool
+         * 
+         * 
+         */
+        public function before(): Bool
         {
             $this->userModel = $this->model('User');
             $this->notificationModel = $this->model('Notification');
@@ -15,10 +24,10 @@
             
             $now = new DateTime();
 
-            if( isset($this->user->workingUntil)
+            if( 
+                isset($this->user->workingUntil)
                 && strtotime($this->user->workingUntil) <= $now->getTimestamp()
-            )
-            {
+            ) {
                 $max = ceil( ($this->user->charismaSkills + 1) / 100 );    
 
                 if( $max > 5 )
@@ -37,7 +46,8 @@
                 {
                     $notificationBody = "You have sold no vacuum cleaners at all...";
                     $notificationClass = "alert-warning";
-                }elseif( $amountOfVacuums == 1)
+                }
+                elseif( $amountOfVacuums == 1 )
                 {
                     $notificationBody = "You have successfully sold " . $amountOfVacuums . " vacuum cleaner and made <strong>&euro;" . $earnings . "</strong>";
                 }
@@ -52,8 +62,6 @@
                 ];
 
                 $this->notificationModel->insert($insertNotificationData);
-
-
 
                 $this->user->bank += $earnings;
                 $this->user->charismaSkills += $amountOfVacuums;

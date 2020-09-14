@@ -16,14 +16,22 @@
             $this->data['user']->adminRights         = $this->adminRoleModel->getRightNamesForRole($this->data['user']->adminRole);
             $this->data['user']->conversationUpdates = $this->conversationModel->countUnreadConversations($_SESSION['userId']);
             $this->data['user']->notifications = $this->notificationModel->getUnreadNotifications($_SESSION['userId']);
-
         }
 
-        public function hospitalized ()
+
+        /**
+         * 
+         * 
+         * Hospitalized
+         * @return Void
+         * 
+         * 
+         */
+        public function hospitalized (): Void
         {
             $user = &$this->data['user'];
 
-            $hospitalization = $this->hospitalizationModel->getSingleByUserId($user->id);
+            $hospitalization = $this->hospitalizationModel->getSingleByUserId( $user->id );
 
             $endDate = new DateTime($hospitalization->createdAt);
             $endDate->modify('+' . $hospitalization->duration . ' seconds');
@@ -32,7 +40,7 @@
 
             $this->data['interval'] =  $endDate->getTimestamp() - $now->getTimestamp();
 
-            $this->view('hospitalizations/hospitalized', $this->data);
+            $this->view( 'hospitalizations/hospitalized', $this->data );
         }
 
     }

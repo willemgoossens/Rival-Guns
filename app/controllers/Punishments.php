@@ -15,25 +15,32 @@
             $this->data['user']->adminRights         = $this->adminRoleModel->getRightNamesForRole($this->data['user']->adminRole);
             $this->data['user']->conversationUpdates = $this->conversationModel->countUnreadConversations($_SESSION['userId']);
             $this->data['user']->notifications = $this->notificationModel->getUnreadNotifications($_SESSION['userId']);
-
         }
 
 
-
         /**
-         * permanent Ban
+         * 
+         * 
+         * permanentBan
+         * @return Void
+         * 
+         * 
          */
-        public function permanent ()
+        public function permanentBan (): void
         {
             echo "You've received a permanent ban.";
         }
 
 
-
         /**
-         * temporary ban
+         * 
+         * 
+         * temporaryBan
+         * @return Void
+         * 
+         * 
          */
-        public function temporary ()
+        public function temporaryBan (): void
         {
             echo "You've received a temporary ban.";
         }

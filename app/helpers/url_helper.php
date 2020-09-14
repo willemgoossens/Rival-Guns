@@ -1,6 +1,15 @@
 <?php
-  // Simple page redirect
-  function redirect($page){
-    header('location: ' . URLROOT . '/' . $page);
-    exit();
-  }
+    /**
+     * 
+     * 
+     * Redirect
+     * @param String url
+     * @return Void
+     * 
+     * 
+     */
+    function redirect(String $url): Void
+    {
+        header('location: ' . URLROOT . '/' . $url);
+        exit();
+    }

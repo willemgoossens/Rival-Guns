@@ -7,7 +7,16 @@
       $this->setVariables(...$setup);
     }
 
-    public function before(): bool
+
+    /**
+     * 
+     * 
+     * Before
+     * @return Bool
+     * 
+     * 
+     */
+    public function before(): Bool
     {
         $this->userModel = $this->model('User');
         $user = $this->userModel->getSingleById($_SESSION["userId"]);
@@ -17,22 +26,22 @@
         
         $now = new DateTime();
 
-        if($hospitalization)
+        if( $hospitalization )
         {
             $hos = $hospitalization;
             $hos->endTime = new DateTime($hos->createdAt);
             $hos->endTime->modify('+' . $hos->duration . ' seconds');
             
-            if($hos->endTime->getTimestamp() < $now->getTimestamp())
+            if( $hos->endTime->getTimestamp() < $now->getTimestamp() )
             {
                 $user->health += ($hos->duration / 60) * GAME_HEALTH_INCREASE_PER_MINUTE_HOSPITAL;
-                if($user->health > 100)
+                if( $user->health > 100 )
                 {
                     $user->health = 100;
                 }
 
                 $user->energy += ($hos->duration / 60) * GAME_ENERGY_INCREASE_PER_MINUTE_HOSPITAL;
-                if($user->energy > 100)
+                if( $user->energy > 100 )
                 {
                     $user->energy = 100;
                 }
@@ -42,9 +51,10 @@
             }
             else
             {
-                if($this->controller != "hospitalizations" 
-                   || $this->method != "hospitalized")
-                {
+                if(
+                    $this->controller != "hospitalizations" 
+                    || $this->method != "hospitalized"
+                ) {
                     redirect('hospitalized');
                 }
             }
@@ -53,7 +63,7 @@
         }
         else
         {
-            if($user->health == 0)
+            if( $user->health == 0 )
             {
                 $insertArray = [
                     'userId' => $user->id,
@@ -65,7 +75,7 @@
                 redirect('hospitalized');
             }
 
-            if($this->controller == "hospitalizations")
+            if( $this->controller == "hospitalizations" )
             {
                 redirect('');
             }
@@ -74,13 +84,13 @@
             $difference = $now->getTimestamp() - $user->lastHealthCheck;
 
             $user->health += ($difference / 60) * GAME_HEALTH_INCREASE_PER_MINUTE_HOSPITAL;
-            if($user->health > 100)
+            if( $user->health > 100 )
             {
                 $user->health = 100;
             }
 
             $user->energy += ($difference / 60) * GAME_ENERGY_INCREASE_PER_MINUTE_HOSPITAL;
-            if($user->energy > 100)
+            if( $user->energy > 100 )
             {
                 $user->energy = 100;
             }

@@ -8,8 +8,16 @@
         protected $api;
         protected $controller;
         protected $method;
-        // Load model
-        protected function model($model)
+        
+
+        /**
+         * 
+         * 
+         * loadModel
+         * @param String modelName
+         * @return Object
+         */
+        protected function model(String $model): Object
         {
             // Require model file
             require_once APPROOT . '/models/' . $model . '.php';
@@ -21,12 +29,17 @@
 
 
         /**
+         * 
+         * 
          * setVariables
-         * @param string api
-         * @param string controller
-         * @param string method
+         * @param String api
+         * @param String controller
+         * @param String method
+         * @return Void
+         * 
+         * 
          */
-        protected function setVariables(string $api, string $controller, string $method)
+        protected function setVariables(String $api, String $controller, String $method): Void
         {
             $this->api = $api;
             $this->controller = lcfirst($controller);
@@ -36,14 +49,18 @@
 
 
         /**
+         * 
+         * 
          * shouldRunMiddleware
          * @return bool shouldRun
+         * 
+         * 
          */
-        public function shouldRunMiddleware(): bool
+        public function shouldRunMiddleware (): bool
         {
             $shouldRun = MIDDLEWARE[get_class($this)]['runByDefault'];
 
-            if( !isset(MIDDLEWARE[get_class($this)]['exceptions']) )
+            if(! isset(MIDDLEWARE[get_class($this)]['exceptions']) )
             {
                 return $shouldRun;
             }
@@ -53,9 +70,10 @@
             $controllerName = $apiText . $this->controller;
             $controllerMethodName = $apiText . $this->controller . '/' . $this->method;
             
-            if( in_array( $controllerName, MIDDLEWARE[get_class($this)]['exceptions']) 
-                || in_array( $controllerMethodName , MIDDLEWARE[get_class($this)]['exceptions']) )
-            {
+            if( 
+                in_array( $controllerName, MIDDLEWARE[get_class($this)]['exceptions']) 
+                || in_array( $controllerMethodName , MIDDLEWARE[get_class($this)]['exceptions']) 
+            ) {
                 $shouldRun = !$shouldRun;
             }
 
@@ -63,27 +81,30 @@
         }
 
 
-
         /**
+         * 
+         * 
          * run sequenced middleware
-         * @param string $stage - before or after
-         * @return bool ran
+         * @param String $stage - before or after
+         * @return Bool ran
+         * 
+         * 
          */
         public function runSequencedMiddleware(string $stage): bool
         {
-            if(isset(MIDDLEWARE[get_class($this)]["sequenced"]))
+            if( isset(MIDDLEWARE[get_class($this)]["sequenced"]) )
             {
-                foreach(MIDDLEWARE[get_class($this)]["sequenced"] as $sequenced)
+                foreach( MIDDLEWARE[get_class($this)]["sequenced"] as $sequenced )
                 {
                     require_once APPROOT . "/middleware/" . $sequenced . ".php";
           
                     $sequencedMiddleware = new $sequenced($this->api, $this->controller, $this->method);
           
-                    if(method_exists($sequencedMiddleware, $stage))
+                    if( method_exists($sequencedMiddleware, $stage) )
                     {            
                         $continue = $sequencedMiddleware->$stage();
                         
-                        if(! $continue)
+                        if( ! $continue )
                         {
                           return false;
                         }

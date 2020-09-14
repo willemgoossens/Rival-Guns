@@ -1,703 +1,736 @@
 <?php
-  /****************************
-  *
-  *
-  * This file contains the base model
-  *
-  *
-  *****************************/
-  abstract class Model 
-  {
-    /* Variables */
-    protected $db;
-
-    private $tableName = NULL;
-    private $tableColumns = [];
-
-
-
-    public function __construct()
+    /****************************
+    *
+    *
+    * This file contains the base model
+    *
+    *
+    *****************************/
+    abstract class Model 
     {
-      // Completely empty, just for the sake of not getting a deprication message because our we have a method named Model
-    }
+        /* Variables */
+        protected $db;
+
+        private $tableName = NULL;
+        private $tableColumns = [];
 
 
 
-    /***********************
-    *
-    *
-    * magic function Call
-    * @PARAM: method
-    * @PARAM: arguments
-    *
-    *
-    ************************/
-    public function __call($method, $arguments)
-    {
-
-        if(substr($method, 0, 5) == "getBy")
+        public function __construct()
         {
-          $methodVariables = substr($method, 5);
-          return $this->getBy($methodVariables, $arguments);
-        }
-        elseif(substr($method, 0, 18) == "getFlaggedUniqueBy")
-        {
-          $methodVariables = substr($method, 18);
-          return $this->getFlaggedUniqueBy($methodVariables, $arguments);
-        }
-        elseif(substr($method, 0, 11) == "getSingleBy")
-        {
-          $methodVariables = substr($method, 11);
-          return $this->getSingleBy($methodVariables, $arguments);
-        }
-        elseif(substr($method, 0, 10) == "getArrayBy")
-        {
-          $methodVariables = substr($method, 10);
-          return $this->getArrayBy($methodVariables, $arguments);
-        }
-        elseif(substr($method, 0, 7) == "countBy")
-        {
-          $methodVariables = substr($method, 7);
-          return $this->countBy($methodVariables, $arguments);
-        }
-        elseif(substr($method, 0, 8) == "existsBy")
-        {
-          $methodVariables = substr($method, 8);
-          return $this->existsBy($methodVariables, $arguments);
+            // Completely empty, just for the sake of not getting a deprication message because our we have a method named Model
         }
 
-        throw new \Exception("Uh Oh! " . $method . " is not a real function for this class (" . get_class($this) . ")" , 1);
 
-    }
 
-    /***********************
-    *
-    *
-    * exists By
-    * @PARAM: string method
-    * @PARAM: arguments
-    *
-    *
-    ************************/
-    private function existsBy(string $method, array $arguments)
-    {
-      $this->prepareDynamicQuery($method, $arguments);
-
-      if($this->db->single())
-      {
-        return true;
-      }
-      else
-      {
-        return false;
-      }
-    }
-
-    /***********************
-    *
-    *
-    * count By
-    * @PARAM: string method
-    * @PARAM: arguments
-    *
-    *
-    ************************/
-    private function countBy(string $method, array $arguments)
-    {
-      $this->prepareDynamicQuery($method, $arguments);
-
-      return $this->db->rowCount();
-    }
-
-    /***********************
-    *
-    *
-    * get single object by
-    * @PARAM: string method
-    * @PARAM: arguments
-    *
-    *
-    ************************/
-    private function getSingleBy(string $method, array $arguments)
-    {
-      $this->prepareDynamicQuery($method, $arguments);
-
-      return $this->db->single();
-    }
-
-    /***********************
-    *
-    *
-    * get array of objects with unique value as first key (most often id) (PDO::FETCH_UNIQUE)
-    * @PARAM: string method
-    * @PARAM: arguments
-    *
-    *
-    ************************/
-    private function getFlaggedUniqueBy(string $method, array $arguments)
-    {
-      $this->prepareDynamicQuery($method, $arguments);
-
-      return $this->db->resultSet(true);
-    }
-
-    /***********************
-    *
-    *
-    * get array of objects
-    * @PARAM: string method
-    * @PARAM: arguments
-    *
-    *
-    ************************/
-    private function getBy(string $method, array $arguments)
-    {
-      $this->prepareDynamicQuery($method, $arguments);
-
-      return $this->db->resultSet();
-    }
-
-    /***********************
-    *
-    *
-    * get array with arrays
-    * @PARAM: string method
-    * @PARAM: arguments
-    *
-    *
-    ************************/
-    private function getArrayBy(string $method, array $arguments)
-    {
-      $this->prepareDynamicQuery($method, $arguments);
-
-      return $this->db->resultSetArray();
-    }
-
-    /***********************
-    *
-    *
-    * prepare Dynamic Query
-    * @PARAM: string - method
-    * @PARAM: array  - arguments
-    *
-    *
-    ************************/
-    private function prepareDynamicQuery(string $method, array $arguments)
-    {
-      // Strip the underscores just to do some checkups
-      $methodStrippedFromUnderscores = str_replace("_", "", $method);
-      $onlyColumns = preg_split("/(And(?=[A-Z]))|(Or(?=[A-Z]))|(Not(?=[A-Z]))/", $methodStrippedFromUnderscores, -1, PREG_SPLIT_NO_EMPTY);
-      $onlyColumns = array_map('lcfirst', $onlyColumns);
-      $different = array_diff($onlyColumns, $this->tableColumns);
-      if(! empty($different))
-      {
-        throw new \Exception("One of or more of the columns (" . print_r($different) . ") that you try to select by doesn't exist in database table: " . $this->tableName, 1);
-      }
-
-      if(count($onlyColumns) > count($arguments))
-      {
-        throw new \Exception("One or more selectors doesn't have data. " . count($onlyColumns) . " selectors given but only " . count($arguments) . " input values.", 1);
-      }
-      // We survived the tests
-      // Now split up of the entire query
-      $fullSplit = preg_split("/(And(?=[A-Z]))|(Or(?=[A-Z]))|(Not(?=[A-Z]))|(_)/", $method, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-      $selectors = array_map('lcfirst', $fullSplit);
-
-      $selectorValues = array_slice($arguments, 0, count($onlyColumns));
-      $returnVariables = array_slice($arguments, count($onlyColumns));
-
-      // We've done the dissection of the function name
-      // Time to turn it into a query
-      $whereString = "";
-      $toBindValues = [];
-
-      $i = 0;
-      $valuesIteration = 0;
-      do {
-        if($selectors[$i] == "_")
+        /***********************
+        *
+        *
+        * magic function Call
+        * @Param String method
+        * @Param Array arguments
+        * @Return Mixed
+        *
+        *
+        ************************/
+        public function __call (String $method, Array $arguments)
         {
-          if(empty($whereString)
-            || substr($whereString, -1) == "(")
-          {
-            $whereString .= "(";
-          }
-          elseif(substr($whereString, -1) == ")")
-          {
-            $whereString .= ")";
-          }
-          elseif($selectors[$i - 1] == "and"
-                ||  $selectors[$i - 1] == "or")
-          {
-            $whereString .= "(";
-          }
-          elseif(!isset($selectors[$i + 1])
-                 || $selectors[$i + 1] == "and"
-                 || $selectors[$i + 1] == "or"
-                 || $selectors[$i + 1] == "_")
-          {
-            $whereString .= ")";
-          }else
-          {
-            throw new \Exception("Uh oh, it seems like something went wrong with your Dynamic Function in " . get_class($this), 1);
-          }
-          continue;
-        }
-        elseif($selectors[$i] == "and")
-        {
-          $whereString .= " AND ";
-          continue;
-        }
-        elseif($selectors[$i] == "or")
-        {
-          $whereString .= " OR ";
-          continue;
-        }else
-        {
-          if($selectors[$i] == "not")
-          {
-            $notQueryAddition = " NOT";
-            $i++;
-
-            if(is_bool($selectorValues[$valuesIteration]))
+            if( substr($method, 0, 5) == "getBy" )
             {
-              $notQueryAddition = "!";
+                $methodVariables = substr($method, 5);
+                return $this->getBy($methodVariables, $arguments);
             }
-          }
-          else
-          {
-            $notQueryAddition = "";
-          }
-
-          if($selectorValues[$valuesIteration] === NULL)
-          {
-            $whereString .= $selectors[$i] . " IS" . $notQueryAddition . " NULL";
-          }
-          elseif(is_bool($selectorValues[$valuesIteration]))
-          {
-            $whereString .= $selectors[$i] . " " . $notQueryAddition . "= " . ($selectorValues[$valuesIteration] ? 1 : 0) . " ";
-          }
-          else
-          {
-            if(is_array($selectorValues[$valuesIteration]))
+            elseif( substr($method, 0, 18) == "getFlaggedUniqueBy" )
             {
-              $repeater = count($selectorValues[$valuesIteration]) - 1;
-              if($repeater < 0)
-              {
-                $placeholders = 'NULL';
-              }
-              else
-              {
-                $placeholders = '?'.str_repeat(',?', $repeater);
-              }
-              array_push($toBindValues, ...$selectorValues[$valuesIteration]);
+                $methodVariables = substr($method, 18);
+                return $this->getFlaggedUniqueBy($methodVariables, $arguments);
+            }
+            elseif( substr($method, 0, 11) == "getSingleBy" )
+            {
+                $methodVariables = substr($method, 11);
+                return $this->getSingleBy($methodVariables, $arguments);
+            }
+            elseif( substr($method, 0, 10) == "getArrayBy" )
+            {
+                $methodVariables = substr($method, 10);
+                return $this->getArrayBy($methodVariables, $arguments);
+            }
+            elseif( substr($method, 0, 7) == "countBy" )
+            {
+                $methodVariables = substr($method, 7);
+                return $this->countBy($methodVariables, $arguments);
+            }
+            elseif( substr($method, 0, 8) == "existsBy" )
+            {
+                $methodVariables = substr($method, 8);
+                return $this->existsBy($methodVariables, $arguments);
+            }
+
+            throw new \Exception("Uh Oh! " . $method . " is not a real function for this class (" . get_class($this) . ")" , 1);
+        }
+
+
+        /**
+        *
+        *
+        * exists By
+        * @Param String method
+        * @Param Array arguments
+        * @Return Bool
+        *
+        *
+        */
+        private function existsBy(String $method, Array $arguments): Bool
+        {
+            $this->prepareDynamicQuery($method, $arguments);
+
+            if( $this->db->single() )
+            {
+                return true;
             }
             else
             {
-              $placeholders = '?';
-              array_push($toBindValues, $selectorValues[$valuesIteration]);
+                return false;
             }
-            $whereString .= $selectors[$i] . $notQueryAddition . " IN (" . $placeholders . ") ";
-          }
         }
 
-        $valuesIteration++;
-      } while ($i++ < count($selectors) - 1);
 
-
-      if(! empty($returnVariables))
-      {
-        if(! in_array("id", $returnVariables))
+        /**
+        *
+        *
+        * count By
+        * @Param String method
+        * @Param Array arguments
+        * @Return Int
+        *
+        *
+        */
+        private function countBy (String $method, Array $arguments): Int
         {
-          array_unshift($returnVariables, "id");
+            $this->prepareDynamicQuery($method, $arguments);
+
+            return $this->db->rowCount();
         }
 
-        $returnVariables = implode(",", $returnVariables);
-      }
-      else {
-        $returnVariables = "*";
-      }
 
-
-      $this->db->query("SELECT " . $returnVariables . "
-                        FROM " . $this->tableName . "
-                        WHERE " . $whereString);
-
-      foreach($toBindValues as $key => $value)
-      {
-        $this->db->bind($key + 1, $value);
-      }
-    }
-
-
-    /***********************
-    *
-    *
-    * set the Table name for the current model
-    * @PARAM: table Name
-    *
-    *
-    ************************/
-    protected function setTableName($value)
-    {
-      $this->tableName = $value;
-
-      $this->db->query("SELECT 1 FROM " . $this->tableName . " LIMIT 1");
-      // Check if the table exists
-      if($this->db->execute())
-      {
-        // Get a list of the table Columns
-        $this->setTableColumns();
-      }
-    }
-
-
-    /**
-     * 
-     * 
-     * getTableName
-     * @return string tableName
-     * 
-     * 
-     */
-    protected function getTableName()
-    {
-        return $this->tableName;
-    }
-
-    /***********************
-    *
-    *
-    * get the columns for the table of this model
-    *
-    *
-    ************************/
-    protected function setTableColumns()
-    {
-      $this->db->query("SELECT `COLUMN_NAME`
-                        FROM `INFORMATION_SCHEMA`.`COLUMNS`
-                        WHERE `TABLE_SCHEMA`= :dbName
-                            AND `TABLE_NAME`= :tableName");
-
-      $this->db->bind(':dbName', DB_NAME);
-      $this->db->bind(':tableName', $this->tableName);
-
-      $columnNamesOriginal = $this->db->resultSet();
-
-      $this->tableColumns = array_map(function($array){
-                                return $array->COLUMN_NAME;
-                              }, $columnNamesOriginal);
-    }
-
-
-
-    /**
-     * load another model
-     * @param string - model
-     */
-    protected function model(string $model)
-    {
-      // Require model file
-      require_once APPROOT . '/models/' . $model . '.php';
-
-      // Instatiate model
-      return new $model();
-    }
-
-
-
-
-
-
-
-
-    /***********************
-    *
-    *
-    * insert
-    * @PARAM: array - values
-    * @PARAM: false - return the insert id or not
-    *
-    *
-    ************************/
-    public function insert(array $values, bool $returnId = false)
-    {
-      $columnsString = "";
-      $valuesString = "";
-
-      foreach($values as $key => $value)
-      {
-        $columnsString .= $key . ", ";
-        $valuesString  .= ":" . $key . ", ";
-      }
-      $columnsString = rtrim($columnsString, ", ");
-      $valuesString = rtrim($valuesString, ", ");
-
-      $this->db->query("INSERT INTO " . $this->tableName . "
-                        (" . $columnsString . ")
-                        VALUES (" . $valuesString . ")");
-
-      $this->db->bindArray($values);
-
-      if($returnId)
-      {
-        return $this->db->returnId();
-      }else {
-        return $this->db->execute();
-      }
-    }
-
-
-    /***********************
-    *
-    *
-    * insert
-    * @PARAM: array values
-    *
-    *
-    ************************/
-    public function insertArray(array $rows)
-    {
-      $firstKey = key($rows);
-      // Check if it's a multilevel array
-      if(!is_array($rows[$firstKey]))
-      {
-        $rows = ["0" => $rows];
-      }
-
-      $columnsString = "";
-      $totalValuesString = "";
-      $valuesArray = [];
-
-      foreach($rows[$firstKey] as $key => $value)
-      {
-        $columnsString .= $key . ", ";
-      }
-      $columnsString = rtrim($columnsString, ", ");
-
-      foreach($rows as $values)
-      {
-        $valuesString = "(";
-
-        foreach($values as $key => $value)
+        /**
+        *
+        *
+        * getSingleBy
+        * @Param String method
+        * @Param Array arguments
+        * @Return Mixed
+        *
+        *
+        */
+        private function getSingleBy (String $method, Array $arguments)
         {
-          $valuesString  .= "? , ";
-          $valuesArray[ count($valuesArray) + 1 ] = $value;
+            $this->prepareDynamicQuery($method, $arguments);
+
+            return $this->db->single();
         }
-        $valuesString = rtrim($valuesString, ", ");
-        $totalValuesString .= $valuesString . "),";
-      }
-
-      $totalValuesString = rtrim($totalValuesString, ",");
-
-      $this->db->query("INSERT INTO " . $this->tableName . "
-                        (" . $columnsString . ")
-                        VALUES " . $totalValuesString);
-
-      $this->db->bindArray($valuesArray);
-
-      return $this->db->execute();
-    }
 
 
-    /**
-    *
-    *
-    * update By Id
-    * @param: int id
-    * @param: array values
-    *
-    *
-    ***/
-    public function updateById(int $id, array $values): bool
-    {
-      $valuesQuery = "";
+        /**
+        *
+        *
+        * getFlaggedUniqueBy
+        * @Param String method
+        * @Param Array arguments
+        * @Return Array
+        *
+        *
+        */
+        private function getFlaggedUniqueBy(string $method, array $arguments): ?Array
+        {
+            $this->prepareDynamicQuery($method, $arguments);
 
-      foreach($values as $key => $value)
-      {
-        $valuesQuery .= $key . " = :" . $key . ", ";
-      }
-      $valuesQuery = rtrim($valuesQuery, ", ");
+            return $this->db->resultSet(true);
+        }
 
-      $this->db->query("UPDATE
-                      " . $this->tableName . "
-                      SET " . $valuesQuery . "
-                      WHERE id = :id
-                      LIMIT 1");
+        /**
+        *
+        *
+        * getBy
+        * @Param String method
+        * @Param Array arguments
+        * @Return Array
+        *
+        *
+        */
+        private function getBy(String $method, Array $arguments): ?Array
+        {
+            $this->prepareDynamicQuery($method, $arguments);
 
-      $this->db->bindArray($values);
-      $this->db->bind(":id", $id);
-
-      $return = $this->db->execute();
-
-      return $return;
-    }
-
-
-    /***********************
-    *
-    *
-    * delete By Id
-    * @PARAM: int id
-    *
-    *
-    ************************/
-    public function deleteById(int $id): bool
-    {
-      $this->db->query("DELETE FROM
-                      " . $this->tableName. "
-                      WHERE id = :id
-                      LIMIT 1");
-
-      $this->db->bind(":id", $id);
-
-      $return = $this->db->execute();
-
-      return $return;
-    }
+            return $this->db->resultSet();
+        }
 
 
-    /***********************
-    *
-    *
-    * count Rows
-    *
-    *
-    ************************/
-    public function count(): int
-    {
-      $this->db->query("SELECT id
-                      FROM " . $this->tableName);
+        /**
+        *
+        *
+        * get Array By
+        * @Param String method
+        * @Param Array arguments
+        * @Return Array
+        *
+        *
+        */
+        private function getArrayBy(String $method, Array $arguments): ?Array
+        {
+            $this->prepareDynamicQuery($method, $arguments);
 
-      $return = $this->db->rowCount();
-
-      return $return;
-    }
-
-
-    /***********************
-    *
-    *
-    * get
-    *
-    *
-    ************************/
-    public function get(bool $unique = false)
-    {
-      $this->db->query("SELECT *
-                      FROM " . $this->tableName);
-
-      $return = $this->db->resultSet($unique);
-
-      return $return;
-    }
+            return $this->db->resultSetArray();
+        }
 
 
+        /**
+        *
+        *
+        * prepareDynamicQuery
+        * @Param String method
+        * @Param Array arguments
+        * @Return Void
+        *
+        *
+        */
+        private function prepareDynamicQuery (String $method, Array $arguments): Void
+        {
+            // Strip the underscores just to do some checkups
+            $methodStrippedFromUnderscores = str_replace("_", "", $method);
+            $onlyColumns = preg_split("/(And(?=[A-Z]))|(Or(?=[A-Z]))|(Not(?=[A-Z]))/", $methodStrippedFromUnderscores, -1, PREG_SPLIT_NO_EMPTY);
+            $onlyColumns = array_map('lcfirst', $onlyColumns);
+            $different = array_diff($onlyColumns, $this->tableColumns);
+            if( ! empty($different) )
+            {
+                throw new \Exception("One of or more of the columns (" . print_r($different) . ") that you try to select by doesn't exist in database table: " . $this->tableName, 1);
+            }
+
+            if( count($onlyColumns) > count($arguments) )
+            {
+                throw new \Exception("One or more selectors doesn't have data. " . count($onlyColumns) . " selectors given but only " . count($arguments) . " input values.", 1);
+            }
+            // We survived the tests
+            // Now split up of the entire query
+            $fullSplit = preg_split("/(And(?=[A-Z]))|(Or(?=[A-Z]))|(Not(?=[A-Z]))|(_)/", $method, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+            $selectors = array_map('lcfirst', $fullSplit);
+
+            $selectorValues = array_slice($arguments, 0, count($onlyColumns));
+            $returnVariables = array_slice($arguments, count($onlyColumns));
+
+            // We've done the dissection of the function name
+            // Time to turn it into a query
+            $whereString = "";
+            $toBindValues = [];
+
+            $i = 0;
+            $valuesIteration = 0;
+            do 
+            {
+                if($selectors[$i] == "_")
+                {
+                    if(
+                        empty($whereString)
+                        || substr($whereString, -1) == "("
+                    ) {
+                        $whereString .= "(";
+                    }
+                    elseif( substr($whereString, -1) == ")" )
+                    {
+                        $whereString .= ")";
+                    }
+                    elseif(
+                        $selectors[$i - 1] == "and"
+                        ||    $selectors[$i - 1] == "or"
+                    ) {
+                        $whereString .= "(";
+                    }
+                    elseif(
+                        ! isset($selectors[$i + 1])
+                        || $selectors[$i + 1] == "and"
+                        || $selectors[$i + 1] == "or"
+                        || $selectors[$i + 1] == "_"
+                    ) {
+                        $whereString .= ")";
+                    }
+                    else
+                    {
+                        throw new \Exception("Uh oh, it seems like something went wrong with your Dynamic Function in " . get_class($this), 1);
+                    }
+                    continue;
+                }
+                elseif( $selectors[$i] == "and" )
+                {
+                    $whereString .= " AND ";
+                    continue;
+                }
+                elseif( $selectors[$i] == "or" )
+                {
+                    $whereString .= " OR ";
+                    continue;
+                }
+                else
+                {
+                    if( $selectors[$i] == "not" )
+                    {
+                        $notQueryAddition = " NOT";
+                        $i++;
+
+                        if( is_bool($selectorValues[$valuesIteration]) )
+                        {
+                            $notQueryAddition = "!";
+                        }
+                    }
+                    else
+                    {
+                        $notQueryAddition = "";
+                    }
+
+                    if( $selectorValues[$valuesIteration] === NULL )
+                    {
+                        $whereString .= $selectors[$i] . " IS" . $notQueryAddition . " NULL";
+                    }
+                    elseif( is_bool($selectorValues[$valuesIteration]) )
+                    {
+                        $whereString .= $selectors[$i] . " " . $notQueryAddition . "= " . ($selectorValues[$valuesIteration] ? 1 : 0) . " ";
+                    }
+                    else
+                    {
+                        if( is_array($selectorValues[$valuesIteration]) )
+                        {
+                            $repeater = count($selectorValues[$valuesIteration]) - 1;
+                            if( $repeater < 0 )
+                            {
+                                $placeholders = 'NULL';
+                            }
+                            else
+                            {
+                                $placeholders = '?'.str_repeat(',?', $repeater);
+                            }
+                            array_push($toBindValues, ...$selectorValues[$valuesIteration]);
+                        }
+                        else
+                        {
+                            $placeholders = '?';
+                            array_push($toBindValues, $selectorValues[$valuesIteration]);
+                        }
+                        $whereString .= $selectors[$i] . $notQueryAddition . " IN (" . $placeholders . ") ";
+                    }
+                }
+
+                $valuesIteration++;
+            } 
+            while ( $i++ < count($selectors) - 1 );
 
 
-    // -------------------------------------------------------
-    //  UNDERNEATH ARE THE DATABASE HELPER FUNCTION
-    // -------------------------------------------------------
+            if( ! empty($returnVariables) )
+            {
+                if( ! in_array("id", $returnVariables) )
+                {
+                    array_unshift($returnVariables, "id");
+                }
 
-    /***********************
-    *
-    *
-    * limit
-    * @PARAM: int - limit
-    *
-    *
-    ************************/
-    public function limit (int $limit)
-    {
-      $this->db->limit($limit);
-
-      return $this;
-    }
+                $returnVariables = implode(",", $returnVariables);
+            }
+            else 
+            {
+                $returnVariables = "*";
+            }
 
 
-    /***********************
-    *
-    *
-    * getLimit
-    *
-    *
-    ************************/
-    public function getLimit()
-    {
-      return $this->db->getLimit();
-    }
+            $this->db->query("SELECT " . $returnVariables . "
+                                                FROM " . $this->tableName . "
+                                                WHERE " . $whereString);
+
+            foreach($toBindValues as $key => $value)
+            {
+                $this->db->bind($key + 1, $value);
+            }
+        }
 
 
-    /***********************
-    *
-    *
-    * offset
-    * @PARAM: int - offset
-    *
-    *
-    ************************/
-    public function offset (int $offset)
-    {
-      $this->db->offset($offset);
+        /***********************
+        *
+        *
+        * set the Table name for the current model
+        * @PARAM: table Name
+        *
+        *
+        ************************/
+        protected function setTableName($value)
+        {
+            $this->tableName = $value;
 
-      return $this;
-    }
-
-
-    /***********************
-    *
-    *
-    * getOffset
-    *
-    *
-    ************************/
-    public function getOffset()
-    {
-      return $this->db->getOffset();
-    }
+            $this->db->query("SELECT 1 FROM " . $this->tableName . " LIMIT 1");
+            // Check if the table exists
+            if($this->db->execute())
+            {
+                // Get a list of the table Columns
+                $this->setTableColumns();
+            }
+        }
 
 
-    /***********************
-    *
-    *
-    * order By
-    * @PARAM: string variable
-    * @PARAM: optional - string - order
-    *
-    *
-    ************************/
-    public function orderBy (...$variables)
-    {
-      $this->db->orderBy(...$variables);
+        /**
+         * 
+         * 
+         * getTableName
+         * @return String tableName
+         * 
+         * 
+         */
+        protected function getTableName(): String
+        {
+            return $this->tableName;
+        }
 
-      return $this;
-    }
+        
+        /**
+         * 
+         * 
+         * setTableColumns
+         * @return Void
+         * 
+         * 
+         */
+        protected function setTableColumns(): Void
+        {
+            $this->db->query("SELECT `COLUMN_NAME`
+                                  FROM `INFORMATION_SCHEMA`.`COLUMNS`
+                                  WHERE `TABLE_SCHEMA`= :dbName
+                                      AND `TABLE_NAME`= :tableName");
+
+            $this->db->bind(':dbName', DB_NAME);
+            $this->db->bind(':tableName', $this->tableName);
+
+            $columnNamesOriginal = $this->db->resultSet();
+
+            $this->tableColumns = array_map(
+                                      function($array)
+                                      {
+                                          return $array->COLUMN_NAME;
+                                      }, $columnNamesOriginal);
+        }
 
 
-    /***********************
-    *
-    *
-    * getOrderBy
-    *
-    *
-    ************************/
-    public function getOrderBy ()
-    {
-      return $this->db->getOrderBy();
-    }
+        /**
+         * 
+         * Model
+         * @param String modelName
+         * @return Object
+         * 
+         * 
+         */
+        protected function model(String $model): Object
+        {
+            // Require model file
+            require_once APPROOT . '/models/' . $model . '.php';
+
+            // Instatiate model
+            return new $model();
+        }
 
 
-    /***********************
-    *
-    *
-    * group by
-    * @PARAM: string group by
-    *
-    *
-    ************************/
-    public function groupBy (string $groupBy)
-    {
-      $this->db->groupBy($groupBy);
+        /**
+         * 
+         * 
+         * Insert
+         * @param Array values
+         * @param Bool returnId
+         * @return Mixed
+         * 
+         * 
+         */
+        public function insert(array $values, bool $returnId = false)
+        {
+            $columnsString = "";
+            $valuesString = "";
 
-      return $this;
-    }
+            foreach( $values as $key => $value )
+            {
+                $columnsString .= $key . ", ";
+                $valuesString    .= ":" . $key . ", ";
+            }
+            $columnsString = rtrim($columnsString, ", ");
+            $valuesString = rtrim($valuesString, ", ");
+
+            $this->db->query("INSERT INTO " . $this->tableName . "
+                                                (" . $columnsString . ")
+                                                VALUES (" . $valuesString . ")");
+
+            $this->db->bindArray($values);
+
+            if( $returnId )
+            {
+                return $this->db->returnId();
+            }
+            else 
+            {
+                return $this->db->execute();
+            }
+        }
+
+
+        /**
+         * 
+         * 
+         * insertArrays
+         * @param Array rows
+         * @return Bool
+         * 
+         * 
+         */
+        public function insertArray(Array $rows): Bool
+        {
+            $firstKey = key($rows);
+            // Check if it's a multilevel array
+            if( ! is_array($rows[$firstKey]) )
+            {
+                $rows = ["0" => $rows];
+            }
+
+            $columnsString = "";
+            $totalValuesString = "";
+            $valuesArray = [];
+
+            foreach( $rows[$firstKey] as $key => $value )
+            {
+                $columnsString .= $key . ", ";
+            }
+            $columnsString = rtrim($columnsString, ", ");
+
+            foreach( $rows as $values )
+            {
+                $valuesString = "(";
+
+                foreach( $values as $key => $value )
+                {
+                    $valuesString    .= "? , ";
+                    $valuesArray[ count($valuesArray) + 1 ] = $value;
+                }
+                $valuesString = rtrim($valuesString, ", ");
+                $totalValuesString .= $valuesString . "),";
+            }
+
+            $totalValuesString = rtrim($totalValuesString, ",");
+
+            $this->db->query("INSERT INTO " . $this->tableName . "
+                                  (" . $columnsString . ")
+                                  VALUES " . $totalValuesString);
+
+            $this->db->bindArray($valuesArray);
+
+            return $this->db->execute();
+        }
+
+
+        /**
+        *
+        *
+        * update By Id
+        * @param Int Id
+        * @param Array values
+        * @param Bool
+        *
+        *
+        ***/
+        public function updateById (Int $id, Array $values): Bool
+        {
+            $valuesQuery = "";
+
+            foreach( $values as $key => $value )
+            {
+                $valuesQuery .= $key . " = :" . $key . ", ";
+            }
+            $valuesQuery = rtrim($valuesQuery, ", ");
+
+            $this->db->query("UPDATE
+                                " . $this->tableName . "
+                                SET " . $valuesQuery . "
+                                WHERE id = :id
+                                LIMIT 1");
+
+            $this->db->bindArray($values);
+            $this->db->bind(":id", $id);
+
+            $return = $this->db->execute();
+
+            return $return;
+        }
+
+
+        /**
+         * 
+         * 
+         * deleteById
+         * @param Int Id
+         * @return Bool
+         * 
+         * 
+         */
+        public function deleteById(int $id): Bool
+        {
+            $this->db->query("DELETE FROM
+                                " . $this->tableName. "
+                                WHERE id = :id
+                                LIMIT 1");
+
+            $this->db->bind(":id", $id);
+
+            $return = $this->db->execute();
+
+            return $return;
+        }
+
+
+        /**
+         * 
+         * 
+         * Count the total rows for model
+         * @return Int
+         * 
+         * 
+         */
+        public function count(): int
+        {
+            $this->db->query("SELECT id
+                                FROM " . $this->tableName);
+
+            $return = $this->db->rowCount();
+
+            return $return;
+        }
+
+
+        /**
+         * 
+         * 
+         * getAll
+         * @param Bool Unique [Optional]
+         * @return Array
+         * 
+         * 
+         */
+        public function get(bool $unique = false): Array
+        {
+            $this->db->query("SELECT *
+                                FROM " . $this->tableName);
+
+            $return = $this->db->resultSet($unique);
+
+            return $return;
+        }
+
+
+
+
+        // -------------------------------------------------------
+        //    UNDERNEATH ARE THE DATABASE HELPER FUNCTION
+        // -------------------------------------------------------
+
+        /**
+         * 
+         * 
+         * Limit
+         * @param Int limit
+         * @return Self
+         * 
+         * 
+         */
+        public function limit (int $limit): Self
+        {
+            $this->db->limit($limit);
+
+            return $this;
+        }
+
+        /**
+         * 
+         * 
+         * getLimit
+         * @return Int
+         * 
+         * 
+         */
+        public function getLimit (): ?Int
+        {
+            return $this->db->getLimit();
+        }
+
+
+        /**
+         * 
+         * 
+         * Offset
+         * @param Int offset
+         * @return Self
+         * 
+         * 
+         */
+        public function offset (int $offset): Self
+        {
+            $this->db->offset($offset);
+
+            return $this;
+        }
+
+        /**
+         * 
+         * 
+         * GetOffset
+         * @return Int
+         * 
+         * 
+         */
+        public function getOffset(): ?Int
+        {
+            return $this->db->getOffset();
+        }
+
+        /**
+         * 
+         * 
+         * Limit
+         * @param Mixed variables
+         * @return Self
+         * 
+         * 
+         */
+        public function orderBy (...$variables): Self
+        {
+            $this->db->orderBy(...$variables);
+
+            return $this;
+        }
+
+
+        /**
+         * 
+         * 
+         * getOrderBy
+         * @return Array
+         * 
+         * 
+         */
+        public function getOrderBy (): ?Array
+        {
+            return $this->db->getOrderBy();
+        }
+
+
+        /**
+         * 
+         * 
+         * groupBy
+         * @param String Group By
+         * @return Self
+         * 
+         * 
+         */
+        public function groupBy (string $groupBy): Self
+        {
+            $this->db->groupBy($groupBy);
+
+            return $this;
+        }
 }

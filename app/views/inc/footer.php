@@ -2,11 +2,11 @@
 
 <!-- Footer -->
 <footer class="footer font-small special-color-dark pt-4">
-  <!-- Copyright -->
-  <div class="footer-copyright text-center py-3">© <?php echo date("Y"); ?> Copyright:
-    <a href="<?php echo COPYRIGHT_URL; ?>"> <?php echo COPYRIGHT; ?></a>
-  </div>
-  <!-- Copyright -->
+    <!-- Copyright -->
+    <div class="footer-copyright text-center py-3">© <?php echo date("Y"); ?> Copyright:
+        <a href="<?php echo COPYRIGHT_URL; ?>"> <?php echo COPYRIGHT; ?></a>
+    </div>
+    <!-- Copyright -->
 </footer>
 <!-- Footer -->
 
@@ -16,21 +16,24 @@
 <script src="<?php echo URLROOT; ?>/js/inc/navbar.js"></script>
 
 <?php
-  if(isset($data['CDNFiles'])) {
-    foreach($data['CDNFiles'] as $cdn) {
-      if($cdn == 'TempusDominus') {
-        echo "<script type=\"text/javascript\" src=\"https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.min.js\"></script>";
-        echo "<script type=\"text/javascript\" src=\"https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.0-alpha14/js/tempusdominus-bootstrap-4.min.js\"></script>";
-      }
+    if( isset($data['CDNFiles']) ) 
+    {
+        foreach( $data['CDNFiles'] as $cdn ) 
+        {
+            if( $cdn == 'TempusDominus' ) 
+            {
+                echo "<script type=\"text/javascript\" src=\"https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.min.js\"></script>";
+                echo "<script type=\"text/javascript\" src=\"https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.0-alpha14/js/tempusdominus-bootstrap-4.min.js\"></script>";
+            }
+        }
     }
-  }
-  
-  if(file_exists(ROOT . '/public/js/' .  $view . '.js'))
-  {
-      echo "<script type=\"module\" src=\"" . URLROOT . "/js/" . $view . ".js\"></script>";
-  }
+    
+    if( file_exists(ROOT . '/public/js/' .    $view . '.js') )
+    {
+            echo "<script type=\"module\" src=\"" . URLROOT . "/js/" . $view . ".js\"></script>";
+    }
 
-  runQuillEditor();
+    runQuillEditor();
 ?>
 </body>
 </html>

@@ -11,14 +11,35 @@
 
         protected $user;
 
-        protected function setEnding(int $ending)
+
+        /**
+         * 
+         * 
+         * setEnding
+         * @param Int EndingNr
+         * @return Void
+         * 
+         * 
+         */
+        protected function setEnding (Int $endingNr): Void
         {
-            $this->testPHPUnitEnding = $ending;
+            $this->testPHPUnitEnding = $endingNr;
         }
 
-        protected function addUserReward(string $key, $value)
+
+        /**
+         * 
+         * 
+         * addUserReward
+         * @param String key
+         * @param Int value
+         * @return Void
+         * 
+         * 
+         */
+        protected function addUserReward (String $key, Int $value): Void
         {
-            if(isset($this->userRewards[$key]))
+            if( isset($this->userRewards[$key]) )
             {
                 $this->userRewards[$key] += $value;
             }
@@ -29,8 +50,17 @@
         }
 
 
-
-        protected function addSummary(string $story, string $class = "info")
+        /**
+         * 
+         * 
+         * addSummary
+         * @param String story
+         * @param String class
+         * @return Void
+         * 
+         * 
+         */
+        protected function addSummary (String $story, String $class = "info"): Void
         {
             $array = [
                 "story" => $story,
@@ -41,34 +71,52 @@
         }
 
 
-
-        protected function addCrimeRecord(string $crime)
+        /**
+         * 
+         * 
+         * addCrimeRecord
+         * @param String Crime
+         * @return Void
+         * 
+         * 
+         */
+        protected function addCrimeRecord (String $crime): Void
         {
             $key = count($this->crimeRecords);
             $this->crimeRecords[$key] = $crime;
         }
 
 
-
         /** 
+         * 
+         * 
          * arrest the user
+         * @return Void
+         * 
+         * 
          */
-        public function arrest()
+        public function arrest (): Void
         {
             $this->arrested = true;
             $this->items = [];
         }
-
         
 
         /**
+         * 
+         * 
          * this function checks whether the user should be arrested.
+         * @param String Story
+         * @return Bool
+         * 
+         * 
          */
-        public function checkArrested(string $story = "A police officer recognizes you and peppersprays you... <br/><strong>You've got time!</strong>")
+        public function checkArrested (String $story = "A police officer recognizes you and peppersprays you... <br/><strong>You've got time!</strong>"): Bool
         {
-            if(! isset($this->user->stars)
-                || $this->user->stars < 1)
-            {
+            if(
+                ! isset($this->user->stars)
+                || $this->user->stars < 1
+            ) {
                 return false;
             }
 
@@ -76,7 +124,7 @@
             $luck = rand(0, $luckUpperLimit);
             $stars = $this->user->stars * 100;
 
-            if($stars < $luck)
+            if( $stars < $luck )
             {
                 return false;
             }
@@ -90,9 +138,14 @@
 
 
         /**
-         * return all data
+         * 
+         * 
+         * return Summary
+         * @return Array
+         * 
+         * 
          */
-        public function returnSummary()
+        public function returnSummary (): array
         {
             $summary = new stdClass();
             
