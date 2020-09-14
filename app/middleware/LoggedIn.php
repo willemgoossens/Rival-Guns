@@ -25,7 +25,7 @@
                 return true;
             }
             else
-            { die("test");
+            {
                 header("HTTP/1.1 401 Unauthorized");
                 redirect('users/login');
             }
