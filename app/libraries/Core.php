@@ -72,6 +72,7 @@
             $this->loadBeforeMiddleware();
 
             $this->instantiatedController = new $this->currentControllerWithNamespace;
+            call_user_func([$this->instantiatedController, 'init']);
 
             $r  = new \ReflectionMethod($this->currentControllerWithNamespace, $this->currentMethod);
             if( $r->getNumberOfRequiredParameters() > count($this->params) )

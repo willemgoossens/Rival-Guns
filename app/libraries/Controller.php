@@ -8,6 +8,27 @@
     {
         public $data = [];
         
+
+        /**
+         * 
+         * 
+         * initialize
+         * @return Void
+         * 
+         * 
+         */
+        public function init(): Void
+        {
+            if( $this->userModel->isLoggedIn() )
+            {
+                // Set the sessions for the nav bar
+                $this->data['user']                      = $this->userModel->getSingleById($_SESSION['userId']);
+                $this->data['user']->adminRights         = $this->adminRoleModel->getRightNamesForRole($this->data['user']->adminRole);
+                $this->data['user']->conversationUpdates = $this->conversationModel->countUnreadConversations($this->data['user']->id);
+                $this->data['user']->notifications       = $this->notificationModel->getUnreadNotifications($this->data['user']->id);
+            }
+        }
+
         
         /**
          * 
