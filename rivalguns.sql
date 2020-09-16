@@ -530,6 +530,7 @@ LOCK TABLES `propertycategories` WRITE;
 /*!40000 ALTER TABLE `propertycategories` DISABLE KEYS */;
 INSERT INTO `propertycategories` VALUES (1,'Shack',1,500);
 INSERT INTO `propertycategories` VALUES (2,'House',0,20000);
+INSERT INTO `propertycategories` VALUES (3,'Villa',0,1000000);
 /*!40000 ALTER TABLE `propertycategories` ENABLE KEYS */;
 UNLOCK TABLES;
 
