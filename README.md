@@ -109,4 +109,4 @@ Execute them as following:
   $summary = $crime->returnSummary();
 ```
 
-The summary can then be used for display purposes or to make database changes. 
+The summary can then be used for display purposes or to make database changes.
