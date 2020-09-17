@@ -192,6 +192,7 @@
         {
             foreach( MIDDLEWARE as $middlewareName => $executionUrls )
             {
+                $middlewareName = MIDDLEWARE_NAMESPACE . $middlewareName;
                 if( 
                     method_exists($middlewareName, "after")
                     && $this->middleware[$middlewareName]->shouldRunMiddleware()
@@ -219,7 +220,7 @@
         */
         public function returnControllerData (): Array
         {
-            return $this->currentController->data;
+            return $this->instantiatedController->data;
         }
 
         /**
