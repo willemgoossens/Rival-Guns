@@ -45,7 +45,7 @@
                         $user->energy = 100;
                     }
 
-                    $this->userModel->updateById($user->id, ["health" => $user->health, "energy" => $user->energy, "lastHealthCheck" => $now->format('Y-m-d H:i:s')]);
+                    $this->userModel->updateById($user->id, ["health" => $user->health, "energy" => $user->energy, "lastCheckedAt" => $now->format('Y-m-d H:i:s')]);
                     $this->hospitalizationModel->deleteById($hos->id);
                 }
                 else
@@ -79,8 +79,8 @@
                     redirect('');
                 }
 
-                $user->lastHealthCheck = strtotime($user->lastHealthCheck);
-                $difference = $now->getTimestamp() - $user->lastHealthCheck;
+                $user->lastCheckedAt = strtotime($user->lastCheckedAt);
+                $difference = $now->getTimestamp() - $user->lastCheckedAt;
 
                 $user->health += ($difference / 60) * GAME_HEALTH_INCREASE_PER_MINUTE_HOSPITAL;
                 if( $user->health > 100 )
@@ -94,7 +94,7 @@
                     $user->energy = 100;
                 }
 
-                $this->userModel->updateById($user->id, ["health" => $user->health, "energy" => $user->energy, "lastHealthCheck" => $now->format('Y-m-d H:i:s')]);
+                $this->userModel->updateById($user->id, ["health" => $user->health, "energy" => $user->energy, "lastCheckedAt" => $now->format('Y-m-d H:i:s')]);
             }
 
             return true;

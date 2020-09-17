@@ -105,6 +105,32 @@ INSERT INTO `adminroles_adminrights` VALUES (12,1);
 UNLOCK TABLES;
 
 --
+-- Table structure for table `businesscategories`
+--
+
+DROP TABLE IF EXISTS `businesscategories`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `businesscategories` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `profitPerDay` int(11) DEFAULT NULL,
+  `launderingAmountPerDay` int(11) DEFAULT NULL,
+  `isLegal` tinyint(1) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `businesscategories`
+--
+
+LOCK TABLES `businesscategories` WRITE;
+/*!40000 ALTER TABLE `businesscategories` DISABLE KEYS */;
+/*!40000 ALTER TABLE `businesscategories` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `conversationreports`
 --
 
@@ -436,8 +462,6 @@ CREATE TABLE `notifications` (
 
 LOCK TABLES `notifications` WRITE;
 /*!40000 ALTER TABLE `notifications` DISABLE KEYS */;
-INSERT INTO `notifications` VALUES (32,2,'You have sold no vacuum cleaners at all...','2020-09-15 19:13:37','/locations/hoovers','alert-warning','2020-09-14 18:55:10');
-INSERT INTO `notifications` VALUES (33,2,'You have successfully sold 1 vacuum cleaner and made <strong>&euro;40</strong>','2020-09-15 19:13:37','/locations/hoovers','alert-success','2020-09-14 22:52:17');
 /*!40000 ALTER TABLE `notifications` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -519,7 +543,7 @@ CREATE TABLE `propertycategories` (
   `allowPaymentByCash` tinyint(1) NOT NULL DEFAULT 0,
   `price` int(20) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -593,7 +617,7 @@ CREATE TABLE `users` (
   `enduranceSkills` int(9) NOT NULL DEFAULT 0,
   `health` decimal(5,2) unsigned NOT NULL DEFAULT 100.00,
   `inJailUntil` datetime NOT NULL,
-  `lastHealthCheck` datetime NOT NULL DEFAULT current_timestamp(),
+  `lastCheckedAt` datetime NOT NULL DEFAULT current_timestamp(),
   `energy` decimal(5,2) NOT NULL DEFAULT 100.00,
   `password` varchar(255) NOT NULL,
   `pistolSkills` int(9) NOT NULL DEFAULT 0,
@@ -617,7 +641,7 @@ CREATE TABLE `users` (
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 INSERT INTO `users` VALUES (1,'testaccount1',NULL,0,0,101,0,0,50,0,0,0,'test1@test.com',0,100.00,'0000-00-00 00:00:00','2020-05-15 21:02:02',100.00,'$2y$10$gx/3veekeiaiGWAE8CFE0.dB0GgpHUi/5sV31lc3YSZFTTADp/uUG',0,'',0,0,0,0,NULL,'2019-02-16 20:14:36');
-INSERT INTO `users` VALUES (2,'admin',4,10,103,381,0,0,8194,52,500,0,'admin@test.com',0,100.00,'2020-08-28 18:27:10','2020-09-16 23:07:27',100.00,'$2y$10$eX0GEcmxokWdNbhsUpI25.GKpDqvySB1JbvUPS7Q.hS2Fdb/TlAd.',1,'',0,0,0,0,NULL,'2019-03-02 21:39:08');
+INSERT INTO `users` VALUES (2,'admin',4,10,103,381,0,0,8194,52,500,0,'admin@test.com',0,100.00,'2020-08-28 18:27:10','2020-09-17 21:31:55',100.00,'$2y$10$eX0GEcmxokWdNbhsUpI25.GKpDqvySB1JbvUPS7Q.hS2Fdb/TlAd.',1,'',0,0,0,0,NULL,'2019-03-02 21:39:08');
 INSERT INTO `users` VALUES (4,'testaccount2',NULL,0,0,0,0,0,69,5,0,0,'test2@test.com',0,100.00,'0000-00-00 00:00:00','2020-05-15 17:09:13',98.70,'$2y$10$kCorgsWvSQczBp16VjbIn.BK7S.nG2T/itHBEjjnVtOg9m94CREnW',0,'a906e303a164fd74e00dbd2a63815bba',0,0,0,0,NULL,'2020-03-24 18:56:36');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -778,4 +802,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-09-16 23:10:24
+-- Dump completed on 2020-09-17 21:42:59
