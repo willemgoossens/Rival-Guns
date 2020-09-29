@@ -16,21 +16,45 @@
     </p>
 
     <?php
-        foreach($data['propertyCategories'] as $categoryId => $category):
+        foreach($data['propertyCategories'] as $propertyCategoryId => $propertyCategory):
     ?>
         <div class="card mb-3">
             <div class="card-body">
                 <h5 class="card-title">
-                    <?php echo $category->name; ?>
+                    <?php echo $propertyCategory->name; ?>
                 </h5>
                 <p class="card-text font-italic">
-                    &euro;<?php echo $category->price; ?>
+                    &euro;<?php echo $propertyCategory->price; ?>
                 </p>
 
+                Can serve as:
+                <ul class="list-group mb-1">
+                    <?php foreach($propertyCategory->businessCategoryIds as $businessCategoryId): ?>
+                        <?php $businessCategory = $data['businessCategories'][$businessCategoryId]; ?>
+                        <li class="list-group-item" data-toggle="tooltip">
+                            <?php echo $businessCategory->name; ?>&nbsp;
+                            <?php if($businessCategory->name != 'House'): ?>
+                                <small>
+                                    <i>
+                                        <?php echo isset($businessCategory->profitPerDay) ? 'Income: &euro;' . $businessCategory->profitPerDay * $propertyCategory->generationBonus : ''; ?>
+                                        <?php echo isset($businessCategory->launderingAmountPerDay) ? ' Max. advised laundering amount : &euro;' . $businessCategory->launderingAmountPerDay * $propertyCategory->generationBonus : ''; ?>
+                                    </i>
+                                </small>
+                            <?php else: ?>
+                                <small>
+                                    <i>
+                                        <?php echo ($propertyCategory->generationBonus != 1) ? 'Health & Energy restoration bonus: ' . ( ($propertyCategory->generationBonus - 1) * 100 ) . '%' : ''; ?>
+                                    </i>
+                                </small>
+                            <?php endif; ?>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+
                 <form action="<?php echo URLROOT; ?>/locations/realEstate" method="post">
-                    <input type="number" name="propertyCategoryId" value="<?php echo $categoryId;?>" class="d-none">
+                    <input type="number" name="propertyCategoryId" value="<?php echo $propertyCategoryId;?>" class="d-none">
                     <?php 
-                        if($category->allowPaymentByCash)
+                        if($propertyCategory->allowPaymentByCash)
                         {
                             echo '<button type="submit" name="payByCash" class="btn btn-info mr-sm-2 mr-1">Pay by cash</button>';
                         }

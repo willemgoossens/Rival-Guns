@@ -211,6 +211,10 @@
             $user = &$this->data['user'];
 
             $propertyCategories = $this->propertyCategoryModel->get( true );
+            foreach( $propertyCategories as $categoryId => &$category )
+            {
+                $category->businessCategoryIds = $this->propertyCategoryModel->getBusinessCategoryIdsForId( $categoryId );
+            }
 
             if( $_SERVER['REQUEST_METHOD'] == 'POST' )
             {
@@ -293,6 +297,7 @@
                 }
             }
 
+            $this->data['businessCategories'] = $this->businessCategoryModel->get( true );
             $this->data['propertyCategories'] = $propertyCategories;
             $this->view( 'locations/realEstate', $this->data );
         }

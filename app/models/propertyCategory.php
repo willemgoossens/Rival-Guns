@@ -10,4 +10,25 @@
             $this->db = new Database;
             $this->setTableName('propertycategories');
         }
+
+        /**
+         * 
+         * 
+         * getBusinessCategoriesForId
+         * @param int propertyCategoryId
+         * @return array businessCategories
+         * 
+         * 
+         */
+        public function getBusinessCategoryIdsForId ( Int $propertyCategoryId ): Array
+        {
+            $this->db->query("SELECT businessCategoryId
+                                        FROM propertycategories_businesscategories
+                                        WHERE propertyCategoryId = :propertyCategoryId");
+            $this->db->bind( ':propertyCategoryId', $propertyCategoryId );
+
+            $categoryIds = $this->db->resultSetArray();
+
+            return $categoryIds;
+        }
     }

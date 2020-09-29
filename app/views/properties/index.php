@@ -13,11 +13,11 @@
         else:
             foreach($data['user']->properties as $property):
     ?>
-                <a href="<?php echo URLROOT . '/properties/visit/' . $property->id; ?>">
+                <a href="<?php echo URLROOT . "/properties\/" . $property->id; ?>">
                     <div class="card mb-3">
                         <div class="card-body">
                             <h5 class="card-title">
-                                <?php echo $data['propertyCategories'][$property->propertyCategoryId]->name . ' (' . $property->id . ')'; ?>
+                                <?php echo $data['propertyCategories'][$property->propertyCategoryId]->name . ' (#' . $property->id . ')'; ?>
                             </h5>
                         </div>
                     </div>
