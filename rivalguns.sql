@@ -114,11 +114,13 @@ DROP TABLE IF EXISTS `businesscategories`;
 CREATE TABLE `businesscategories` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
+  `installationCosts` int(10) unsigned NOT NULL DEFAULT 0,
+  `installationTime` int(10) unsigned NOT NULL,
   `profitPerDay` int(11) DEFAULT NULL,
   `launderingAmountPerDay` int(11) DEFAULT NULL,
   `isLegal` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -127,8 +129,9 @@ CREATE TABLE `businesscategories` (
 
 LOCK TABLES `businesscategories` WRITE;
 /*!40000 ALTER TABLE `businesscategories` DISABLE KEYS */;
-INSERT INTO `businesscategories` VALUES (1,'House',NULL,NULL,1);
-INSERT INTO `businesscategories` VALUES (2,'Nightstore',200,500,1);
+INSERT INTO `businesscategories` VALUES (1,'House',0,60,NULL,NULL,1);
+INSERT INTO `businesscategories` VALUES (2,'Nightstore',500,300,200,500,1);
+INSERT INTO `businesscategories` VALUES (3,'Accountant office',1000,600,1000,10000,1);
 /*!40000 ALTER TABLE `businesscategories` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -504,13 +507,19 @@ DROP TABLE IF EXISTS `properties`;
 CREATE TABLE `properties` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `userId` int(11) NOT NULL,
+  `businessCategoryId` int(11) DEFAULT NULL,
+  `installingUntil` datetime DEFAULT NULL,
   `propertyCategoryId` int(11) NOT NULL,
   `createdAt` datetime NOT NULL DEFAULT current_timestamp(),
+  `totalProfit` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `totalLaundered` bigint(20) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `userId` (`userId`),
   KEY `propertyCategoryId` (`propertyCategoryId`),
+  KEY `businessCategoryId` (`businessCategoryId`),
   CONSTRAINT `properties_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `properties_ibfk_2` FOREIGN KEY (`propertyCategoryId`) REFERENCES `propertycategories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `properties_ibfk_3` FOREIGN KEY (`businessCategoryId`) REFERENCES `businesscategories` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `properties_ibfk_4` FOREIGN KEY (`propertyCategoryId`) REFERENCES `propertycategories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -520,15 +529,15 @@ CREATE TABLE `properties` (
 
 LOCK TABLES `properties` WRITE;
 /*!40000 ALTER TABLE `properties` DISABLE KEYS */;
-INSERT INTO `properties` VALUES (1,2,1,'2020-09-10 23:04:12');
-INSERT INTO `properties` VALUES (2,2,1,'2020-09-10 23:06:28');
-INSERT INTO `properties` VALUES (3,2,1,'2020-09-14 14:49:58');
-INSERT INTO `properties` VALUES (4,2,1,'2020-09-14 18:40:17');
-INSERT INTO `properties` VALUES (5,2,1,'2020-09-14 18:42:39');
-INSERT INTO `properties` VALUES (6,2,1,'2020-09-14 18:42:54');
-INSERT INTO `properties` VALUES (7,2,1,'2020-09-14 18:46:25');
-INSERT INTO `properties` VALUES (8,2,1,'2020-09-14 18:47:03');
-INSERT INTO `properties` VALUES (9,2,1,'2020-09-14 19:57:32');
+INSERT INTO `properties` VALUES (1,2,1,'2020-09-29 22:15:50',3,'2020-09-10 23:04:12',0,0);
+INSERT INTO `properties` VALUES (2,2,2,NULL,4,'2020-09-10 23:06:28',0,0);
+INSERT INTO `properties` VALUES (3,2,NULL,NULL,1,'2020-09-14 14:49:58',0,0);
+INSERT INTO `properties` VALUES (4,2,NULL,NULL,1,'2020-09-14 18:40:17',0,0);
+INSERT INTO `properties` VALUES (5,2,NULL,NULL,1,'2020-09-14 18:42:39',0,0);
+INSERT INTO `properties` VALUES (6,2,NULL,NULL,1,'2020-09-14 18:42:54',0,0);
+INSERT INTO `properties` VALUES (7,2,NULL,NULL,1,'2020-09-14 18:46:25',0,0);
+INSERT INTO `properties` VALUES (8,2,NULL,NULL,1,'2020-09-14 18:47:03',0,0);
+INSERT INTO `properties` VALUES (9,2,NULL,NULL,1,'2020-09-14 19:57:32',0,0);
 /*!40000 ALTER TABLE `properties` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -544,6 +553,7 @@ CREATE TABLE `propertycategories` (
   `name` varchar(255) NOT NULL,
   `allowPaymentByCash` tinyint(1) NOT NULL DEFAULT 0,
   `price` int(20) NOT NULL,
+  `generationBonus` decimal(3,2) NOT NULL DEFAULT 1.00,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -554,10 +564,10 @@ CREATE TABLE `propertycategories` (
 
 LOCK TABLES `propertycategories` WRITE;
 /*!40000 ALTER TABLE `propertycategories` DISABLE KEYS */;
-INSERT INTO `propertycategories` VALUES (1,'Shack',1,500);
-INSERT INTO `propertycategories` VALUES (2,'House',0,20000);
-INSERT INTO `propertycategories` VALUES (3,'Villa',0,1000000);
-INSERT INTO `propertycategories` VALUES (4,'Downtown business estate',0,50000);
+INSERT INTO `propertycategories` VALUES (1,'Shack',1,500,1.00);
+INSERT INTO `propertycategories` VALUES (2,'House',0,20000,1.00);
+INSERT INTO `propertycategories` VALUES (3,'Villa',0,1000000,1.10);
+INSERT INTO `propertycategories` VALUES (4,'Downtown business estate',0,50000,1.00);
 /*!40000 ALTER TABLE `propertycategories` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -588,6 +598,7 @@ INSERT INTO `propertycategories_businesscategories` VALUES (4,2);
 INSERT INTO `propertycategories_businesscategories` VALUES (2,1);
 INSERT INTO `propertycategories_businesscategories` VALUES (1,1);
 INSERT INTO `propertycategories_businesscategories` VALUES (3,1);
+INSERT INTO `propertycategories_businesscategories` VALUES (4,3);
 /*!40000 ALTER TABLE `propertycategories_businesscategories` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -674,7 +685,7 @@ CREATE TABLE `users` (
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 INSERT INTO `users` VALUES (1,'testaccount1',NULL,0,0,101,0,0,50,0,0,0,'test1@test.com',0,100.00,'0000-00-00 00:00:00','2020-05-15 21:02:02',100.00,'$2y$10$gx/3veekeiaiGWAE8CFE0.dB0GgpHUi/5sV31lc3YSZFTTADp/uUG',0,'',0,0,0,0,NULL,'2019-02-16 20:14:36');
-INSERT INTO `users` VALUES (2,'admin',4,10,103,381,0,0,8194,52,500,0,'admin@test.com',0,100.00,'2020-08-28 18:27:10','2020-09-17 22:15:11',100.00,'$2y$10$eX0GEcmxokWdNbhsUpI25.GKpDqvySB1JbvUPS7Q.hS2Fdb/TlAd.',1,'',0,0,0,0,NULL,'2019-03-02 21:39:08');
+INSERT INTO `users` VALUES (2,'admin',4,10,1003,381,0,0,8194,52,500,0,'admin@test.com',0,100.00,'2020-08-28 18:27:10','2020-09-29 22:39:01',100.00,'$2y$10$eX0GEcmxokWdNbhsUpI25.GKpDqvySB1JbvUPS7Q.hS2Fdb/TlAd.',1,'',0,0,0,0,NULL,'2019-03-02 21:39:08');
 INSERT INTO `users` VALUES (4,'testaccount2',NULL,0,0,0,0,0,69,5,0,0,'test2@test.com',0,100.00,'0000-00-00 00:00:00','2020-05-15 17:09:13',98.70,'$2y$10$kCorgsWvSQczBp16VjbIn.BK7S.nG2T/itHBEjjnVtOg9m94CREnW',0,'a906e303a164fd74e00dbd2a63815bba',0,0,0,0,NULL,'2020-03-24 18:56:36');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -835,4 +846,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-09-17 22:15:59
+-- Dump completed on 2020-09-29 22:44:35
