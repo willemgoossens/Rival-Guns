@@ -22,9 +22,9 @@
 
             <form action="<?php echo URLROOT; ?>/locations/hoovers" method="post">
                 <?php 
-                    if($data['user']->workingUntil != null)
+                    if( $data['existingJob'] )
                     {
-                        echo '<div class="alert alert-info">You\'re working until ' . $data['user']->workingUntil . '</div>';
+                        echo '<div class="alert alert-info">You\'re working until ' . $data['existingJob']->workingUntil . '</div>';
                     }
                     else
                     {

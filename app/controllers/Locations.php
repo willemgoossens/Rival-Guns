@@ -135,10 +135,11 @@
         public function Hoovers (): Void
         {
             $user = &$this->data['user'];
+            $existingJob = $this->jobModel->getSingleByUserId( $user->id );
 
             if( isset($_POST['work']) )
             {
-                if( isset($user->workingUntil)
+                if( $existingJob
                     || $user->energy < 20 )
                 {
                     // The user is already working or his energy is too low, this shouldn't be possible
@@ -146,20 +147,19 @@
                 }
                 else
                 {
-                    $futureTimestamp = new \DateTime();
-                    $futureTimestamp->modify( '+15 minutes' );
+                    $this->jobModel->createHooversJob( $user->id );
+                    $existingJob = $this->jobModel->getSingleByUserId( $user->id );
+                    $workingUntil = new \DateTime($existingJob->workingUntil);
 
-                    $user->workingUntil = $futureTimestamp->format( 'Y-m-d H:i:s' );
                     $user->energy -= 20;
 
-                    $updateArray = [
-                        'workingUntil' => $user->workingUntil,
+                    $updateUserArray = [
                         'energy' => $user->energy
                     ];
 
-                    $this->userModel->updateById( $user->id, $updateArray );
+                    $this->userModel->updateById($user->id, $updateUserArray);
 
-                    flash( 'hoovers_work', 'You\'re working until ' . $futureTimestamp->format('H:i:s') . '!' );
+                    flash( 'hoovers_work', 'You\'re working until ' . $workingUntil->format('H:i:s') . '!' );
                 }
             }
 
@@ -193,6 +193,8 @@
                     flash( 'hoovers_launder', 'You\'ve laundered $' . $amount . ' and received $' . $reducedAmount . ' on your bankaccount.' );
                 }
             }
+
+            $this->data['existingJob'] = $existingJob;
 
             $this->view( 'locations/hoovers', $this->data );
         }
