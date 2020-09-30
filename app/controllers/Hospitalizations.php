@@ -18,8 +18,7 @@
 
             $hospitalization = $this->hospitalizationModel->getSingleByUserId( $user->id );
 
-            $endDate = new \DateTime($hospitalization->createdAt);
-            $endDate->modify('+' . $hospitalization->duration . ' seconds');
+            $endDate = new \DateTime( $hospitalization->hospitalizedUntil );
 
             $now = new \DateTime();
 

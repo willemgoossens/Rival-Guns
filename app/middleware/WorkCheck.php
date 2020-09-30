@@ -24,8 +24,10 @@
             
             $now = new \DateTime();
             
-            if( strtotime( $job->workingUntil ) <= $now->getTimestamp() ) 
-            {
+            if( 
+                $job
+                && strtotime( $job->workingUntil ) <= $now->getTimestamp() 
+            ) {
                 $this->jobModel->finishJobById( $job->id );
             }
 

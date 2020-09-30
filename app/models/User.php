@@ -245,21 +245,24 @@
          * 
          * 
          */
-        public function hospitalize(Int $userId, Int $duration, String $reason): Void
+        public function hospitalize( Int $userId, Int $duration, String $reason ): Void
         {
+            $hospitalizedUntil = new \DateTime;
+            $hospitalizedUntil->modify( '+' . $duration . ' seconds');
+
             $insertArray = [
                 'userId' => $userId,
-                'duration' => $duration,
+                'hospitalizedUntil' => $hospitalizedUntil->format( 'Y-m-d H:i:s' ),
                 'reason' => $reason
             ];
 
             $this->hospitalizationModel->insert($insertArray);
 
-            $updateArray = [
-                'workingUntil' => null
-            ];
-
-            $this->updateById($userId, $updateArray);
+            $job = $this->jobModel->getSingleByUserId( $userId, 'id' );
+            if( $job )
+            {
+                $this->jobModel->deleteById( $job->id );
+            }
         }
 
         /**

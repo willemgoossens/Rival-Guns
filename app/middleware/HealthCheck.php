@@ -28,28 +28,58 @@
             if( $hospitalization )
             {
                 $hos = $hospitalization;
-                $hos->endTime = new \DateTime($hos->createdAt);
-                $hos->endTime->modify('+' . $hos->duration . ' seconds');
-                
-                if( $hos->endTime->getTimestamp() < $now->getTimestamp() )
-                {
-                    $user->health += ($hos->duration / 60) * GAME_HEALTH_INCREASE_PER_MINUTE_HOSPITAL;
+                $hos->hospitalizedUntil = new \DateTime($hos->hospitalizedUntil);
+
+                $user->lastCheckedAt = new \DateTime($user->lastCheckedAt);
+
+                if( $hos->hospitalizedUntil < $now )
+                {                
+                    $difference = $hos->hospitalizedUntil->getTimestamp() - $user->lastCheckedAt->getTimestamp();
+    
+                    $user->health += ($difference / 60) * GAME_HEALTH_INCREASE_PER_MINUTE_HOSPITAL;                    
                     if( $user->health > 100 )
                     {
                         $user->health = 100;
                     }
-
-                    $user->energy += ($hos->duration / 60) * GAME_ENERGY_INCREASE_PER_MINUTE_HOSPITAL;
+    
+                    $user->energy += ($difference / 60) * GAME_ENERGY_INCREASE_PER_MINUTE_HOSPITAL;
                     if( $user->energy > 100 )
                     {
                         $user->energy = 100;
                     }
 
-                    $this->userModel->updateById($user->id, ["health" => $user->health, "energy" => $user->energy, "lastCheckedAt" => $now->format('Y-m-d H:i:s')]);
+                    $difference = $now->getTimestamp() - $hos->hospitalizedUntil->getTimestamp();
+    
+                    $user->health += ($difference / 60) * GAME_HEALTH_INCREASE_PER_MINUTE;
+                    if( $user->health > 100 )
+                    {
+                        $user->health = 100;
+                    }
+    
+                    $user->energy += ($difference / 60) * GAME_ENERGY_INCREASE_PER_MINUTE;
+                    if( $user->energy > 100 )
+                    {
+                        $user->energy = 100;
+                    }
+
                     $this->hospitalizationModel->deleteById($hos->id);
                 }
                 else
-                {
+                {              
+                    $difference = $now->getTimestamp() - $user->lastCheckedAt->getTimestamp();
+    
+                    $user->health += ($difference / 60) * GAME_HEALTH_INCREASE_PER_MINUTE_HOSPITAL;                    
+                    if( $user->health > 100 )
+                    {
+                        $user->health = 100;
+                    }
+    
+                    $user->energy += ($difference / 60) * GAME_ENERGY_INCREASE_PER_MINUTE_HOSPITAL;
+                    if( $user->energy > 100 )
+                    {
+                        $user->energy = 100;
+                    }
+
                     if(
                         $this->controller != "hospitalizations" 
                         || $this->method != "hospitalized"
@@ -57,6 +87,8 @@
                         redirect('hospitalized');
                     }
                 }
+                
+                $this->userModel->updateById($user->id, ["health" => $user->health, "energy" => $user->energy, "lastCheckedAt" => $now->format('Y-m-d H:i:s')]);
 
                 return false;
             }
@@ -82,13 +114,13 @@
                 $user->lastCheckedAt = strtotime($user->lastCheckedAt);
                 $difference = $now->getTimestamp() - $user->lastCheckedAt;
 
-                $user->health += ($difference / 60) * GAME_HEALTH_INCREASE_PER_MINUTE_HOSPITAL;
+                $user->health += ($difference / 60) * GAME_HEALTH_INCREASE_PER_MINUTE;
                 if( $user->health > 100 )
                 {
                     $user->health = 100;
                 }
 
-                $user->energy += ($difference / 60) * GAME_ENERGY_INCREASE_PER_MINUTE_HOSPITAL;
+                $user->energy += ($difference / 60) * GAME_ENERGY_INCREASE_PER_MINUTE;
                 if( $user->energy > 100 )
                 {
                     $user->energy = 100;
