@@ -327,7 +327,7 @@ CREATE TABLE `criminalrecords` (
   CONSTRAINT `criminalrecords_ibfk_1` FOREIGN KEY (`type`) REFERENCES `crimetypes` (`id`),
   CONSTRAINT `criminalrecords_ibfk_2` FOREIGN KEY (`imprisonmentId`) REFERENCES `imprisonments` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `link_to_userId` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=108 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=116 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -367,7 +367,6 @@ CREATE TABLE `hospitalizations` (
 
 LOCK TABLES `hospitalizations` WRITE;
 /*!40000 ALTER TABLE `hospitalizations` DISABLE KEYS */;
-INSERT INTO `hospitalizations` VALUES (16,2,'2020-10-01 14:19:40','resting',NULL,'2020-10-01 14:24:40');
 /*!40000 ALTER TABLE `hospitalizations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -382,11 +381,12 @@ CREATE TABLE `imprisonments` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `userId` int(11) NOT NULL,
   `department` enum('minimum','medium','maximum','solitary') NOT NULL,
+  `imprisonedUntil` datetime NOT NULL,
   `createdAt` datetime NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `userId` (`userId`),
   CONSTRAINT `imprisonment_to_id` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -711,7 +711,7 @@ CREATE TABLE `users` (
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 INSERT INTO `users` VALUES (1,'testaccount1',NULL,0,0,101,0,0,50,0,0,0,'test1@test.com',0,100.00,'0000-00-00 00:00:00','2020-05-15 21:02:02',100.00,'$2y$10$gx/3veekeiaiGWAE8CFE0.dB0GgpHUi/5sV31lc3YSZFTTADp/uUG',0,'',0,0,0,0,NULL,'2019-02-16 20:14:36');
-INSERT INTO `users` VALUES (2,'admin',4,10,1013,381,0,0,8194,52,500,0,'admin@test.com',0,100.00,'2020-08-28 18:27:10','2020-10-01 14:19:40',80.03,'$2y$10$eX0GEcmxokWdNbhsUpI25.GKpDqvySB1JbvUPS7Q.hS2Fdb/TlAd.',1,'',0,0,0,0,NULL,'2019-03-02 21:39:08');
+INSERT INTO `users` VALUES (2,'admin',4,10,1013,385,0,0,8229,52,500,0,'admin@test.com',0,100.00,'2020-08-28 18:27:10','2020-10-01 15:04:56',92.06,'$2y$10$eX0GEcmxokWdNbhsUpI25.GKpDqvySB1JbvUPS7Q.hS2Fdb/TlAd.',1,'',0,0,0,0,NULL,'2019-03-02 21:39:08');
 INSERT INTO `users` VALUES (4,'testaccount2',NULL,0,0,0,0,0,69,5,0,0,'test2@test.com',0,100.00,'0000-00-00 00:00:00','2020-05-15 17:09:13',98.70,'$2y$10$kCorgsWvSQczBp16VjbIn.BK7S.nG2T/itHBEjjnVtOg9m94CREnW',0,'a906e303a164fd74e00dbd2a63815bba',0,0,0,0,NULL,'2020-03-24 18:56:36');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -858,7 +858,6 @@ CREATE TABLE `wearables` (
 
 LOCK TABLES `wearables` WRITE;
 /*!40000 ALTER TABLE `wearables` DISABLE KEYS */;
-INSERT INTO `wearables` VALUES (1,1,1,1);
 INSERT INTO `wearables` VALUES (3,0,1,3);
 /*!40000 ALTER TABLE `wearables` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -872,4 +871,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-10-01 14:20:20
+-- Dump completed on 2020-10-01 15:07:48

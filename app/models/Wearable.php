@@ -10,4 +10,32 @@
             $this->db = new Database;
             $this->setTableName('wearables');
         }
+
+
+        /**
+         * 
+         * 
+         * deleteIllegalEquippedWearablesForUser
+         * @param Int userId
+         * @return Void
+         * 
+         * 
+         */
+        public function deleteIllegalEquippedWearablesForUser( Int $userId ): Void
+        {
+            $wearables = $this->getByUserIdAndEquipped($userId, 1);
+            if( ! empty($wearables) )
+            {
+                foreach( $wearables as $wearable )
+                {
+                    $isIllegal = $this->wearableCategoryModel->existsByIdAndIllegal($wearable->wearableCategoryId, 1);
+
+                    if( $isIllegal )
+                    {
+                        $this->deleteById( $wearable->id );
+                    }
+                }
+            }
+        }
+
     }

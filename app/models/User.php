@@ -170,36 +170,12 @@
          */
         public function arrest(Int $userId): Array
         {
-            $records = $this->criminalRecordModel->selectArrestRecords($userId);
-
-
-            $imprisonmentInsertArray = [
-                'userId' => $userId,
-                'department' => 'minimum'
-            ];
-            $imprisonmentId = $this->imprisonmentModel->insert($imprisonmentInsertArray, true);
+            $records = $this->criminalRecordModel->selectRecordsForWhichArrested( $userId );
             
 
-            $updateArray = [
-                'workingUntil' => null
-            ];
-            $this->updateById($userId, $updateArray);
+            $this->jobModel->deleteJobsForUser( $userId );
 
-
-            $wearables = $this->wearableModel->getByUserIdAndEquipped($userId, 1);
-            if( ! empty($wearables) )
-            {
-                foreach( $wearables as $wearable )
-                {
-                    $isIllegal = $this->wearableCategoryModel->existsByIdAndIllegal($wearable->wearableCategoryId, true);
-
-                    if( $isIllegal )
-                    {
-                        $this->wearableModel->deleteById($wearable->id);
-                    }
-                }
-            }
-
+            $this->wearableModel->deleteIllegalEquippedWearablesForUser( $userId );
 
             $crimeTypeIds = array_column($records, "type");
             $crimeTypes = $this->crimeTypeModel
@@ -224,6 +200,14 @@
             }
 
             $prisonReleaseDate = new \DateTime("+" . $totalJailTime . " seconds");
+
+
+            $imprisonmentInsertArray = [
+                'userId' => $userId,
+                'department' => 'minimum',
+                'imprisonedUntil' => $prisonReleaseDate->format('Y-m-d H:i:s')
+            ];
+            $imprisonmentId = $this->imprisonmentModel->insert($imprisonmentInsertArray, true);
 
             $returnArray = [
                 'prisonReleaseDate' => $prisonReleaseDate->format('Y-m-d H:i:s'), 

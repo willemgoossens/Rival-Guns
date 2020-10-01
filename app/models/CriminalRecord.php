@@ -45,7 +45,7 @@
          * 
          * 
          */
-        public function selectArrestRecords (Int $userId): Array
+        public function selectRecordsForWhichArrested (Int $userId): Array
         {
             $alwaysConvictIds = $this->crimeTypeModel->getArrayByAlwaysConvict(1);
             $alwaysConvictString = implode(',', $alwaysConvictIds);

@@ -25,20 +25,7 @@
                 return true;
             }
 
-            $criminalRecords = $this->criminalRecordModel->getByImprisonmentId($imprisonment->id);
-
-            $crimeTypeIds = array_column($criminalRecords, "type");
-            $crimeTypes = $this->crimeTypeModel
-                               ->getFlaggedUniqueById($crimeTypeIds);
-
-            $interval = 0;
-            foreach( $criminalRecords as $record )
-            {                
-                $interval += $crimeTypes[$record->type]->jailTime;
-            }
-            $interval = new \DateInterval('PT' . $interval . 'S');            
-            $releaseDate = new \DateTime($imprisonment->createdAt);
-            $releaseDate->add($interval);
+            $releaseDate = new \DateTime($imprisonment->imprisonedUntil);
 
             $now = new \DateTime();
 
