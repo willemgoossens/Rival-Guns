@@ -258,11 +258,7 @@
 
             $this->hospitalizationModel->insert($insertArray);
 
-            $job = $this->jobModel->getSingleByUserId( $userId, 'id' );
-            if( $job )
-            {
-                $this->jobModel->deleteById( $job->id );
-            }
+            $job = $this->jobModel->deleteJobsForUser( $userId );
         }
 
         /**

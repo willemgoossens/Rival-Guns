@@ -108,4 +108,22 @@
 
             $this->deleteById( $jobId );
         }
+
+
+        /**
+         * 
+         * 
+         * deleteJobsForUser
+         * @param Int $userId
+         * @return Void
+         * 
+         * 
+         */
+        public function deleteJobsForUser( Int $userId ): Void
+        {
+
+            $this->db->query("DELETE FROM " . $this->getTableName() . " WHERE userId = :userId");
+            $this->db->bind(":userId", $userId);
+            $this->db->execute();
+        }
     }
