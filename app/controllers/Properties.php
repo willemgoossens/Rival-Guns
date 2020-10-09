@@ -29,7 +29,7 @@
             $user->properties = $this->propertyModel->offset( $offset )
                                                     ->limit( $limit )
                                                     ->getByUserId( $user->id );
-            $propertyCategoryIds = array_column( $user->properties, 'id' );
+            $propertyCategoryIds = array_column( $user->properties, 'propertyCategoryId' );
 
             $propertyCategories = $this->propertyCategoryModel->getFlaggedUniqueById( $propertyCategoryIds );
 
@@ -150,5 +150,4 @@
             
             $this->view('properties/change', $this->data);
         }
-
     }

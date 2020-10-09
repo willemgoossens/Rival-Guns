@@ -358,7 +358,7 @@ CREATE TABLE `hospitalizations` (
   KEY `causedById` (`causedById`),
   CONSTRAINT `hospitalizations_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `hospitalizations_ibfk_2` FOREIGN KEY (`causedById`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -386,7 +386,7 @@ CREATE TABLE `imprisonments` (
   PRIMARY KEY (`id`),
   KEY `userId` (`userId`),
   CONSTRAINT `imprisonment_to_id` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -419,7 +419,7 @@ CREATE TABLE `jobs` (
   PRIMARY KEY (`id`),
   KEY `userId` (`userId`),
   CONSTRAINT `jobs_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -492,7 +492,7 @@ CREATE TABLE `notifications` (
   PRIMARY KEY (`id`),
   KEY `userId` (`userId`),
   CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -501,7 +501,11 @@ CREATE TABLE `notifications` (
 
 LOCK TABLES `notifications` WRITE;
 /*!40000 ALTER TABLE `notifications` DISABLE KEYS */;
-INSERT INTO `notifications` VALUES (34,2,'You have sold no vacuum cleaners at all...','2020-09-30 23:05:34','','alert-warning','2020-09-30 22:44:39');
+INSERT INTO `notifications` VALUES (34,2,'You have sold no vacuum cleaners at all...','2020-10-02 23:35:08','','alert-warning','2020-09-30 22:44:39');
+INSERT INTO `notifications` VALUES (35,2,'You have sold no vacuum cleaners at all...','2020-10-02 23:35:08','/locations/hoovers','alert-warning','2020-10-01 21:03:22');
+INSERT INTO `notifications` VALUES (36,2,'you made it!','2020-10-02 23:35:08','/locations/hoovers','alert alert-danger','2020-10-02 23:05:55');
+INSERT INTO `notifications` VALUES (37,2,'you made it!','2020-10-02 23:35:08','/locations/hoovers','alert alert-danger','2020-10-02 23:05:55');
+INSERT INTO `notifications` VALUES (38,2,'you made it!','2020-10-02 23:35:08','/locations/hoovers','alert alert-danger','2020-10-02 23:05:55');
 /*!40000 ALTER TABLE `notifications` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -555,7 +559,7 @@ CREATE TABLE `properties` (
   CONSTRAINT `properties_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `properties_ibfk_3` FOREIGN KEY (`businessCategoryId`) REFERENCES `businesscategories` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `properties_ibfk_4` FOREIGN KEY (`propertyCategoryId`) REFERENCES `propertycategories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -564,6 +568,8 @@ CREATE TABLE `properties` (
 
 LOCK TABLES `properties` WRITE;
 /*!40000 ALTER TABLE `properties` DISABLE KEYS */;
+INSERT INTO `properties` VALUES (10,2,2,NULL,4,'2020-10-01 20:34:20',0,0);
+INSERT INTO `properties` VALUES (11,2,3,NULL,4,'2020-10-01 20:34:20',0,0);
 /*!40000 ALTER TABLE `properties` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -675,18 +681,17 @@ CREATE TABLE `users` (
   `name` varchar(255) NOT NULL,
   `adminRole` int(2) DEFAULT NULL,
   `agilitySkills` int(9) NOT NULL DEFAULT 0,
-  `bank` bigint(21) NOT NULL,
+  `bank` decimal(65,5) unsigned NOT NULL DEFAULT 0.00000,
   `boxingSkills` int(9) NOT NULL DEFAULT 0,
   `burglarySkills` int(9) NOT NULL DEFAULT 0,
   `carTheftSkills` int(9) NOT NULL DEFAULT 0,
-  `cash` bigint(20) NOT NULL DEFAULT 50,
+  `cash` decimal(65,5) unsigned NOT NULL DEFAULT 50.00000,
   `charismaSkills` int(9) NOT NULL DEFAULT 0,
   `depositedToday` int(9) NOT NULL DEFAULT 0,
   `drivingSkills` int(9) NOT NULL DEFAULT 0,
   `email` varchar(255) NOT NULL,
   `enduranceSkills` int(9) NOT NULL DEFAULT 0,
   `health` decimal(5,2) unsigned NOT NULL DEFAULT 100.00,
-  `inJailUntil` datetime NOT NULL,
   `lastCheckedAt` datetime NOT NULL DEFAULT current_timestamp(),
   `energy` decimal(5,2) NOT NULL DEFAULT 100.00,
   `password` varchar(255) NOT NULL,
@@ -696,7 +701,6 @@ CREATE TABLE `users` (
   `robbingSkills` int(9) NOT NULL DEFAULT 0,
   `stealingSkills` int(9) NOT NULL DEFAULT 0,
   `strengthSkills` int(9) NOT NULL DEFAULT 0,
-  `workingUntil` datetime DEFAULT NULL,
   `createdAt` datetime NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `adminrole_id` (`adminRole`),
@@ -710,9 +714,9 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'testaccount1',NULL,0,0,101,0,0,50,0,0,0,'test1@test.com',0,100.00,'0000-00-00 00:00:00','2020-05-15 21:02:02',100.00,'$2y$10$gx/3veekeiaiGWAE8CFE0.dB0GgpHUi/5sV31lc3YSZFTTADp/uUG',0,'',0,0,0,0,NULL,'2019-02-16 20:14:36');
-INSERT INTO `users` VALUES (2,'admin',4,10,1013,385,0,0,8229,52,500,0,'admin@test.com',0,100.00,'2020-08-28 18:27:10','2020-10-01 15:04:56',92.06,'$2y$10$eX0GEcmxokWdNbhsUpI25.GKpDqvySB1JbvUPS7Q.hS2Fdb/TlAd.',1,'',0,0,0,0,NULL,'2019-03-02 21:39:08');
-INSERT INTO `users` VALUES (4,'testaccount2',NULL,0,0,0,0,0,69,5,0,0,'test2@test.com',0,100.00,'0000-00-00 00:00:00','2020-05-15 17:09:13',98.70,'$2y$10$kCorgsWvSQczBp16VjbIn.BK7S.nG2T/itHBEjjnVtOg9m94CREnW',0,'a906e303a164fd74e00dbd2a63815bba',0,0,0,0,NULL,'2020-03-24 18:56:36');
+INSERT INTO `users` VALUES (1,'testaccount1',NULL,0,0.00000,101,0,0,50.00000,0,0,0,'test1@test.com',0,100.00,'2020-05-15 21:02:02',100.00,'$2y$10$gx/3veekeiaiGWAE8CFE0.dB0GgpHUi/5sV31lc3YSZFTTADp/uUG',0,'',0,0,0,0,'2019-02-16 20:14:36');
+INSERT INTO `users` VALUES (2,'admin',4,10,4645.54168,385,0,0,13102.00000,52,500,0,'admin@test.com',0,100.00,'2020-10-09 22:11:16',100.00,'$2y$10$eX0GEcmxokWdNbhsUpI25.GKpDqvySB1JbvUPS7Q.hS2Fdb/TlAd.',1,'',0,0,0,0,'2019-03-02 21:39:08');
+INSERT INTO `users` VALUES (4,'testaccount2',NULL,0,0.00000,0,0,0,69.00000,5,0,0,'test2@test.com',0,100.00,'2020-05-15 17:09:13',98.70,'$2y$10$kCorgsWvSQczBp16VjbIn.BK7S.nG2T/itHBEjjnVtOg9m94CREnW',0,'a906e303a164fd74e00dbd2a63815bba',0,0,0,0,'2020-03-24 18:56:36');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -871,4 +875,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-10-01 15:07:48
+-- Dump completed on 2020-10-09 22:12:52

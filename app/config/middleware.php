@@ -30,7 +30,8 @@
                 'sequenced' => 
                     [
                         'PunishmentCheck',
-                        'WorkCheck'
+                        'WorkCheck',
+                        'UserUpdater'
                     ]
             ],
         'HealthCheck' => 

@@ -10,4 +10,31 @@
             $this->db = new Database;
             $this->setTableName('imprisonments');
         }
+
+
+        /**
+         * 
+         * 
+         * finishDueImprisonmentForUserAndTime
+         * @param Int userId
+         * @param DateTime dateTime
+         * @return Void
+         * 
+         * 
+         */
+        public function finishDueImprisonmentForUserAndTime( Int $userId, \DateTime $dateTime): Void
+        {
+            $this->db->query( "SELECT id 
+                                FROM " . $this->getTableName() . "
+                                WHERE userId = :userId
+                                AND imprisonedUntil <= :imprisonedUntil" );
+            $this->db->bind( ":userId", $userId );
+            $this->db->bind( ":imprisonedUntil", $dateTime->format( 'Y-m-d H:i:s' ) );
+            $imprisonment = $this->db->single();
+            
+            if( $imprisonment )
+            {
+                $this->deleteById( $imprisonment->id );
+            }
+        }
     }

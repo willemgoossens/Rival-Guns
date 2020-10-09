@@ -73,16 +73,29 @@
         /**
          * 
          * 
-         * finishJobById
-         * @param Int jobId
+         * finishDueJobForUserAndTime
+         * @param Int userId
+         * @param DateTime dateTime
          * @return Void
          * 
          * 
          */
-        public function finishJobById( Int $jobId ): Void
+        public function finishDueJobForUserAndTime( Int $userId, \DateTime $dateTime): Void
         {
-            $job = $this->getSingleById( $jobId );
-            $user = $this->userModel->getSingleById( $job->userId, 'charismaSkills', 'bank');
+            $this->db->query( "SELECT * 
+                                FROM " . $this->getTableName() . "
+                                WHERE userId = :userId
+                                AND workingUntil <= :workingUntil" );
+            $this->db->bind( ":userId", $userId );
+            $this->db->bind( ":workingUntil", $dateTime->format( 'Y-m-d H:i:s' ) );
+            $job = $this->db->single();
+            echo ("<br/>test<br/>" . $dateTime->format( 'Y-m-d H:i:s' ) . "<br/>");
+            if( ! $job )
+            {
+                return;
+            }
+
+            $user = $this->userModel->getSingleById( $userId, 'charismaSkills', 'bank', 'lastCheckedAt');
 
             // Create a new conversation
             $insertNotificationData = [
@@ -106,7 +119,7 @@
 
             $this->userModel->updateById($job->userId, $updateArray);
 
-            $this->deleteById( $jobId );
+            $this->deleteById( $job->id );
         }
 
 

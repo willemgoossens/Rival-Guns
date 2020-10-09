@@ -19,7 +19,7 @@
          * 
          */
         public function before(): Bool
-        {
+        {/*
             $job = $this->jobModel->getSingleByUserId( $_SESSION['userId'], 'id', 'workingUntil' );
             
             $now = new \DateTime();
@@ -30,7 +30,7 @@
             ) {
                 $this->jobModel->finishJobById( $job->id );
             }
-
+*/
             return true;
         }
     }

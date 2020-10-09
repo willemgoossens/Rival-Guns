@@ -259,4 +259,176 @@
             $_SESSION['userId'] = $user->id;
             redirect('');
         }
+
+
+        /**
+         * 
+         * 
+         * updateUserData
+         * @param Int userId
+         * @return Void
+         * 
+         * 
+         */
+        public function updateUserData( Int $userId ): Void
+        {
+            $eventTimestamps = $this->userModel->getEventTimestampsForUser( $userId );
+            
+            $now = new \DateTime;
+
+            $user = $this->getSingleById( $userId );
+            $user->lastCheckedAt = new \DateTime( $user->lastCheckedAt);
+
+            foreach($eventTimestamps as $eventTimestamp)
+            {
+                $time = new \DateTime('@' . $eventTimestamp);
+                $time->setTimezone(new \DateTimeZone('Europe/Brussels'));
+                
+                if( $time > $now )
+                {
+                    break;
+                }
+
+                $this->calculateHealthAndEnergyForUser( $userId, $time );
+                $this->propertyModel->calculateProfitsForUserAndTime( $userId, $time );
+
+                $this->propertyModel->finishInstallationForUserAndTime( $userId, $time );                
+                $this->jobModel->finishDueJobForUserAndTime( $userId, $time );                                
+                $this->imprisonmentModel->finishDueImprisonmentForUserAndTime( $userId, $time );
+
+                $user->lastCheckedAt = $time;
+
+                $this->db->query("UPDATE users SET lastCheckedAt = :time
+                                WHERE id = :userId");
+                $this->db->bind(":time", $time->format( 'Y-m-d H:i:s' ));
+                $this->db->bind(":userId", $userId);
+                $this->db->execute();
+            }
+        }
+
+
+        /**
+         * 
+         * 
+         * getEventTimestampsForUser
+         * @param Int userId
+         * @return Array
+         * 
+         * 
+         */
+        public function getEventTimestampsForUser( Int $userId ): Array
+        {
+            $timestamps = [];
+            $installationTimes = $this->propertyModel->getFlaggedUniqueByUserIdAndNotInstallingUntil( $userId, NULL, 'installingUntil' );
+
+            if( ! empty($installationTimes) )
+            {
+                $installationTimes = array_map( function($val){ return strtotime($val->installingUntil); }, $installationTimes);
+                array_push( $timestamps, ...$installationTimes );
+            }
+
+            $imprisonmentTime = $this->imprisonmentModel->getSingleByUserId( $userId, 'imprisonedUntil' );
+            if( ! empty( $imprisonmentTime ) )
+            {
+                array_push( $timestamps, strtotime($imprisonmentTime->imprisonedUntil) );
+            }
+
+            $hospitalizationTime = $this->hospitalizationModel->getSingleByUserId( $userId, 'hospitalizedUntil' );
+            if( ! empty( $hospitalizationTime ) )
+            {
+                array_push( $timestamps, strtotime($hospitalizationTime->hospitalizedUntil) );
+            }
+
+            $jobTime = $this->jobModel->getSingleByUserId( $userId, 'workingUntil' );
+            if( ! empty( $jobTime ) )
+            {
+                array_push( $timestamps, strtotime($jobTime->workingUntil) );
+            }
+
+            $now = new \DateTime;
+            array_push( $timestamps, $now->getTimestamp() );
+
+            sort($timestamps);
+
+            return $timestamps;
+        }
+
+
+        /**
+         * 
+         * 
+         * calculateHealthAndEnergyForUser
+         * @param Int userId
+         * @param DateTime dateTime
+         * @return NULL|Int Id
+         * 
+         * 
+         */
+        public function calculateHealthAndEnergyForUser( Int $userId, \DateTime $dateTime): Void
+        {
+            // This function needs to be checked
+            $user = $this->getSingleById( $userId );
+            $user->lastCheckedAt = new \DateTime($user->lastCheckedAt);
+            $hospitalization = $this->hospitalizationModel->getSingleByUserId( $userId );
+
+            $userLastCheckedDuplicate = $user->lastCheckedAt;
+            echo "<br/>Health: " . $dateTime->format( 'Y-m-d H:i:s' ) . "  " . $userLastCheckedDuplicate->format( 'Y-m-d H:i:s' ) . "<br/>";
+            if( $hospitalization )
+            { echo "test";
+                $hospitalization->hospitalizedUntil = new \DateTime($hospitalization->hospitalizedUntil);
+
+                if( $hospitalization->hospitalizedUntil > $dateTime )
+                {
+                    $usedTime = $dateTime;
+                }else
+                {
+                    $usedTime = $hospitalization->hospitalizedUntil;
+                }
+                
+                $difference = $usedTime->getTimestamp() - $userLastCheckedDuplicate->getTimestamp();
+
+                $user->health += ($difference / 60) * GAME_HEALTH_INCREASE_PER_MINUTE_HOSPITAL;                    
+                if( $user->health > 100 )
+                {
+                    $user->health = 100;
+                }
+
+                $user->energy += ($difference / 60) * GAME_ENERGY_INCREASE_PER_MINUTE_HOSPITAL;
+                if( $user->energy > 100 )
+                {
+                    $user->energy = 100;
+                }
+
+                $userLastCheckedDuplicate = $usedTime;
+
+                if( $hospitalization->hospitalizedUntil <= $dateTime)
+                {
+                    $this->hospitalizationModel->deleteById( $hospitalization->id );
+                }
+            }
+
+
+            $difference = $dateTime->getTimestamp() - $userLastCheckedDuplicate->getTimestamp();
+
+            $user->health += ($difference / 60) * GAME_HEALTH_INCREASE_PER_MINUTE;                    
+            if( $user->health > 100 )
+            {
+                $user->health = 100;
+            }
+
+            $user->energy += ($difference / 60) * GAME_ENERGY_INCREASE_PER_MINUTE;
+            if( $user->energy > 100 )
+            {
+                $user->energy = 100;
+            }
+            echo "  " . $user->health;
+            $updateArray = [
+                "health" => $user->health, 
+                "energy" => $user->energy, 
+                "lastCheckedAt" => $user->lastCheckedAt->format('Y-m-d H:i:s')
+            ];
+
+            print_r($updateArray);
+            $this->userModel->updateById( $user->id, $updateArray );
+        }
     }

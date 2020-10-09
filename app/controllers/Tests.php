@@ -6,6 +6,7 @@
   {
     public function index()
     {
-      var_dump($this->userModel->getSingleById(2));
+      $datetime = new \DateTime('2020-10-02 13:00:00');
+      $this->hospitalizationModel->calculateHealthAndEnergyForUser(1, $datetime);
     }
   }
