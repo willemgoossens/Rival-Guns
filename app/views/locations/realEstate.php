@@ -12,7 +12,7 @@
     </p>
 
     <p class="font-italic">
-        You have <strong>&euro;<?php echo $data['user']->cash; ?></strong> cash and <strong>&euro;<?php echo $data['user']->bank; ?></strong> on your bank account.
+        You have <strong>&euro;<?php echo floor( $data['user']->cash ); ?></strong> cash and <strong>&euro;<?php echo floor( $data['user']->bank ); ?></strong> on your bank account.
     </p>
 
     <?php

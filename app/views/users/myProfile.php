@@ -57,7 +57,7 @@
                                     Cash:
                                 </th>
                                 <td>
-                                    &euro;<?php echo $data['user']->cash; ?>
+                                    &euro;<?php echo floor( $data['user']->cash ); ?>
                                 </td>
                             </tr>
                             <tr>
@@ -65,7 +65,7 @@
                                     Bank:
                                 </th>
                                 <td>
-                                    &euro;<?php echo $data['user']->bank; ?>
+                                    &euro;<?php echo floor( $data['user']->bank ); ?>
                                 </td>
                             </tr>
                             <tr>
@@ -73,7 +73,7 @@
                                     Total:
                                 </th>
                                 <td>
-                                    &euro;<?php echo $data['user']->bank + $data['user']->cash; ?>
+                                    &euro;<?php echo floor( $data['user']->bank ) + floor( $data['user']->cash ); ?>
                                 </td>
                             </tr>
                         </tbody>

@@ -18,10 +18,10 @@
         <div class="card-body">
             <div class="row mb-3">
                 <div class="col">
-                    <strong>Cash:</strong> &euro;<?php echo $data['user']->cash; ?>
+                    <strong>Cash:</strong> &euro;<?php echo floor( $data['user']->cash ); ?>
                 </div>
                 <div class="col">
-                    <strong>Bank:</strong> &euro;<?php echo $data['user']->bank; ?>
+                    <strong>Bank:</strong> &euro;<?php echo floor( $data['user']->bank ); ?>
                 </div>
                 <div class="col">
                     <strong>Deposited today:</strong> &euro;<?php echo $data['user']->depositedToday . '/' . GAME_MAX_DEPOSIT; ?>

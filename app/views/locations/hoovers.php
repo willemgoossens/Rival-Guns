@@ -44,7 +44,7 @@
             </p>
 
             <p class="font-italic">
-                You have &euro;<?php echo $data['user']->cash; ?> available.
+                You have &euro;<?php echo floor( $data['user']->cash ); ?> available.
             </p>
 
             <form action="<?php echo URLROOT; ?>/locations/hoovers" method="post">
