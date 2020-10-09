@@ -34,10 +34,8 @@
 
             foreach ($properties as $property) 
             {
-                echo "<br/>Property id:" . $property->id . "<br/>";
                 if( isset( $property->businessCategoryId ) )
                 {
-                    echo "<br/>Property id:" . $property->id . "<br/>";
                     $businessCategory = $businessCategories[$property->businessCategoryId];
                     $profitPerSecond = $businessCategory->profitPerDay / ( 24 * 60 * 60 );
 
@@ -53,7 +51,6 @@
                     }
                 }
             }
-            echo $user->bank;
 
             $updateArray = [
                 'cash' => $user->cash,

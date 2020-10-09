@@ -372,9 +372,9 @@
             $hospitalization = $this->hospitalizationModel->getSingleByUserId( $userId );
 
             $userLastCheckedDuplicate = $user->lastCheckedAt;
-            echo "<br/>Health: " . $dateTime->format( 'Y-m-d H:i:s' ) . "  " . $userLastCheckedDuplicate->format( 'Y-m-d H:i:s' ) . "<br/>";
+
             if( $hospitalization )
-            { echo "test";
+            {
                 $hospitalization->hospitalizedUntil = new \DateTime($hospitalization->hospitalizedUntil);
 
                 if( $hospitalization->hospitalizedUntil > $dateTime )
@@ -421,14 +421,13 @@
             {
                 $user->energy = 100;
             }
-            echo "  " . $user->health;
+            
             $updateArray = [
                 "health" => $user->health, 
                 "energy" => $user->energy, 
                 "lastCheckedAt" => $user->lastCheckedAt->format('Y-m-d H:i:s')
             ];
 
-            print_r($updateArray);
             $this->userModel->updateById( $user->id, $updateArray );
         }
     }

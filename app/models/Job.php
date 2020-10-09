@@ -89,7 +89,7 @@
             $this->db->bind( ":userId", $userId );
             $this->db->bind( ":workingUntil", $dateTime->format( 'Y-m-d H:i:s' ) );
             $job = $this->db->single();
-            echo ("<br/>test<br/>" . $dateTime->format( 'Y-m-d H:i:s' ) . "<br/>");
+            
             if( ! $job )
             {
                 return;
