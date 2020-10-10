@@ -87,6 +87,7 @@
             <div class="card">
                 <div class="card-header">
                     Skills
+                    <small>(With - Without bonus)</small>
                 </div>
                 <div class="card-body">
                     <table class="table table-sm table-hover">
