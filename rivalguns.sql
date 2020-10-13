@@ -119,8 +119,11 @@ CREATE TABLE `businesscategories` (
   `profitPerDay` int(11) DEFAULT NULL,
   `launderingAmountPerDay` int(11) DEFAULT NULL,
   `isLegal` tinyint(1) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
+  `notLegalCrimeTypeId` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `notLegalCrimeTypeId` (`notLegalCrimeTypeId`),
+  CONSTRAINT `businesscategories_ibfk_1` FOREIGN KEY (`notLegalCrimeTypeId`) REFERENCES `crimetypes` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -129,9 +132,10 @@ CREATE TABLE `businesscategories` (
 
 LOCK TABLES `businesscategories` WRITE;
 /*!40000 ALTER TABLE `businesscategories` DISABLE KEYS */;
-INSERT INTO `businesscategories` VALUES (1,'House',0,60,NULL,NULL,1);
-INSERT INTO `businesscategories` VALUES (2,'Nightstore',500,300,200,500,1);
-INSERT INTO `businesscategories` VALUES (3,'Accountant office',1000,600,1000,10000,1);
+INSERT INTO `businesscategories` VALUES (1,'House',0,60,NULL,NULL,1,NULL);
+INSERT INTO `businesscategories` VALUES (2,'Nightstore',500,300,200,500,1,NULL);
+INSERT INTO `businesscategories` VALUES (3,'Accountant office',1000,600,1000,10000,1,NULL);
+INSERT INTO `businesscategories` VALUES (4,'Brothel',5000,60,1000,NULL,0,16);
 /*!40000 ALTER TABLE `businesscategories` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -285,7 +289,7 @@ CREATE TABLE `crimetypes` (
   `alwaysConvict` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -304,6 +308,11 @@ INSERT INTO `crimetypes` VALUES (7,'escaping prison (medium)',120,180,0.50,4.00,
 INSERT INTO `crimetypes` VALUES (8,'escaping prison (maximum)',180,360,1.00,4.00,1);
 INSERT INTO `crimetypes` VALUES (9,'escaping prison (supermax)',300,900,2.00,5.00,1);
 INSERT INTO `crimetypes` VALUES (10,'escaping prison (extreme)',900,1800,2.00,5.00,1);
+INSERT INTO `crimetypes` VALUES (11,'money laundering (minor)',1800,1800,1.00,4.00,0);
+INSERT INTO `crimetypes` VALUES (12,'money laundering (medium)',14400,14400,1.00,4.00,0);
+INSERT INTO `crimetypes` VALUES (13,'money laundering (maximum)',43200,43200,1.00,4.00,0);
+INSERT INTO `crimetypes` VALUES (14,'money laundering (supermax)',86400,86400,1.00,4.00,0);
+INSERT INTO `crimetypes` VALUES (16,'Sex trafficking',600,1200,1.00,4.00,0);
 /*!40000 ALTER TABLE `crimetypes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -327,7 +336,7 @@ CREATE TABLE `criminalrecords` (
   CONSTRAINT `criminalrecords_ibfk_1` FOREIGN KEY (`type`) REFERENCES `crimetypes` (`id`),
   CONSTRAINT `criminalrecords_ibfk_2` FOREIGN KEY (`imprisonmentId`) REFERENCES `imprisonments` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `link_to_userId` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=116 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=140 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -336,7 +345,41 @@ CREATE TABLE `criminalrecords` (
 
 LOCK TABLES `criminalrecords` WRITE;
 /*!40000 ALTER TABLE `criminalrecords` DISABLE KEYS */;
+INSERT INTO `criminalrecords` VALUES (139,22,2,13,'2020-10-13 13:24:10');
 /*!40000 ALTER TABLE `criminalrecords` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `futureimprisonments`
+--
+
+DROP TABLE IF EXISTS `futureimprisonments`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `futureimprisonments` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) NOT NULL,
+  `crimeTypeId` int(11) NOT NULL,
+  `department` enum('minimum','medium','maximum','solitary') NOT NULL,
+  `fine` bigint(20) NOT NULL,
+  `imprisonedFrom` datetime NOT NULL,
+  `createdAt` datetime NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `userId` (`userId`),
+  KEY `crimeTypeId` (`crimeTypeId`),
+  CONSTRAINT `futureimprisonments_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `futureimprisonments_ibfk_2` FOREIGN KEY (`crimeTypeId`) REFERENCES `crimetypes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `futureimprisonments`
+--
+
+LOCK TABLES `futureimprisonments` WRITE;
+/*!40000 ALTER TABLE `futureimprisonments` DISABLE KEYS */;
+INSERT INTO `futureimprisonments` VALUES (35,2,13,'minimum',100,'2020-10-12 11:52:30','2020-10-10 23:15:58');
+/*!40000 ALTER TABLE `futureimprisonments` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -386,7 +429,7 @@ CREATE TABLE `imprisonments` (
   PRIMARY KEY (`id`),
   KEY `userId` (`userId`),
   CONSTRAINT `imprisonment_to_id` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -395,6 +438,7 @@ CREATE TABLE `imprisonments` (
 
 LOCK TABLES `imprisonments` WRITE;
 /*!40000 ALTER TABLE `imprisonments` DISABLE KEYS */;
+INSERT INTO `imprisonments` VALUES (22,2,'minimum','2020-10-14 01:24:10','2020-10-13 13:24:10');
 /*!40000 ALTER TABLE `imprisonments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -429,6 +473,37 @@ CREATE TABLE `jobs` (
 LOCK TABLES `jobs` WRITE;
 /*!40000 ALTER TABLE `jobs` DISABLE KEYS */;
 /*!40000 ALTER TABLE `jobs` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `launderinglogs`
+--
+
+DROP TABLE IF EXISTS `launderinglogs`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `launderinglogs` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) NOT NULL,
+  `launderedAmount` bigint(20) NOT NULL,
+  `maxLaunderingAmount` bigint(20) NOT NULL,
+  `createdAt` datetime NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `userId` (`userId`),
+  CONSTRAINT `launderinglogs_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `launderinglogs`
+--
+
+LOCK TABLES `launderinglogs` WRITE;
+/*!40000 ALTER TABLE `launderinglogs` DISABLE KEYS */;
+INSERT INTO `launderinglogs` VALUES (1,2,1000000,1000000,'2020-10-10 22:22:05');
+INSERT INTO `launderinglogs` VALUES (2,2,1000,1000,'2020-10-09 23:09:50');
+INSERT INTO `launderinglogs` VALUES (3,2,10,1000,'2020-09-30 23:17:28');
+/*!40000 ALTER TABLE `launderinglogs` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -492,7 +567,7 @@ CREATE TABLE `notifications` (
   PRIMARY KEY (`id`),
   KEY `userId` (`userId`),
   CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=61 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -501,11 +576,7 @@ CREATE TABLE `notifications` (
 
 LOCK TABLES `notifications` WRITE;
 /*!40000 ALTER TABLE `notifications` DISABLE KEYS */;
-INSERT INTO `notifications` VALUES (34,2,'You have sold no vacuum cleaners at all...','2020-10-02 23:35:08','','alert-warning','2020-09-30 22:44:39');
-INSERT INTO `notifications` VALUES (35,2,'You have sold no vacuum cleaners at all...','2020-10-02 23:35:08','/locations/hoovers','alert-warning','2020-10-01 21:03:22');
-INSERT INTO `notifications` VALUES (36,2,'you made it!','2020-10-02 23:35:08','/locations/hoovers','alert alert-danger','2020-10-02 23:05:55');
-INSERT INTO `notifications` VALUES (37,2,'you made it!','2020-10-02 23:35:08','/locations/hoovers','alert alert-danger','2020-10-02 23:05:55');
-INSERT INTO `notifications` VALUES (38,2,'you made it!','2020-10-02 23:35:08','/locations/hoovers','alert alert-danger','2020-10-02 23:05:55');
+INSERT INTO `notifications` VALUES (60,2,'The Tax Services have found you were laundering money and have convicted you to imprisonment until 2020-10-12 23:52:30  and a &euro;100 fine. If you were already in prison, your sentence will be elongated.',NULL,'#','alert alert-danger','2020-10-12 11:52:30');
 /*!40000 ALTER TABLE `notifications` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -559,7 +630,7 @@ CREATE TABLE `properties` (
   CONSTRAINT `properties_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `properties_ibfk_3` FOREIGN KEY (`businessCategoryId`) REFERENCES `businesscategories` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `properties_ibfk_4` FOREIGN KEY (`propertyCategoryId`) REFERENCES `propertycategories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -568,8 +639,7 @@ CREATE TABLE `properties` (
 
 LOCK TABLES `properties` WRITE;
 /*!40000 ALTER TABLE `properties` DISABLE KEYS */;
-INSERT INTO `properties` VALUES (10,2,2,NULL,4,'2020-10-01 20:34:20',0,0);
-INSERT INTO `properties` VALUES (11,2,3,NULL,4,'2020-10-01 20:34:20',0,0);
+INSERT INTO `properties` VALUES (11,1,3,NULL,4,'2020-10-01 20:34:20',0,0);
 /*!40000 ALTER TABLE `properties` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -631,6 +701,7 @@ INSERT INTO `propertycategories_businesscategories` VALUES (2,1);
 INSERT INTO `propertycategories_businesscategories` VALUES (1,1);
 INSERT INTO `propertycategories_businesscategories` VALUES (3,1);
 INSERT INTO `propertycategories_businesscategories` VALUES (4,3);
+INSERT INTO `propertycategories_businesscategories` VALUES (3,4);
 /*!40000 ALTER TABLE `propertycategories_businesscategories` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -715,7 +786,7 @@ CREATE TABLE `users` (
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 INSERT INTO `users` VALUES (1,'testaccount1',NULL,0,0.00000,101,0,0,50.00000,0,0,0,'test1@test.com',0,100.00,'2020-05-15 21:02:02',100.00,'$2y$10$gx/3veekeiaiGWAE8CFE0.dB0GgpHUi/5sV31lc3YSZFTTADp/uUG',0,'',0,0,0,0,'2019-02-16 20:14:36');
-INSERT INTO `users` VALUES (2,'admin',4,10,5742.45834,385,0,0,13102.00000,52,500,0,'admin@test.com',0,100.00,'2020-10-10 20:07:34',100.00,'$2y$10$eX0GEcmxokWdNbhsUpI25.GKpDqvySB1JbvUPS7Q.hS2Fdb/TlAd.',1,'',0,0,0,0,'2019-03-02 21:39:08');
+INSERT INTO `users` VALUES (2,'admin',4,10,100.00000,385,0,0,13102.00000,52,500,0,'admin@test.com',0,100.00,'2020-10-11 19:34:15',100.00,'$2y$10$eX0GEcmxokWdNbhsUpI25.GKpDqvySB1JbvUPS7Q.hS2Fdb/TlAd.',1,'',0,0,0,0,'2019-03-02 21:39:08');
 INSERT INTO `users` VALUES (4,'testaccount2',NULL,0,0.00000,0,0,0,69.00000,5,0,0,'test2@test.com',0,100.00,'2020-05-15 17:09:13',98.70,'$2y$10$kCorgsWvSQczBp16VjbIn.BK7S.nG2T/itHBEjjnVtOg9m94CREnW',0,'a906e303a164fd74e00dbd2a63815bba',0,0,0,0,'2020-03-24 18:56:36');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -875,4 +946,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-10-10 20:08:05
+-- Dump completed on 2020-10-13 22:30:20

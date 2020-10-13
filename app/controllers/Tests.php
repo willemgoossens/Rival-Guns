@@ -6,7 +6,6 @@
   {
     public function index()
     {
-      $datetime = new \DateTime('2020-10-02 13:00:00');
-      $this->hospitalizationModel->calculateHealthAndEnergyForUser(1, $datetime);
+      $this->futureImprisonmentModel->finishDueFutureImprisonmentsForUserAndTime( 2 , new \DateTime );
     }
   }

@@ -184,9 +184,7 @@
             $totalJailTime = 0;
 
             foreach( $records as $record )
-            {
-                $this->criminalRecordModel->updateById($record->id, ['imprisonmentId' => $imprisonmentId]);
-                
+            {                
                 if( isset($crimesNames[$crimeTypes[$record->type]->name]) )
                 {
                     $crimesNames[$crimeTypes[$record->type]->name] += 1;
@@ -208,6 +206,11 @@
                 'imprisonedUntil' => $prisonReleaseDate->format('Y-m-d H:i:s')
             ];
             $imprisonmentId = $this->imprisonmentModel->insert($imprisonmentInsertArray, true);
+
+            foreach( $records as $record )
+            {
+                $this->criminalRecordModel->updateById($record->id, ['imprisonmentId' => $imprisonmentId]);
+            }
 
             $returnArray = [
                 'prisonReleaseDate' => $prisonReleaseDate->format('Y-m-d H:i:s'), 
@@ -319,30 +322,37 @@
         public function getEventTimestampsForUser( Int $userId ): Array
         {
             $timestamps = [];
-            $installationTimes = $this->propertyModel->getFlaggedUniqueByUserIdAndNotInstallingUntil( $userId, NULL, 'installingUntil' );
 
+            $installationTimes = $this->propertyModel->getFlaggedUniqueByUserIdAndNotInstallingUntil( $userId, NULL, 'installingUntil' );
             if( ! empty($installationTimes) )
             {
                 $installationTimes = array_map( function($val){ return strtotime($val->installingUntil); }, $installationTimes);
                 array_push( $timestamps, ...$installationTimes );
             }
 
+            $futureImprisonmentTimes = $this->futureImprisonmentModel->getFlaggedUniqueByUserId( $userId, 'imprisonedFrom', 'imprisonedUntil' );
+            foreach( $futureImprisonmentTimes as $futureImprisonmentTime )
+            {
+                array_push( $timestamps, strtotime( $futureImprisonmentTime->imprisonedFrom ) );
+                array_push( $timestamps, strtotime( $futureImprisonmentTime->imprisonedUntil ) );
+            }
+
             $imprisonmentTime = $this->imprisonmentModel->getSingleByUserId( $userId, 'imprisonedUntil' );
             if( ! empty( $imprisonmentTime ) )
             {
-                array_push( $timestamps, strtotime($imprisonmentTime->imprisonedUntil) );
+                array_push( $timestamps, strtotime( $imprisonmentTime->imprisonedUntil ) );
             }
 
             $hospitalizationTime = $this->hospitalizationModel->getSingleByUserId( $userId, 'hospitalizedUntil' );
             if( ! empty( $hospitalizationTime ) )
             {
-                array_push( $timestamps, strtotime($hospitalizationTime->hospitalizedUntil) );
+                array_push( $timestamps, strtotime( $hospitalizationTime->hospitalizedUntil ) );
             }
 
             $jobTime = $this->jobModel->getSingleByUserId( $userId, 'workingUntil' );
             if( ! empty( $jobTime ) )
             {
-                array_push( $timestamps, strtotime($jobTime->workingUntil) );
+                array_push( $timestamps, strtotime( $jobTime->workingUntil ) );
             }
 
             $now = new \DateTime;

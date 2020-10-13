@@ -86,4 +86,102 @@
                 $this->updateById( $property->id, [ 'installingUntil' => NULL ] );
             }
         }
+
+
+        /**
+         * 
+         * 
+         * confiscatePropertiesForPriceAndUser
+         * @param Int price
+         * @param Int userId
+         * @param Null|DateTime datetime
+         * @return Void
+         * 
+         */
+        public function confiscatePropertiesForPriceAndUser( Int $price, Int $userId, \DateTime $dateTime = null ): Void
+        {
+            $this->db->query("SELECT properties.id, propertycategories.name, @total := @total + propertyCategories.price
+                                FROM (properties, (select @total := 0) t)
+                                JOIN (SELECT * FROM propertyCategories ORDER BY price ASC) propertycategories
+                                    ON properties.propertyCategoryId = propertyCategories.id
+                                WHERE
+                                    properties.userId = :userId
+                                    AND @total < :price");
+            $this->db->bind(":price", $price);
+            $this->db->bind(":userId", $userId);
+
+            $properties = $this->db->resultSet();
+            
+            if( empty( $properties ) )
+            {
+                return;
+            }
+
+            $countedProperties = array_count_values( array_column( $properties, "name" ) );
+            $confiscatedString = "";
+            foreach( $countedProperties as $name => $amount )
+            {
+                $confiscatedString .= $amount . "x " . $name . ", ";
+            }
+            $confiscatedString = rtrim( $confiscatedString, ", " );
+            
+            $notificationText = "As your bank account didn't contain enough money. The government confiscated some of your properties (" . $confiscatedString . ").";
+            $insertNotificationArray = [
+                'body' => $notificationText,
+                'class' => 'alert alert-warning',
+                'userId' => $userId,
+                'createdAt' => isset( $dateTime ) ? $dateTime->format( 'Y-m-d H:i:s' ) : 'NOW()'
+            ];
+            $this->notificationModel->insert( $insertNotificationArray );
+
+            foreach( $properties as $property )
+            {
+                $this->propertyModel->confiscateById( $property->id, $dateTime );
+            }
+        }
+
+
+        /**
+         * 
+         * 
+         * confiscateById
+         * @param Int propertyId
+         * @param Null|DateTime datetime
+         * @param Void
+         * 
+         * 
+         */
+        public function confiscateById( Int $propertyId, \DateTime $dateTime = null ): Void
+        {
+            $property = $this->getSingleById( $propertyId );
+            
+            if( isset( $property->businessCategoryId ) )
+            {
+                $businessCategory = $this->businessCategoryModel->getSingleById( $property->businessCategoryId );
+
+                if( ! $businessCategory->isLegal )
+                {
+                    $insertArray = [
+                        'userId' => $property->userId,
+                        'type' => $businessCategory->notLegalCrimeTypeId
+                    ];
+                    $this->criminalRecordModel->insert( $insertArray );
+
+                    $crimeType = $this->crimeTypeModel->getSingleById( $businessCategory->notLegalCrimeTypeId );
+
+                    $this->userModel->arrest( $property->userId );
+
+                    $insertNotificationArray = [
+                        'body' => "While confiscating one of your properties (#" . $propertyId . "), the police found a " . $businessCategory->name . ". As such, you've also been arrested for " . $crimeType->name . ".",
+                        'class' => "alert alert-danger",
+                        'userId' =>  $property->userId,
+                        'createdAt' => isset( $dateTime ) ? $dateTime->format( 'Y-m-d H:i:s' ) : 'NOW()'
+                    ];
+
+                    $this->notificationModel->insert( $insertNotificationArray );
+                }
+            }
+
+            $this->deleteById( $propertyId );
+        }
     }

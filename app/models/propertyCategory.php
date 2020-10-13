@@ -11,12 +11,13 @@
             $this->setTableName('propertycategories');
         }
 
+
         /**
          * 
          * 
          * getBusinessCategoriesForId
-         * @param int propertyCategoryId
-         * @return array businessCategories
+         * @param Int propertyCategoryId
+         * @return Array businessCategories
          * 
          * 
          */
@@ -30,5 +31,49 @@
             $categoryIds = $this->db->resultSetArray();
 
             return $categoryIds;
+        }
+
+
+        /**
+         * 
+         * 
+         * getPropertyTypeForConfiscationForPriceAndCategoryIds
+         * @param Int price
+         * @param Array categoryIds
+         * @return Mixed rows
+         * 
+         * 
+         */
+        public function getPropertyTypeForConfiscationForPriceAndCategoryIds( Int $difference, Array $categoryIds): Mixed
+        {
+            $this->db->query("SELECT * 
+                                FROM " . $this->getTableName() . "
+                                WHERE 
+                                    id IN :categoryIds
+                                    AND price >= :difference
+                                ORDER BY price ASC
+                                LIMIT 1");
+            $this->db->bind(":difference", $difference);
+            $categoryIds = "(" . implode(",", $categoryIds) . ")";
+            $this->db->bind(":categoryIds", $categoryIds);
+            
+            $category = $this->db->single();
+
+            if( ! $category )
+            {
+                $this->db->query("SELECT * 
+                                FROM " . $this->getTableName() . "
+                                WHERE 
+                                    id IN :categoryIds
+                                    AND price < :difference
+                                ORDER BY price DESC
+                                LIMIT 2");
+                $this->db->bind(":difference", $difference);
+                $this->db->bind(":categoryIds", $categoryIds);
+                
+                $category = $this->db->resultSet( true );
+            }
+
+            return $categoryId;
         }
     }
