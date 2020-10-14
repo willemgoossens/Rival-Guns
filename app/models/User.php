@@ -335,7 +335,6 @@
             foreach( $futureImprisonmentTimes as $futureImprisonmentTime )
             {
                 array_push( $timestamps, strtotime( $futureImprisonmentTime->imprisonedFrom ) );
-                array_push( $timestamps, strtotime( $futureImprisonmentTime->imprisonedUntil ) );
             }
 
             $imprisonmentTime = $this->imprisonmentModel->getSingleByUserId( $userId, 'imprisonedUntil' );
