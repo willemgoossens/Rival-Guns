@@ -162,6 +162,7 @@
             {
                 return;
             }
+
             $futureImprisonment->imprisonedFrom = new \DateTime( $futureImprisonment->imprisonedFrom );
 
             $crimeType = $this->crimeTypeModel->getSingleById( $futureImprisonment->crimeTypeId );
@@ -208,5 +209,6 @@
             }
 
             $this->deleteById( $futureImprisonment->id );
+            $this->launderingLogModel->deleteAllLaunderingLogsForUser( $user->id );
         }
     }

@@ -40,4 +40,23 @@
 
             return $log;
         }
+
+
+        /**
+         * 
+         * 
+         * deleteAllLaunderingLogsForUser
+         * @param Int userId
+         * @return Void
+         * 
+         * 
+         */
+        public function deleteAllLaunderingLogsForUser( Int $userId ): Void
+        {
+            $this->db->query('DELETE
+                                FROM ' . $this->getTableName() . '
+                                WHERE userId = :userId');
+            $this->db->bind( ':userId', $userId );
+            $this->db->execute();
+        }
     }
