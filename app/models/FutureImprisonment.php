@@ -206,5 +206,7 @@
                 ];
                 $this->userModel->updateById( $userId, $updateUserArray );
             }
+
+            $this->deleteById( $futureImprisonment->id );
         }
     }
