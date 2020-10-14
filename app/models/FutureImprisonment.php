@@ -44,19 +44,14 @@
 
                 $orderedLogs[$key] = $log;
             }
-            print_r($orderedLogs);
 
             $remainingHours = $now->format( 'H' ) + 1;
             $futureDays = 0;
 
             while( true )
             {
-                echo "<br/>--------------------------------------------";
-                echo "<br/>Day:" . $futureDays . " Hour:" . $remainingHours;
                 if( $remainingHours > 23 )
                 {
-                    echo "<br/>Skip to the next day";
-
                     $futureDays += 1;
                     $remainingHours = 0;
 
@@ -78,7 +73,6 @@
                             // We cap of the very small chances
                             if( $log->chanceFactor < 0.1 && $log->chanceFactor > 0 )
                             {
-                                echo "<br>Set to 0";
                                 $log->chanceFactor = 0;
                             }
                         }
@@ -89,10 +83,8 @@
                 $max_value = max( array_column( $orderedLogs, "chanceFactor" ) ) * 100;
                 if( $chance  < 300 && $max_value < 100 )
                 {
-                    echo "<br>Chance too small";
                     break;
                 }
-                echo "<br/>" . $chance;
 
                 if( $chance > rand(0, 100 * 14 * 24) )
                 {
@@ -103,7 +95,6 @@
                     $imprisonedFrom->modify('+' . rand( 0, 59 ) . ' second');
 
                     $launderedAmount = array_sum( array_column( $orderedLogs, "launderedAmount" ) );
-                    echo "<br/>Laundered amount: " . $launderedAmount;
                     if( $launderedAmount < 10000)
                     {
                         $crimeType = "money laundering (minor)";
