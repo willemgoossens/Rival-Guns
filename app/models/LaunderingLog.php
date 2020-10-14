@@ -18,11 +18,11 @@
          * 
          * getLaunderingLogOfTodayForUser
          * @param Int userId
-         * @return Object log
+         * @return Mixed log
          * 
          * 
          */
-        public function getLaunderingLogOfTodayForUser( Int $userId ): Object
+        public function getLaunderingLogOfTodayForUser( Int $userId )
         {
             $startOfToday = new \DateTime('today');
             $endOfToday = new \DateTime('tomorrow');

@@ -15,7 +15,87 @@
          */
         public function index ( Int $page = 1 ): Void
         {
+            // Add future imprisonment
+            // Rework the arrestation thing (sentences)
+            // Add some explanatory text to this page
             $user = &$this->data['user'];
+            $this->data['maxLaunderingAmount'] = $this->propertyModel->getMaxLaunderingAmountForUser( $user->id );
+            
+            $launderingLog = $this->launderingLogModel->getLaunderingLogOfTodayForUser( $user->id );
+            if( $launderingLog )
+            {
+                $this->data['launderedAmount'] = $launderingLog->launderedAmount;
+            }
+            else 
+            {
+                $this->data['launderedAmount'] = 0;
+            }
+
+            if( $_SERVER['REQUEST_METHOD'] == 'POST' )
+            {
+                $_POST = filter_input_array( INPUT_POST, FILTER_SANITIZE_STRING );
+                $this->data['amountToLaunder'] = (int) $_POST['amountToLaunder'];
+                $this->data['amountToLaunderError'] = false;
+
+                if( $this->data['maxLaunderingAmount'] <= 0 )
+                {
+                    redirect('');
+                }
+                elseif( $this->data['amountToLaunder'] > $user->cash )
+                {
+                    $this->data['amountToLaunderError'] = "You don't have enough cash money to launder.";
+                }
+                else
+                {
+                    if( $launderingLog )
+                    {
+                        if( $launderingLog->maxLaunderingAmount < $this->data['maxLaunderingAmount'] )
+                        {
+                            $launderingLog->maxLaunderingAmount = $this->data['maxLaunderingAmount'];
+                        }
+
+                        $launderingLog->launderedAmount += $this->data['amountToLaunder'];
+
+                        $updateArray = [
+                            'launderedAmount' => $launderingLog->launderedAmount,
+                            'maxLaunderingAmount' => $launderingLog->maxLaunderingAmount
+                        ];
+
+                        $this->launderingLogModel->updateById( $launderingLog->id, $updateArray );
+                    }
+                    else
+                    {
+                        $insertArray = [
+                            'userId' => $user->id,
+                            'launderedAmount' => $this->data['amountToLaunder'],
+                            'maxLaunderingAmount' => $this->data['maxLaunderingAmount']
+                        ];
+
+                        $this->launderingLogModel->insert($insertArray);
+                    }
+
+                    $user->bank += $this->data['amountToLaunder'];
+                    $user->cash -= $this->data['amountToLaunder'];
+                    $this->data['launderedAmount'] += $this->data['amountToLaunder'];
+
+                    $updateArray = [
+                        'bank' => $user->bank,
+                        'cash' => $user->cash
+                    ];
+                    $this->userModel->updateById( $user->id, $updateArray );
+
+                    flash('launderSuccess', 'You have successfully laundered &euro;' . $this->data['amountToLaunder'] . '!');
+
+                    $crimeTypeIds = $this->crimeTypeModel->getIdsForLaunderingCrimes();
+                    $futureImprisonment = $this->futureImprisonmentModel->getSingleByUserIdAndCrimeTypeId( $user->id, $crimeTypeIds );
+                    if( $futureImprisonment )
+                    {
+                        $this->futureImprisonmentModel->deleteById( $futureImprisonment->id );
+                    }
+
+                    $this->futureImprisonmentModel->createFutureImprisonmentForLaunderingOrNotForUser( $user->id );
+                }
+            }
 
             $user->amountOfProperties = $this->propertyModel->countByUserId( $user->id );
 

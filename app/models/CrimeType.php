@@ -10,4 +10,23 @@
             $this->db = new Database;
             $this->setTableName('crimetypes');
         }
+
+
+        /**
+         * 
+         * 
+         * getIdsForLaunderingCrimes
+         * @return Array ids
+         * 
+         * 
+         */
+        public function getIdsForLaunderingCrimes(): Array
+        {
+            $this->db->query("SELECT id
+                                FROM " . $this->getTableName() . "
+                                WHERE name LIKE 'money laundering%'");
+            $ids = $this->db->resultSetArray();
+
+            return $ids;
+        }
     }

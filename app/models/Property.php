@@ -184,4 +184,37 @@
 
             $this->deleteById( $propertyId );
         }
+
+
+        /**
+         * 
+         * 
+         * getMaxLaunderingAmountForUser
+         * @param Int userId
+         * @return Int amount
+         * 
+         * 
+         */
+        public function getMaxLaunderingAmountForUser( Int $userId ): Int
+        {
+            $this->db->query("SELECT SUM(businesscategories.launderingAmountPerDay) AS total
+                                FROM properties
+                                LEFT JOIN businesscategories
+                                    ON properties.businessCategoryId = businesscategories.id
+                                WHERE
+                                    userId = :userId");
+            $this->db->bind( ":userId", $userId );
+            $amount = $this->db->single();
+            
+            if( ! $amount )
+            {
+                $amount = 0;
+            }
+            else
+            {
+                $amount = $amount->total;
+            }
+
+            return $amount;
+        }
     }
