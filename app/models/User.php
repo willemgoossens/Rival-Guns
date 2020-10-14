@@ -297,6 +297,7 @@
 
                 $this->propertyModel->finishInstallationForUserAndTime( $userId, $time );                
                 $this->jobModel->finishDueJobForUserAndTime( $userId, $time );                                
+                $this->futureImprisonmentModel->finishDueFutureImprisonmentsForUserAndTime( $userId, $time );
                 $this->imprisonmentModel->finishDueImprisonmentForUserAndTime( $userId, $time );
 
                 $user->lastCheckedAt = $time;
