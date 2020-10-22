@@ -336,7 +336,7 @@ CREATE TABLE `criminalrecords` (
   CONSTRAINT `criminalrecords_ibfk_1` FOREIGN KEY (`type`) REFERENCES `crimetypes` (`id`),
   CONSTRAINT `criminalrecords_ibfk_2` FOREIGN KEY (`imprisonmentId`) REFERENCES `imprisonments` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `link_to_userId` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=148 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=152 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -345,7 +345,6 @@ CREATE TABLE `criminalrecords` (
 
 LOCK TABLES `criminalrecords` WRITE;
 /*!40000 ALTER TABLE `criminalrecords` DISABLE KEYS */;
-INSERT INTO `criminalrecords` VALUES (147,26,2,11,'2020-10-14 22:18:24');
 /*!40000 ALTER TABLE `criminalrecords` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -370,7 +369,7 @@ CREATE TABLE `futureimprisonments` (
   KEY `crimeTypeId` (`crimeTypeId`),
   CONSTRAINT `futureimprisonments_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `futureimprisonments_ibfk_2` FOREIGN KEY (`crimeTypeId`) REFERENCES `crimetypes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=46 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=50 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -429,7 +428,7 @@ CREATE TABLE `imprisonments` (
   PRIMARY KEY (`id`),
   KEY `userId` (`userId`),
   CONSTRAINT `imprisonment_to_id` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -438,7 +437,6 @@ CREATE TABLE `imprisonments` (
 
 LOCK TABLES `imprisonments` WRITE;
 /*!40000 ALTER TABLE `imprisonments` DISABLE KEYS */;
-INSERT INTO `imprisonments` VALUES (26,2,'minimum','2020-10-14 22:48:24','2020-10-14 22:18:24');
 /*!40000 ALTER TABLE `imprisonments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -564,7 +562,7 @@ CREATE TABLE `notifications` (
   PRIMARY KEY (`id`),
   KEY `userId` (`userId`),
   CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=70 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=75 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -573,16 +571,8 @@ CREATE TABLE `notifications` (
 
 LOCK TABLES `notifications` WRITE;
 /*!40000 ALTER TABLE `notifications` DISABLE KEYS */;
-INSERT INTO `notifications` VALUES (60,2,'The Tax Services have found you were laundering money and have convicted you to imprisonment until 2020-10-12 23:52:30  and a &euro;100 fine. If you were already in prison, your sentence will be elongated.','2020-10-14 13:50:01','#','alert alert-danger','2020-10-12 11:52:30');
-INSERT INTO `notifications` VALUES (61,2,'The Tax Services have found you were laundering money and have convicted you to imprisonment until 2020-10-14 20:43:28  and a &euro;657546 fine. If you were already in prison, your sentence will be elongated.','2020-10-14 13:50:01','#','alert alert-danger','2020-10-14 08:43:28');
-INSERT INTO `notifications` VALUES (62,2,'The Tax Services have found you were laundering money and have convicted you to imprisonment until 2020-10-14 20:43:28  and a &euro;657546 fine. If you were already in prison, your sentence will be elongated.','2020-10-14 13:50:01','#','alert alert-danger','2020-10-14 08:43:28');
-INSERT INTO `notifications` VALUES (63,2,'The Tax Services have found you were laundering money and have convicted you to imprisonment until 2020-10-14 20:43:28  and a &euro;657546 fine. If you were already in prison, your sentence will be elongated.','2020-10-14 13:50:01','#','alert alert-danger','2020-10-14 08:43:28');
-INSERT INTO `notifications` VALUES (64,2,'The Tax Services have found you were laundering money and have convicted you to imprisonment until 2020-10-14 20:43:28  and a &euro;657546 fine. If you were already in prison, your sentence will be elongated.','2020-10-14 13:50:01','#','alert alert-danger','2020-10-14 08:43:28');
-INSERT INTO `notifications` VALUES (65,2,'The Tax Services have found you were laundering money and have convicted you to imprisonment until 2020-10-14 20:43:28  and a &euro;657546 fine. If you were already in prison, your sentence will be elongated.','2020-10-14 13:50:01','#','alert alert-danger','2020-10-14 08:43:28');
-INSERT INTO `notifications` VALUES (66,2,'The Tax Services have found you were laundering money and have convicted you to imprisonment until 2020-10-14 21:16:36  and a &euro;554807 fine. If you were already in prison, your sentence will be elongated.',NULL,'#','alert alert-danger','2020-10-14 09:16:36');
-INSERT INTO `notifications` VALUES (67,2,'The Tax Services have found you were laundering money and have convicted you to imprisonment until 2020-10-15 10:14:58  and a &euro;1000000 fine. If you were already in prison, your sentence will be elongated.',NULL,'#','alert alert-danger','2020-10-14 22:14:58');
-INSERT INTO `notifications` VALUES (68,2,'The Tax Services have found you were laundering money and have convicted you to imprisonment until 2020-10-14 22:47:00  and a &euro;10000 fine. If you were already in prison, your sentence will be elongated.',NULL,'#','alert alert-danger','2020-10-14 22:17:00');
-INSERT INTO `notifications` VALUES (69,2,'As your bank account didn\'t contain enough money. The government confiscated some of your properties (1x Downtown business estate).',NULL,'#','alert alert-warning','2020-10-14 22:17:00');
+INSERT INTO `notifications` VALUES (73,2,'The Tax Services have found you were laundering money and have convicted you to imprisonment until 2020-10-16 02:20:03  and a &euro;10000 fine. If you were already in prison, your sentence will be elongated.','2020-10-22 23:06:13','#','alert alert-danger','2020-10-15 22:20:03');
+INSERT INTO `notifications` VALUES (74,2,'As your bank account didn\'t contain enough money. The government confiscated some of your properties (1x Downtown business estate).','2020-10-22 23:06:13','#','alert alert-warning','2020-10-15 22:20:03');
 /*!40000 ALTER TABLE `notifications` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -645,7 +635,6 @@ CREATE TABLE `properties` (
 
 LOCK TABLES `properties` WRITE;
 /*!40000 ALTER TABLE `properties` DISABLE KEYS */;
-INSERT INTO `properties` VALUES (11,1,3,NULL,4,'2020-10-01 20:34:20',0,0);
 /*!40000 ALTER TABLE `properties` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -792,7 +781,7 @@ CREATE TABLE `users` (
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 INSERT INTO `users` VALUES (1,'testaccount1',NULL,0,0.00000,101,0,0,50.00000,0,0,0,'test1@test.com',0,100.00,'2020-05-15 21:02:02',100.00,'$2y$10$gx/3veekeiaiGWAE8CFE0.dB0GgpHUi/5sV31lc3YSZFTTADp/uUG',0,'',0,0,0,0,'2019-02-16 20:14:36');
-INSERT INTO `users` VALUES (2,'admin',4,10,0.00000,385,0,0,13194.00000,52,500,0,'admin@test.com',0,100.00,'2020-10-14 22:18:24',100.00,'$2y$10$eX0GEcmxokWdNbhsUpI25.GKpDqvySB1JbvUPS7Q.hS2Fdb/TlAd.',1,'',0,0,0,0,'2019-03-02 21:39:08');
+INSERT INTO `users` VALUES (2,'admin',4,10,0.00000,385,0,0,13194.00000,52,500,0,'admin@test.com',0,100.00,'2020-10-22 23:07:56',100.00,'$2y$10$eX0GEcmxokWdNbhsUpI25.GKpDqvySB1JbvUPS7Q.hS2Fdb/TlAd.',1,'',0,0,0,0,'2019-03-02 21:39:08');
 INSERT INTO `users` VALUES (4,'testaccount2',NULL,0,0.00000,0,0,0,69.00000,5,0,0,'test2@test.com',0,100.00,'2020-05-15 17:09:13',98.70,'$2y$10$kCorgsWvSQczBp16VjbIn.BK7S.nG2T/itHBEjjnVtOg9m94CREnW',0,'a906e303a164fd74e00dbd2a63815bba',0,0,0,0,'2020-03-24 18:56:36');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -952,4 +941,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-10-14 22:19:13
+-- Dump completed on 2020-10-22 23:08:20

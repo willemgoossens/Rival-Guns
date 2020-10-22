@@ -206,7 +206,7 @@
             $this->db->bind( ":userId", $userId );
             $amount = $this->db->single();
             
-            if( ! $amount )
+            if( ! $amount->total )
             {
                 $amount = 0;
             }
