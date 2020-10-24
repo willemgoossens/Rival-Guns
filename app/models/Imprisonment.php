@@ -42,36 +42,28 @@
         /**
          * 
          * 
-         * insert
-         * @param Array data
-         * @param Bool unique
-         * @param return mixed
+         * imprisonUser
+         * @param Int userId
+         * @return Void
          * 
          * 
          */
-        public function insert( Array $values, Bool $returnId = false)
+        public function imprisonUser( Int $userId ): Void
         {
-            $existingImprisonment = $this->getSingleByUserId( $values['userId'] );
+            $existingImprisonment = $this->existsByUserId( $userId );
 
-            if( $existingImprisonment )
+            if( ! $existingImprisonment )
             {
-                $existingImprisonment->imprisonedUntil = new \DateTime( $existingImprisonment->imprisonedUntil );
-                $values['imprisonedUntil'] = new \DateTime( $values['imprisonedUntil'] );
-                $now = new \DateTime;
-
-                $imprisonmentDuration = $now->diff( $values['imprisonedUntil'] );
-                $existingImprisonment->imprisonedUntil->add( $imprisonmentDuration );
-
-                $updateArray = [
-                    'imprisonedUntil' => $existingImprisonment->imprisonedUntil->format( 'Y-m-d H:i:s' )
+                $imprisonmentArray = [
+                    'userId' => $userId
                 ];
-                $this->updateById( $existingImprisonment->id, $updateArray );
+                $this->insert( $imprisonmentArray );
 
-                return $existingImprisonment->id;
-            }
-            else
-            {
-                return parent::insert( $values, $returnId);
+                $updateSentenceArray = [
+                    'escapedPrison' => false
+                ];
+
+                $this->sentenceModel->reactivateSentencesForUser( $userId );
             }
         }
     }

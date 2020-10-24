@@ -140,9 +140,10 @@
 
             if( $summary["arrested"] )
             {        
-                $arrestData = $this->userModel->arrest( $user->id );
-                $user->prisonReleaseDate = $arrestData['prisonReleaseDate'];
-                $this->data['arrestedFor'] = $arrestData['arrestedFor'];
+                $this->userModel->arrest( $user->id );
+
+                $this->data['sentences'] = $this->sentenceModel->getSentencesForUser( $user->id );                
+                $user->prisonReleaseDate = $this->userModel->calculateReleaseDateForUser( $user->id );
             }
 
             

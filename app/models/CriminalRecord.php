@@ -28,7 +28,7 @@
                               INNER JOIN crimetypes t ON r.type = t.id
                               WHERE r.createdAt < DATE_SUB(NOW(), INTERVAL t.expiredByTime SECOND)
                                 AND userId = :userId
-                                AND imprisonmentId IS NULL");
+                                AND sentenceId IS NULL");
             
             $this->db->bind(':userId', $userId);
             
@@ -47,21 +47,19 @@
          */
         public function selectRecordsForWhichArrested (Int $userId): Array
         {
-            $alwaysConvictIds = $this->crimeTypeModel->getArrayByAlwaysConvict(1);
-            $alwaysConvictString = implode(',', $alwaysConvictIds);
             // Select last record(s) by default -> use a subquery
             // Select a random selection of other records.
             $this->db->query("SELECT *
-                              FROM criminalrecords
-                              WHERE userId = :userId
-                                    AND(createdAt = (SELECT createdAt
-                                                 FROM criminalrecords
-                                                 WHERE userId = :userId
-                                                 ORDER BY createdAt DESC
-                                                 LIMIT 1)
-                                        OR type IN (:type))");
+                              FROM 
+                                criminalrecords
+                              WHERE 
+                                userId = :userId
+                                AND createdAt = (SELECT createdAt
+                                                    FROM criminalrecords
+                                                    WHERE userId = :userId
+                                                    ORDER BY createdAt DESC
+                                                    LIMIT 1)");
             $this->db->bind(':userId', $userId);
-            $this->db->bind(':type', $alwaysConvictString);
 
             $arrestedForRecords = $this->db->resultSet();
             $arrestedForRecordsCount = count($arrestedForRecords);
@@ -79,7 +77,7 @@
 
                 $randomSelectionOfOthersForWhichConvicted = $this->orderBy("RAND()")
                                                                  ->limit($limit)
-                                                                 ->getByUserIdAndNotId($userId, $arrestedForRecordsIds);
+                                                                 ->getByUserIdAndNotIdAndSentenceId( $userId, $arrestedForRecordsIds, NULL );
             }
 
             $return = array_merge($arrestedForRecords, $randomSelectionOfOthersForWhichConvicted);

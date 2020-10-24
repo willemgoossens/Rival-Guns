@@ -164,60 +164,19 @@
          * 
          * Arrest
          * @param Int userId
-         * @return Array
+         * @return Void
          * 
          * 
          */
-        public function arrest(Int $userId): Array
+        public function arrest(Int $userId): Void
         {
-            $records = $this->criminalRecordModel->selectRecordsForWhichArrested( $userId );
+            $this->sentenceModel->createSentenceForUser( $userId ); 
             
+            $this->imprisonmentModel->imprisonUser( $userId );
 
             $this->jobModel->deleteJobsForUser( $userId );
 
             $this->wearableModel->deleteIllegalEquippedWearablesForUser( $userId );
-
-            $crimeTypeIds = array_column($records, "type");
-            $crimeTypes = $this->crimeTypeModel
-                               ->getFlaggedUniqueById($crimeTypeIds); 
-            $crimesNames = [];
-            $totalJailTime = 0;
-
-            foreach( $records as $record )
-            {                
-                if( isset($crimesNames[$crimeTypes[$record->type]->name]) )
-                {
-                    $crimesNames[$crimeTypes[$record->type]->name] += 1;
-                }
-                else
-                {
-                    $crimesNames[$crimeTypes[$record->type]->name] = 1;
-                }
-
-                $totalJailTime += $crimeTypes[$record->type]->jailTime;
-            }
-
-            $prisonReleaseDate = new \DateTime("+" . $totalJailTime . " seconds");
-
-
-            $imprisonmentInsertArray = [
-                'userId' => $userId,
-                'department' => 'minimum',
-                'imprisonedUntil' => $prisonReleaseDate->format('Y-m-d H:i:s')
-            ];
-            $imprisonmentId = $this->imprisonmentModel->insert($imprisonmentInsertArray, true);
-
-            foreach( $records as $record )
-            {
-                $this->criminalRecordModel->updateById($record->id, ['imprisonmentId' => $imprisonmentId]);
-            }
-
-            $returnArray = [
-                'prisonReleaseDate' => $prisonReleaseDate->format('Y-m-d H:i:s'), 
-                'arrestedFor' => $crimesNames
-            ];
-
-            return $returnArray;
         }
 
 
@@ -330,7 +289,7 @@
                 $installationTimes = array_map( function($val){ return strtotime($val->installingUntil); }, $installationTimes);
                 array_push( $timestamps, ...$installationTimes );
             }
-
+            /*
             $futureImprisonmentTimes = $this->futureImprisonmentModel->getFlaggedUniqueByUserId( $userId, 'imprisonedFrom', 'imprisonedUntil' );
             foreach( $futureImprisonmentTimes as $futureImprisonmentTime )
             {
@@ -342,7 +301,7 @@
             {
                 array_push( $timestamps, strtotime( $imprisonmentTime->imprisonedUntil ) );
             }
-
+            */
             $hospitalizationTime = $this->hospitalizationModel->getSingleByUserId( $userId, 'hospitalizedUntil' );
             if( ! empty( $hospitalizationTime ) )
             {
@@ -439,5 +398,33 @@
             ];
 
             $this->userModel->updateById( $user->id, $updateArray );
+        }
+
+
+        /**
+         * 
+         * 
+         * calculateReleaseDateForUser
+         * @param Int userId
+         * @return Null|Datetime
+         * 
+         * 
+         */
+        public function calculateReleaseDateForUser( Int $userId ): ?\DateTime
+        {
+            $sentences = $this->sentenceModel->getByUserId( $userId );
+
+            if( empty( $sentences ) )
+            {
+                return null;
+            }
+
+            $totaltime = array_sum( array_column( $sentences, "timeRemaining") );
+
+            $imprisonment = $this->imprisonmentModel->getSingleByUserId( $userId );
+            $imprisonment->createdAt = new \DateTime( $imprisonment->createdAt );
+            $imprisonedUntil = $imprisonment->createdAt->modify('+' . $totaltime . ' second');
+
+            return $imprisonedUntil;
         }
     }

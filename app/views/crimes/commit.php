@@ -13,11 +13,17 @@
             if($data['arrested']):
         ?>
             <div class="col-12 alert alert-danger text-center">
-                You've been arrested until <strong><?php echo $data["user"]->prisonReleaseDate; ?></strong>
+                You've been arrested until <strong><?php echo $data["user"]->prisonReleaseDate->format('Y-m-d H:i:s'); ?></strong>
                 <ul class="list-group mt-3">
                     <li class="list-group-item text-dark font-weight-bold">On the grounds of:</li>
-                    <?php foreach($data["arrestedFor"] as $arrestedFor => $amount): ?>
-                        <li class="list-group-item"><?php echo $amount . "x " . ucfirst($arrestedFor); ?></li>
+                    <?php foreach($data["sentences"] as $key => $sentence): ?>
+                        <?php if( $key == 0 ): ?>
+                            <?php foreach( $sentence->criminalRecords as $arrestedFor => $amount ): ?>
+                                <li class="list-group-item"><?php echo $amount . 'x ' . ucfirst($arrestedFor); ?></li>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <li class="list-group-item">A Previous Sentence</li>
+                        <?php endif; ?>    
                     <?php endforeach; ?>
                 </ul>
             </div>
