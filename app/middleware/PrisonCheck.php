@@ -22,10 +22,19 @@
             $imprisonment = $this->imprisonmentModel->getSingleByUserId($_SESSION["userId"]);
             if( empty($imprisonment) )
             {
+                if( 
+                    $this->controller == "prisons" 
+                    && $this->method != "index"
+                ) {
+                    redirect('');
+                }
                 return true;
             }
 
-            $releaseDate = new \DateTime($imprisonment->imprisonedUntil);
+            $releaseDate = new \DateTime( $imprisonment->createdAt );
+            $sentences = $this->sentenceModel->getByUserId( $_SESSION['userId'] );
+            $totalTime = array_sum( array_column( $sentences, "timeRemaining" ) );
+            $releaseDate->modify( '+' . $totalTime . ' second' );
 
             $now = new \DateTime();
 
@@ -34,20 +43,10 @@
                 // In prison
                 if( 
                     $this->controller != "prisons"
-                    || ($this->controller == "prisons" && $this->method == "index")
+                    || ( $this->controller == "prisons" 
+                         && $this->method == "index" )
                 ) {
                     redirect('prison/inside');
-                }
-            }
-            else
-            {
-                //$this->imprisonmentModel->deleteById($imprisonment->id);
-
-                if(
-                    $this->controller == "prisons" 
-                    && $this->method != "index"
-                ) {
-                    redirect('prison/index');
                 }
             }
 

@@ -28,10 +28,9 @@
                         'tests'
                     ],
                 'sequenced' => 
-                    [
-                        'PunishmentCheck',
-                        'WorkCheck',
-                        'UserUpdater'
+                    [                        
+                        'UserUpdater',
+                        'PunishmentCheck'
                     ]
             ],
         'HealthCheck' => 

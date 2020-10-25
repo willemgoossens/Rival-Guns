@@ -242,8 +242,6 @@
             $user = $this->getSingleById( $userId );
             $user->lastCheckedAt = new \DateTime( $user->lastCheckedAt);
 
-            echo variablePrint($eventTimestamps);
-
             foreach($eventTimestamps as $eventTimestamp)
             {
                 $time = new \DateTime('@' . $eventTimestamp);
@@ -282,8 +280,6 @@
                 $this->db->bind(":userId", $userId);
                 $this->db->execute();
             }
-
-            echo variablePrint($eventTimestamps);
         }
 
 

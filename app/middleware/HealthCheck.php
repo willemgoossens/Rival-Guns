@@ -20,9 +20,30 @@
          */
         public function before(): Bool
         {
-            // Add the pages
+            $hospitalization = $this->hospitalizationModel->getSingleByUserId($_SESSION["userId"]);
+            if( empty($hospitalization) )
+            {
+                if( $this->controller == "hospitalizations" ) 
+                {
+                    redirect('');
+                }
 
-            //$this->hospitalizationModel->calculateHealthAndEnergyForUser($_SESSION['userId'], new \DateTime);
+                return true;
+            }
+
+            $releaseDate = new \DateTime( $hospitalization->hospitalizedUntil );
+
+            $now = new \DateTime();
+
+            if( $releaseDate > $now )
+            {
+                if( 
+                    $this->controller != "hospitalizations"
+                    || ($this->controller != "hospitalizations" && $this->method != "hospitalized")
+                ) {
+                    redirect('hospitalized');
+                }
+            }
 
             return true;
         }
