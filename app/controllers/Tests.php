@@ -17,5 +17,10 @@
       var_dump($now > $time);
       echo "<br> " . $now->format('Y-m-d H:i:s');
       echo "<br> " . $time->format('Y-m-d H:i:s');
+
+      $array = [$now, new \DateTime('yesterday'), new \DateTime('tomorrow')];
+      sort($array);
+
+      echo variablePrint($array);
     }
   }
