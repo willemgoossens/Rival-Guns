@@ -58,7 +58,8 @@
                                                     FROM criminalrecords
                                                     WHERE userId = :userId
                                                     ORDER BY createdAt DESC
-                                                    LIMIT 1)");
+                                                    LIMIT 1)
+                                AND sentenceId IS NULL");
             $this->db->bind(':userId', $userId);
 
             $arrestedForRecords = $this->db->resultSet();

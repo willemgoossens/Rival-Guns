@@ -58,12 +58,34 @@
                     'userId' => $userId
                 ];
                 $this->insert( $imprisonmentArray );
-
-                $updateSentenceArray = [
-                    'escapedPrison' => false
-                ];
-
-                $this->sentenceModel->reactivateSentencesForUser( $userId );
             }
+        }
+
+
+        /**
+         * 
+         * 
+         * getEndofImprisonmentForUser
+         * @param Int userId
+         * @return Int
+         * 
+         * 
+         */
+        public function getEndOfImprisonmentForUser( Int $userId ): ?Int
+        {
+            $imprisonment = $this->getSingleByUserId( $userId );            
+            if( empty( $imprisonment ) )
+            {
+                return null;
+            }
+            $imprisonment->createdAt = new \DateTime( $imprisonment->createdAt );
+            $imprisonment->createdAt->setTimezone( new \DateTimeZone('Europe/Brussels') );
+
+            $sentences = $this->sentenceModel->getByUserId( $userId );
+            
+            $totalTimeRemaining = array_sum( array_column( $sentences, "timeRemaining" ) );
+
+            $imprisonment->createdAt->modify('+' . $totalTimeRemaining . ' second');
+            return $imprisonment->createdAt->getTimestamp();
         }
     }

@@ -144,11 +144,11 @@
          * finishDueFutureImprisonmentsForUserAndTime
          * @param Int userId
          * @param DateTime time
-         * @return Void
+         * @return Bool
          * 
          * 
          */
-        public function finishDueFutureImprisonmentsForUserAndTime( Int $userId, \DateTime $dateTime ): Void
+        public function finishDueFutureImprisonmentsForUserAndTime( Int $userId, \DateTime $dateTime ): Bool
         {
             $this->db->query( "SELECT * 
                                 FROM " . $this->getTableName() . "
@@ -160,7 +160,7 @@
             
             if( ! $futureImprisonment )
             {
-                return;
+                return false;
             }
 
             $futureImprisonment->imprisonedFrom = new \DateTime( $futureImprisonment->imprisonedFrom );
@@ -210,5 +210,37 @@
 
             $this->deleteById( $futureImprisonment->id );
             $this->launderingLogModel->deleteAllLaunderingLogsForUser( $user->id );
+
+            return true;
+        }
+
+
+        /**
+         * 
+         * 
+         * getFutureImprisonmentTimestampsForUser
+         * @param Int userId
+         * @return Array
+         * 
+         * 
+         */
+        public function getFutureImprisonmentTimestampsForUser( Int $userId ): Array 
+        {
+            $futureImprisonment = $this->getSingleByUserId( $userId );
+
+            if( ! $futureImprisonment )
+            {
+                return [];
+            }
+            $futureImprisonment->imprisonedFrom = new \DateTime( $futureImprisonment->imprisonedFrom );
+            $timestamps = [];
+
+            array_push( $timestamps, $futureImprisonment->imprisonedFrom->getTimestamp() );
+
+            $crimeType = $this->crimeTypeModel->getSingleById( $futureImprisonment->crimeTypeId );
+            $futureImprisonment->imprisonedFrom->modify('+' . $crimeType->jailTime . ' second');
+            array_push( $timestamps, $futureImprisonment->imprisonedFrom->getTimestamp() );
+
+            return $timestamps;
         }
     }

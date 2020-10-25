@@ -235,11 +235,14 @@
         public function updateUserData( Int $userId ): Void
         {
             $eventTimestamps = $this->userModel->getEventTimestampsForUser( $userId );
+            $eventTimestamps = new \ArrayIterator( $eventTimestamps );
             
             $now = new \DateTime;
 
             $user = $this->getSingleById( $userId );
             $user->lastCheckedAt = new \DateTime( $user->lastCheckedAt);
+
+            echo variablePrint($eventTimestamps);
 
             foreach($eventTimestamps as $eventTimestamp)
             {
@@ -256,8 +259,20 @@
 
                 $this->propertyModel->finishInstallationForUserAndTime( $userId, $time );                
                 $this->jobModel->finishDueJobForUserAndTime( $userId, $time );                                
-                $this->futureImprisonmentModel->finishDueFutureImprisonmentsForUserAndTime( $userId, $time );
-                $this->imprisonmentModel->finishDueImprisonmentForUserAndTime( $userId, $time );
+                
+                $ranFutImpr = $this->futureImprisonmentModel->finishDueFutureImprisonmentsForUserAndTime( $userId, $time );
+                // We need to double check in case the user was also arrested for illegal things
+                if( $ranFutImpr )
+                {
+                    $imprisonmentTime = $this->imprisonmentModel->getEndOfImprisonmentForUser( $userId );
+                    if( ! empty( $imprisonmentTime ) )
+                    {
+                        $eventTimestamps->append( $imprisonmentTime );
+                        $eventTimestamps->asort();
+                    }
+                }
+
+                $this->sentenceModel->finishDueSentencesForUserAndTime( $userId, $time );
 
                 $user->lastCheckedAt = $time;
 
@@ -267,6 +282,8 @@
                 $this->db->bind(":userId", $userId);
                 $this->db->execute();
             }
+
+            echo variablePrint($eventTimestamps);
         }
 
 
@@ -289,19 +306,19 @@
                 $installationTimes = array_map( function($val){ return strtotime($val->installingUntil); }, $installationTimes);
                 array_push( $timestamps, ...$installationTimes );
             }
-            /*
-            $futureImprisonmentTimes = $this->futureImprisonmentModel->getFlaggedUniqueByUserId( $userId, 'imprisonedFrom', 'imprisonedUntil' );
+            
+            $futureImprisonmentTimes = $this->futureImprisonmentModel->getFutureImprisonmentTimestampsForUser( $userId );
             foreach( $futureImprisonmentTimes as $futureImprisonmentTime )
             {
-                array_push( $timestamps, strtotime( $futureImprisonmentTime->imprisonedFrom ) );
+                array_push( $timestamps, $futureImprisonmentTime );
             }
-
-            $imprisonmentTime = $this->imprisonmentModel->getSingleByUserId( $userId, 'imprisonedUntil' );
+            
+            $imprisonmentTime = $this->imprisonmentModel->getEndOfImprisonmentForUser( $userId );
             if( ! empty( $imprisonmentTime ) )
             {
-                array_push( $timestamps, strtotime( $imprisonmentTime->imprisonedUntil ) );
+                array_push( $timestamps, $imprisonmentTime );
             }
-            */
+
             $hospitalizationTime = $this->hospitalizationModel->getSingleByUserId( $userId, 'hospitalizedUntil' );
             if( ! empty( $hospitalizationTime ) )
             {

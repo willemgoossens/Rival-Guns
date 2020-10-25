@@ -85,21 +85,37 @@
         /**
          * 
          * 
-         * reactivateSentencesForUser
+         * finishDueSentencesForUser
          * @param Int userId
-         * @return Void
-         * 
+         * @param DateTime dateTime
+         * @param Return Void
          * 
          */
-        public function reactivateSentencesForUser( Int $userId ): Void
+        public function finishDueSentencesForUserAndTime( Int $userId, \DateTime $dateTime ): Void
         {
-            $this->db->query("UPDATE
-                                " . $this->getTableName() . "
-                                SET
-                                    escapedPrison = false
-                                WHERE
-                                    userId = :userId");
-            $this->db->bind( ":userId", $userId );
-            $this->db->execute();
+            $imprisonment = $this->imprisonmentModel->getSingleByUserId( $userId );
+
+            if( ! $imprisonment )
+            {
+                return;
+            }
+
+            $imprisonment->createdAt = new \DateTime( $imprisonment->createdAt );
+
+            $sentences = $this->getByUserId( $userId );
+            $totalTime = array_sum( array_column( $sentences, "timeRemaining") );
+            $imprisonment->createdAt->modify('+' . $totalTime . ' second');
+            
+            if( $imprisonment->createdAt < new \DateTime )
+            {
+                $this->db->query("DELETE 
+                                    FROM " . $this->getTableName() . "
+                                    WHERE
+                                        userId = :userId");
+                $this->db->bind( ":userId", $userId );
+                $this->db->execute();
+
+                $this->imprisonmentModel->deleteById( $imprisonment->id );
+            }
         }
     }

@@ -41,7 +41,7 @@
             }
             else
             {
-                $this->imprisonmentModel->deleteById($imprisonment->id);
+                //$this->imprisonmentModel->deleteById($imprisonment->id);
 
                 if(
                     $this->controller == "prisons" 
