@@ -10,6 +10,7 @@
         {
             $this->db = new Database;
             $this->setTableName('jobs');
+            $this->dateTimeColumns = ['workingUntil', 'createdAt'];
         }
 
         /**
@@ -50,7 +51,7 @@
                 $notificationBody = "You have successfully sold " . $amountOfVacuums . " vacuum cleaner and made <strong>&euro;" . $bankReward . "</strong>";
             }
 
-            $futureTimestamp = new \DateTime();
+            $futureTimestamp = new \DateTime;
             $futureTimestamp->modify( '+15 minutes' );
 
             $workingUntil = $futureTimestamp->format( 'Y-m-d H:i:s' );

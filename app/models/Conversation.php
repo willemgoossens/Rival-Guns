@@ -8,6 +8,7 @@
         public function __construct()
         {
             $this->db = new Database;
+            $this->dateTimeColumns = ['createdAt'];
             $this->setTableName('conversations');
         }
 

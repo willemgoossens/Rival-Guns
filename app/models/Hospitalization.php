@@ -9,6 +9,7 @@
         {
             $this->db = new Database;
             $this->setTableName('hospitalizations');
+            $this->dateTimeColumns = ['hospitalizedUntil', 'createdAt'];
         }
 
 

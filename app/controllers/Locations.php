@@ -149,7 +149,7 @@
                 {
                     $this->jobModel->createHooversJob( $user->id );
                     $existingJob = $this->jobModel->getSingleByUserId( $user->id );
-                    $workingUntil = new \DateTime($existingJob->workingUntil);
+                    $workingUntil = $existingJob->workingUntil;
 
                     $user->energy -= 20;
 

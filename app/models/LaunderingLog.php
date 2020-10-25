@@ -10,6 +10,7 @@
         {
             $this->db = new Database;
             $this->setTableName('launderinglogs');
+            $this->dateTimeColumns = ['createdAt'];
         }
 
 

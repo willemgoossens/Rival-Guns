@@ -14,6 +14,7 @@
 
         private $tableName = NULL;
         private $tableColumns = [];
+        protected $dateTimeColumns = [];
 
 
 
@@ -151,8 +152,15 @@
         private function getSingleBy (String $method, Array $arguments)
         {
             $this->prepareDynamicQuery($method, $arguments);
+            $object = $this->db->single();
 
-            return $this->db->single();
+            if( is_object( $object ) )
+            {
+                $array = $this->checkForDateTimes( $object );
+            }
+
+
+            return $object;
         }
 
 
@@ -162,7 +170,7 @@
         * getFlaggedUniqueBy
         * @Param String method
         * @Param Array arguments
-        * @Return Array
+        * @Return Null|Array
         *
         *
         */
@@ -170,7 +178,14 @@
         {
             $this->prepareDynamicQuery($method, $arguments);
 
-            return $this->db->resultSet(true);
+            $array = $this->db->resultSet(true);
+            if( is_array( $array ) )
+            {
+                $array = $this->checkForDateTimesArray( $array );
+            }
+
+
+            return $array;
         }
 
         /**
@@ -187,7 +202,13 @@
         {
             $this->prepareDynamicQuery($method, $arguments);
 
-            return $this->db->resultSet();
+            $array = $this->db->resultSet();
+            if( is_array( $array ) )
+            {
+                $array = $this->checkForDateTimesArray( $array );
+            }
+
+            return $array;
         }
 
 
@@ -374,15 +395,15 @@
         }
 
 
-        /***********************
+        /**
         *
         *
         * set the Table name for the current model
-        * @PARAM: table Name
+        * @Param String table Name
+        * @Return Void
         *
-        *
-        ************************/
-        protected function setTableName($value)
+        */
+        protected function setTableName( String $value ): Void
         {
             $this->tableName = $value;
 
@@ -643,6 +664,55 @@
             return $return;
         }
 
+
+        /**
+         * 
+         * 
+         * checkForDateTimes
+         * @param Object $object
+         * @return Object
+         * 
+         * 
+         */
+        public function checkForDateTimes( Object $object ): Object
+        {
+            foreach( $this->dateTimeColumns as $column )
+            {
+                if( isset( $object->$column ) )
+                {
+                    $object->$column = new \DateTime( $object->$column );
+                }
+            }
+
+            return $object;
+        }
+
+
+        /**
+         * 
+         * 
+         * checkForDateTimesArray
+         * @param Array $array
+         * @return Array
+         * 
+         * 
+         */
+        public function checkForDateTimesArray( Array $array ): Array
+        {
+            if( 
+                empty( $array )
+                || empty ( $this->dataTimeColums )
+            ) {
+                return $array;
+            }
+
+            foreach( $array as &$object )
+            {
+                $object = $this->checkForDateTimes( $object );
+            }
+
+            return $array;
+        }
 
 
 

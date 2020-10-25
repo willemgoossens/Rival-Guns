@@ -9,6 +9,7 @@
         {
             $this->db = new Database;
             $this->setTableName('users');
+            $this->dateTimeColumns = ['lastCheckedAt', 'createdAt'];
         }
 
         /**
@@ -240,25 +241,21 @@
             $now = new \DateTime;
 
             $user = $this->getSingleById( $userId );
-            $user->lastCheckedAt = new \DateTime( $user->lastCheckedAt);
 
             foreach($eventTimestamps as $eventTimestamp)
-            {
-                $time = new \DateTime('@' . $eventTimestamp);
-                $time->setTimezone(new \DateTimeZone('Europe/Brussels'));
-                
-                if( $time > $now )
+            {                
+                if( $eventTimestamp > $now )
                 {
                     break;
                 }
 
-                $this->calculateHealthAndEnergyForUser( $userId, $time );
-                $this->propertyModel->calculateProfitsForUserAndTime( $userId, $time );
+                $this->calculateHealthAndEnergyForUser( $userId, $eventTimestamp );
+                $this->propertyModel->calculateProfitsForUserAndTime( $userId, $eventTimestamp );
 
-                $this->propertyModel->finishInstallationForUserAndTime( $userId, $time );                
-                $this->jobModel->finishDueJobForUserAndTime( $userId, $time );                                
+                $this->propertyModel->finishInstallationForUserAndTime( $userId, $eventTimestamp );                
+                $this->jobModel->finishDueJobForUserAndTime( $userId, $eventTimestamp );                                
                 
-                $ranFutImpr = $this->futureImprisonmentModel->finishDueFutureImprisonmentsForUserAndTime( $userId, $time );
+                $ranFutImpr = $this->futureImprisonmentModel->finishDueFutureImprisonmentsForUserAndTime( $userId, $eventTimestamp );
                 // We need to double check in case the user was also arrested for illegal things
                 if( $ranFutImpr )
                 {
@@ -270,13 +267,13 @@
                     }
                 }
 
-                $this->sentenceModel->finishDueSentencesForUserAndTime( $userId, $time );
+                $this->sentenceModel->finishDueSentencesForUserAndTime( $userId, $eventTimestamp );
 
-                $user->lastCheckedAt = $time;
+                $user->lastCheckedAt = $eventTimestamp;
 
                 $this->db->query("UPDATE users SET lastCheckedAt = :time
                                 WHERE id = :userId");
-                $this->db->bind(":time", $time->format( 'Y-m-d H:i:s' ));
+                $this->db->bind(":time", $eventTimestamp->format( 'Y-m-d H:i:s' ));
                 $this->db->bind(":userId", $userId);
                 $this->db->execute();
             }
@@ -304,9 +301,9 @@
             }
             
             $futureImprisonmentTimes = $this->futureImprisonmentModel->getFutureImprisonmentTimestampsForUser( $userId );
-            foreach( $futureImprisonmentTimes as $futureImprisonmentTime )
+            if( ! empty( $futureImprisonmentTimes ) )
             {
-                array_push( $timestamps, $futureImprisonmentTime );
+                $timestamps = array_merge( $timestamps, $futureImprisonmentTimes );
             }
             
             $imprisonmentTime = $this->imprisonmentModel->getEndOfImprisonmentForUser( $userId );
@@ -318,17 +315,17 @@
             $hospitalizationTime = $this->hospitalizationModel->getSingleByUserId( $userId, 'hospitalizedUntil' );
             if( ! empty( $hospitalizationTime ) )
             {
-                array_push( $timestamps, strtotime( $hospitalizationTime->hospitalizedUntil ) );
+                array_push( $timestamps, $hospitalizationTime->hospitalizedUntil );
             }
 
             $jobTime = $this->jobModel->getSingleByUserId( $userId, 'workingUntil' );
             if( ! empty( $jobTime ) )
             {
-                array_push( $timestamps, strtotime( $jobTime->workingUntil ) );
+                array_push( $timestamps, $jobTime->workingUntil );
             }
 
             $now = new \DateTime;
-            array_push( $timestamps, $now->getTimestamp() );
+            array_push( $timestamps, $now );
 
             sort($timestamps);
 
@@ -350,19 +347,17 @@
         {
             // This function needs to be checked
             $user = $this->getSingleById( $userId );
-            $user->lastCheckedAt = new \DateTime($user->lastCheckedAt);
-            $hospitalization = $this->hospitalizationModel->getSingleByUserId( $userId );
-
             $userLastCheckedDuplicate = $user->lastCheckedAt;
+
+            $hospitalization = $this->hospitalizationModel->getSingleByUserId( $userId );
 
             if( $hospitalization )
             {
-                $hospitalization->hospitalizedUntil = new \DateTime($hospitalization->hospitalizedUntil);
-
                 if( $hospitalization->hospitalizedUntil > $dateTime )
                 {
                     $usedTime = $dateTime;
-                }else
+                }
+                else
                 {
                     $usedTime = $hospitalization->hospitalizedUntil;
                 }
@@ -435,7 +430,6 @@
             $totaltime = array_sum( array_column( $sentences, "timeRemaining") );
 
             $imprisonment = $this->imprisonmentModel->getSingleByUserId( $userId );
-            $imprisonment->createdAt = new \DateTime( $imprisonment->createdAt );
             $imprisonedUntil = $imprisonment->createdAt->modify('+' . $totaltime . ' second');
 
             return $imprisonedUntil;

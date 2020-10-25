@@ -9,6 +9,7 @@
         public function __construct()
         {
             $this->db = new Database;
+            $this->dateTimeColumns = ['imprisonedFrom', 'createdAt'];
             $this->setTableName('futureimprisonments');
         }
 
@@ -36,7 +37,6 @@
 
             foreach( $logs as $log )
             {
-                $log->createdAt = new \DateTime( $log->createdAt );
                 $log->originalChanceFactor = ( $log->launderedAmount / $log->maxLaunderingAmount ) ** 2.5;
 
                 $key = 14 - $now->diff( $log->createdAt )->format( '%a' );
@@ -163,8 +163,6 @@
                 return false;
             }
 
-            $futureImprisonment->imprisonedFrom = new \DateTime( $futureImprisonment->imprisonedFrom );
-
             $crimeType = $this->crimeTypeModel->getSingleById( $futureImprisonment->crimeTypeId );
 
             $insertCriminalRecordArray = [
@@ -220,26 +218,25 @@
          * 
          * getFutureImprisonmentTimestampsForUser
          * @param Int userId
-         * @return Array
+         * @return Null|Array
          * 
          * 
          */
-        public function getFutureImprisonmentTimestampsForUser( Int $userId ): Array 
+        public function getFutureImprisonmentTimestampsForUser( Int $userId ): ?Array 
         {
             $futureImprisonment = $this->getSingleByUserId( $userId );
 
             if( ! $futureImprisonment )
             {
-                return [];
+                return null;
             }
-            $futureImprisonment->imprisonedFrom = new \DateTime( $futureImprisonment->imprisonedFrom );
             $timestamps = [];
 
-            array_push( $timestamps, $futureImprisonment->imprisonedFrom->getTimestamp() );
+            array_push( $timestamps, $futureImprisonment->imprisonedFrom );
 
             $crimeType = $this->crimeTypeModel->getSingleById( $futureImprisonment->crimeTypeId );
             $futureImprisonment->imprisonedFrom->modify('+' . $crimeType->jailTime . ' second');
-            array_push( $timestamps, $futureImprisonment->imprisonedFrom->getTimestamp() );
+            array_push( $timestamps, $futureImprisonment->imprisonedFrom );
 
             return $timestamps;
         }

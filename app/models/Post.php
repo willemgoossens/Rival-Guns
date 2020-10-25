@@ -9,6 +9,7 @@
         {
           $this->db = new Database;
           $this->setTableName('posts');
+          $this->dateTimeColumns = ['createdAt'];
         }
 
     }

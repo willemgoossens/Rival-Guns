@@ -10,6 +10,7 @@
         {
             $this->db = new Database;
             $this->setTableName('messages');
+            $this->dateTimeColumns = ['createdAt'];
         }
 
 

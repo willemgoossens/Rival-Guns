@@ -31,12 +31,12 @@
                 return true;
             }
 
-            $releaseDate = new \DateTime( $imprisonment->createdAt );
+            $releaseDate = $imprisonment->createdAt;
             $sentences = $this->sentenceModel->getByUserId( $_SESSION['userId'] );
             $totalTime = array_sum( array_column( $sentences, "timeRemaining" ) );
             $releaseDate->modify( '+' . $totalTime . ' second' );
 
-            $now = new \DateTime();
+            $now = new \DateTime;
 
             if( $releaseDate > $now )
             {

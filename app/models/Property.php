@@ -9,6 +9,7 @@
         {
             $this->db = new Database;
             $this->setTableName('properties');
+            $this->dateTimeColumns = ['installingUntil', 'createdAt'];
         }
 
 
@@ -30,7 +31,6 @@
             $businessCategories = $this->businessCategoryModel->getFlaggedUniqueById( $businessCategoriesIds );
 
             $user = $this->userModel->getSingleById( $userId );
-            $user->lastCheckedAt = new \DateTime( $user->lastCheckedAt );
 
             foreach ($properties as $property) 
             {

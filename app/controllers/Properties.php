@@ -142,7 +142,7 @@
          
             // If we're already installing something
             // Set $now last. In case the installingUntil is NULL, it will generate the current timestamp. But $now has to be higher or equal
-            $currentlyInstallingUntil = new \DateTime($property->installingUntil);
+            $currentlyInstallingUntil = $property->installingUntil;
             $now = new \DateTime;
             $property->underConstruction = $currentlyInstallingUntil > $now ? true : false;
             $property->underConstructionSeconds = $currentlyInstallingUntil->getTimestamp() - $now->getTimestamp();
@@ -176,7 +176,7 @@
          
             // If we're already installing something
             // Set $now last. In case the installingUntil is NULL, it will generate the current timestamp. But $now has to be higher or equal
-            $currentlyInstallingUntil = new \DateTime($property->installingUntil);
+            $currentlyInstallingUntil = $property->installingUntil;
             $now = new \DateTime;
 
             if( $currentlyInstallingUntil > $now )

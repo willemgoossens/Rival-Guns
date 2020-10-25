@@ -9,6 +9,7 @@
         {
             $this->db = new Database;
             $this->setTableName('imprisonments');
+            $this->dateTimeColumns = ['createdAt'];
         }
 
 
@@ -67,19 +68,17 @@
          * 
          * getEndofImprisonmentForUser
          * @param Int userId
-         * @return Int
+         * @return DateTime
          * 
          * 
          */
-        public function getEndOfImprisonmentForUser( Int $userId ): ?Int
+        public function getEndOfImprisonmentForUser( Int $userId ): ?\DateTime
         {
             $imprisonment = $this->getSingleByUserId( $userId );            
             if( empty( $imprisonment ) )
             {
                 return null;
             }
-            $imprisonment->createdAt = new \DateTime( $imprisonment->createdAt );
-            $imprisonment->createdAt->setTimezone( new \DateTimeZone('Europe/Brussels') );
 
             $sentences = $this->sentenceModel->getByUserId( $userId );
             

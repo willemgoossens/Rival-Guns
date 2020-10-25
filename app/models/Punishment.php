@@ -10,6 +10,7 @@
         {
             $this->db = new Database;
             $this->setTableName('punishments');
+            $this->dateTimeColumns = ['endsAt', 'createdAt'];
         }
 
         
@@ -104,7 +105,7 @@
 
                     if(
                         ! $date 
-                        || new \DateTime() >= $date
+                        || new \DateTime >= $date
                     ) {
                         $error = true;
 
@@ -124,14 +125,13 @@
             // Check if the user already has a temporary ban, and perhaps add up the times
             if( $input['punishment'] == "temporaryBan" )
             {
-                $now = new \DateTime();
-                $datePicker = new \DateTime($input['datePicker']);
+                $now = new \DateTime;
+                $datePicker = new \DateTime( $input['datePicker'] );
                 
                 $lastTempBan = $this->getLastTemporaryBanForUser($input['userId']);
 
                 if( $lastTempBan )
                 {
-                    $lastTempBan->endsAt = new \DateTime($lastTempBan->endsAt);
                     if( $lastTempBan->endsAt > $now )
                     {
                         $interval = $now->diff($lastTempBan->endsAt);

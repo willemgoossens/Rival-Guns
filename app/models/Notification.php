@@ -9,6 +9,7 @@
         {
             $this->db = new Database;
             $this->setTableName('notifications');
+            $this->dateTimeColumns = ['createdAt'];
         }
 
 

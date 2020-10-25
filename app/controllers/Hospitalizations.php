@@ -18,9 +18,9 @@
 
             $hospitalization = $this->hospitalizationModel->getSingleByUserId( $user->id );
 
-            $endDate = new \DateTime( $hospitalization->hospitalizedUntil );
+            $endDate = $hospitalization->hospitalizedUntil;
 
-            $now = new \DateTime();
+            $now = new \DateTime;
 
             $this->data['interval'] =  $endDate->getTimestamp() - $now->getTimestamp();
 

@@ -31,11 +31,9 @@
                 return true;
             }
 
-            $releaseDate = new \DateTime( $hospitalization->hospitalizedUntil );
+            $now = new \DateTime;
 
-            $now = new \DateTime();
-
-            if( $releaseDate > $now )
+            if( $hospitalization->hospitalizedUntil > $now )
             {
                 if( 
                     $this->controller != "hospitalizations"

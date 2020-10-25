@@ -10,6 +10,7 @@
         {
             $this->db = new Database;
             $this->setTableName('sentences');
+            $this->dateTimeColumns = ['createdAt'];
         }
 
 
@@ -99,8 +100,6 @@
             {
                 return;
             }
-
-            $imprisonment->createdAt = new \DateTime( $imprisonment->createdAt );
 
             $sentences = $this->getByUserId( $userId );
             $totalTime = array_sum( array_column( $sentences, "timeRemaining") );
