@@ -1,4 +1,5 @@
 <?php
+    date_default_timezone_set('Europe/Brussels');
     // DB Params
     define('DB_HOST', 'localhost');
     define('DB_USER', 'root');

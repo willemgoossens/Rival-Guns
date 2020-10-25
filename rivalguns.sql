@@ -157,7 +157,7 @@ CREATE TABLE `conversationreports` (
   `otherExplanation` text NOT NULL,
   `classified` tinyint(1) NOT NULL,
   `handledById` int(250) DEFAULT NULL,
-  `createdAt` datetime NOT NULL DEFAULT current_timestamp(),
+  `createdAt` timestamp NOT NULL DEFAULT current_timestamp(),
   `summary` text DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `link_to_conversation` (`conversationId`),
@@ -187,7 +187,7 @@ CREATE TABLE `conversations` (
   `subject` varchar(250) NOT NULL,
   `noReply` tinyint(1) NOT NULL,
   `noReplySender` varchar(30) DEFAULT NULL,
-  `createdAt` datetime NOT NULL DEFAULT current_timestamp(),
+  `createdAt` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `user1_id` (`userId`),
   CONSTRAINT `conversations_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -200,19 +200,19 @@ CREATE TABLE `conversations` (
 
 LOCK TABLES `conversations` WRITE;
 /*!40000 ALTER TABLE `conversations` DISABLE KEYS */;
-INSERT INTO `conversations` VALUES (26,2,'Hoi',0,NULL,'2020-05-13 14:27:58');
-INSERT INTO `conversations` VALUES (27,2,'Hi there',0,NULL,'2020-05-16 23:36:22');
-INSERT INTO `conversations` VALUES (44,NULL,'Work report',1,'Harry\'s Hoovers','2020-08-27 23:57:59');
-INSERT INTO `conversations` VALUES (45,NULL,'Work report',1,'Harry\'s Hoovers','2020-08-27 23:59:46');
-INSERT INTO `conversations` VALUES (46,NULL,'Work report',1,'Harry\'s Hoovers','2020-08-28 00:00:51');
-INSERT INTO `conversations` VALUES (47,NULL,'Work report',1,'Harry\'s Hoovers','2020-08-28 00:01:44');
-INSERT INTO `conversations` VALUES (48,NULL,'Work report',1,'Harry\'s Hoovers','2020-08-28 00:02:30');
-INSERT INTO `conversations` VALUES (49,NULL,'Work report',1,'Harry\'s Hoovers','2020-08-28 00:05:02');
-INSERT INTO `conversations` VALUES (50,NULL,'Work report',1,'Harry\'s Hoovers','2020-08-28 00:07:00');
-INSERT INTO `conversations` VALUES (51,NULL,'Work report',1,'Harry\'s Hoovers','2020-08-28 00:10:09');
-INSERT INTO `conversations` VALUES (52,NULL,'Work report',1,'Harry\'s Hoovers','2020-08-28 12:42:32');
-INSERT INTO `conversations` VALUES (53,2,'test',0,NULL,'2020-09-14 14:49:25');
-INSERT INTO `conversations` VALUES (54,2,'Question regarding r/socialanxiety',0,NULL,'2020-09-14 20:16:01');
+INSERT INTO `conversations` VALUES (26,2,'Hoi',0,NULL,'2020-05-13 12:27:58');
+INSERT INTO `conversations` VALUES (27,2,'Hi there',0,NULL,'2020-05-16 21:36:22');
+INSERT INTO `conversations` VALUES (44,NULL,'Work report',1,'Harry\'s Hoovers','2020-08-27 21:57:59');
+INSERT INTO `conversations` VALUES (45,NULL,'Work report',1,'Harry\'s Hoovers','2020-08-27 21:59:46');
+INSERT INTO `conversations` VALUES (46,NULL,'Work report',1,'Harry\'s Hoovers','2020-08-27 22:00:51');
+INSERT INTO `conversations` VALUES (47,NULL,'Work report',1,'Harry\'s Hoovers','2020-08-27 22:01:44');
+INSERT INTO `conversations` VALUES (48,NULL,'Work report',1,'Harry\'s Hoovers','2020-08-27 22:02:30');
+INSERT INTO `conversations` VALUES (49,NULL,'Work report',1,'Harry\'s Hoovers','2020-08-27 22:05:02');
+INSERT INTO `conversations` VALUES (50,NULL,'Work report',1,'Harry\'s Hoovers','2020-08-27 22:07:00');
+INSERT INTO `conversations` VALUES (51,NULL,'Work report',1,'Harry\'s Hoovers','2020-08-27 22:10:09');
+INSERT INTO `conversations` VALUES (52,NULL,'Work report',1,'Harry\'s Hoovers','2020-08-28 10:42:32');
+INSERT INTO `conversations` VALUES (53,2,'test',0,NULL,'2020-09-14 12:49:25');
+INSERT INTO `conversations` VALUES (54,2,'Question regarding r/socialanxiety',0,NULL,'2020-09-14 18:16:01');
 /*!40000 ALTER TABLE `conversations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -322,7 +322,7 @@ CREATE TABLE `criminalrecords` (
   `sentenceId` int(11) DEFAULT NULL,
   `userId` int(11) NOT NULL,
   `type` int(6) NOT NULL,
-  `createdAt` datetime NOT NULL DEFAULT current_timestamp(),
+  `createdAt` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `userId` (`userId`),
   KEY `type` (`type`),
@@ -355,8 +355,8 @@ CREATE TABLE `futureimprisonments` (
   `crimeTypeId` int(11) NOT NULL,
   `department` enum('minimum','medium','maximum','solitary') NOT NULL,
   `fine` bigint(20) NOT NULL,
-  `imprisonedFrom` datetime NOT NULL,
-  `createdAt` datetime NOT NULL DEFAULT current_timestamp(),
+  `imprisonedFrom` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `createdAt` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `userId` (`userId`),
   KEY `crimeTypeId` (`crimeTypeId`),
@@ -384,16 +384,16 @@ DROP TABLE IF EXISTS `hospitalizations`;
 CREATE TABLE `hospitalizations` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `userId` int(11) NOT NULL,
-  `createdAt` datetime NOT NULL DEFAULT current_timestamp(),
+  `createdAt` timestamp NOT NULL DEFAULT current_timestamp(),
   `reason` enum('mugged','hospitalized','resting','bled out') NOT NULL,
   `causedById` int(11) DEFAULT NULL,
-  `hospitalizedUntil` datetime NOT NULL,
+  `hospitalizedUntil` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `userId` (`userId`),
   KEY `causedById` (`causedById`),
   CONSTRAINT `hospitalizations_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `hospitalizations_ibfk_2` FOREIGN KEY (`causedById`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -416,7 +416,7 @@ CREATE TABLE `imprisonments` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `userId` int(11) NOT NULL,
   `department` enum('minimum','medium','maximum','solitary') NOT NULL,
-  `createdAt` datetime NOT NULL DEFAULT current_timestamp(),
+  `createdAt` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `userId` (`userId`),
   CONSTRAINT `imprisonment_to_id` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -429,7 +429,6 @@ CREATE TABLE `imprisonments` (
 
 LOCK TABLES `imprisonments` WRITE;
 /*!40000 ALTER TABLE `imprisonments` DISABLE KEYS */;
-INSERT INTO `imprisonments` VALUES (57,2,'minimum','2020-10-25 20:21:03');
 /*!40000 ALTER TABLE `imprisonments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -443,14 +442,14 @@ DROP TABLE IF EXISTS `jobs`;
 CREATE TABLE `jobs` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `type` enum('Hoovers') NOT NULL,
-  `workingUntil` datetime NOT NULL,
+  `workingUntil` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `userId` int(11) NOT NULL,
   `bankReward` int(11) NOT NULL,
   `charismaSkillsReward` int(11) NOT NULL,
   `notificationText` text NOT NULL,
   `notificationClass` varchar(20) NOT NULL,
   `notificationLink` varchar(30) NOT NULL,
-  `createdAt` datetime NOT NULL DEFAULT current_timestamp(),
+  `createdAt` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `userId` (`userId`),
   CONSTRAINT `jobs_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -478,7 +477,7 @@ CREATE TABLE `launderinglogs` (
   `userId` int(11) NOT NULL,
   `launderedAmount` bigint(20) NOT NULL,
   `maxLaunderingAmount` bigint(20) NOT NULL,
-  `createdAt` datetime NOT NULL DEFAULT current_timestamp(),
+  `createdAt` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `userId` (`userId`),
   CONSTRAINT `launderinglogs_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -505,7 +504,7 @@ CREATE TABLE `messages` (
   `id` int(250) NOT NULL AUTO_INCREMENT,
   `conversationId` int(250) NOT NULL,
   `body` text NOT NULL,
-  `createdAt` datetime NOT NULL DEFAULT current_timestamp(),
+  `createdAt` timestamp NOT NULL DEFAULT current_timestamp(),
   `userId` int(250) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `conversation_id` (`conversationId`),
@@ -520,20 +519,20 @@ CREATE TABLE `messages` (
 
 LOCK TABLES `messages` WRITE;
 /*!40000 ALTER TABLE `messages` DISABLE KEYS */;
-INSERT INTO `messages` VALUES (45,26,'How you doing?','2020-05-13 14:27:58',2);
-INSERT INTO `messages` VALUES (46,26,'I&#039;m doing fine :)\n\n*What about you?*','2020-05-13 14:37:20',1);
-INSERT INTO `messages` VALUES (47,27,'Another test message','2020-05-16 23:36:22',2);
-INSERT INTO `messages` VALUES (61,44,'Goddamnit Admin,\r\n                    \r\n                    Did you seriously fail to sell just a single vacuum cleaner.\r\n                    How hard can it be?\r\n                    \r\n                    Kind regards,\r\n                    Harry','2020-08-27 23:57:59',NULL);
-INSERT INTO `messages` VALUES (62,45,'Dear Admin,\\\r\n                \\\r\n                Thank you for working with Harry\'s Hoovers!\\\r\n                By selling 1 vacuum cleaners, you made $40.\\\r\n                You also earned 1 charisma points. The money has been deposited in your bank account.\\\r\n                \\\r\n                Kind regards,\\\r\n                Harry','2020-08-27 23:59:46',NULL);
-INSERT INTO `messages` VALUES (63,46,'Goddamnit Admin,<br/>\r\n                    <br/>\r\n                    Did you seriously fail to sell just a single vacuum cleaner.<br/>\r\n                    How hard can it be?<br/>\r\n                    <br/>\r\n                    Kind regards,<br/>\r\n                    Harry','2020-08-28 00:00:51',NULL);
-INSERT INTO `messages` VALUES (64,47,'Dear Admin,\\n\r\n                \\n\r\n                Thank you for working with Harry\'s Hoovers!\\n\r\n                By selling 1 vacuum cleaners, you made $40.\\n\r\n                You also earned 1 charisma points. The money has been deposited in your bank account.\\n\r\n                <br/>\r\n                Kind regards,<br/>\r\n                Harry','2020-08-28 00:01:44',NULL);
-INSERT INTO `messages` VALUES (65,48,'Goddamnit Admin,  \r\n                      \r\n                    Did you seriously fail to sell just a single vacuum cleaner.  \r\n                    How hard can it be?  \r\n                      \r\n                    Kind regards,  \r\n                    Harry','2020-08-28 00:02:30',NULL);
-INSERT INTO `messages` VALUES (66,49,'Goddamnit Admin,__\r\n                    __\r\n                    Did you seriously fail to sell just a single vacuum cleaner.__\r\n                    How hard can it be?__\r\n                    __\r\n                    Kind regards,__\r\n                    Harry','2020-08-28 00:05:02',NULL);
-INSERT INTO `messages` VALUES (67,50,'Dear Admin,\\r\\n\r\n                \\r\\n\r\n                Thank you for working with Harry\'s Hoovers!\\r\\n\r\n                By selling 1 vacuum cleaner(s), you made $40.\\r\\n\r\n                You also earned 1 charisma points. The money has been deposited in your bank account.\\r\\n\r\n                \\r\\n\r\n                Kind regards,\\r\\n\r\n                Harry','2020-08-28 00:07:00',NULL);
-INSERT INTO `messages` VALUES (68,51,'Goddamnit Admin,\r\n\r\nYou sold no vacuum cleaners at all.\r\nHow hard can it be?\r\n\r\nHarry','2020-08-28 00:10:09',NULL);
-INSERT INTO `messages` VALUES (69,52,'Dear Admin,\r\n\r\nThank you for working with Harry\\\'s Hoovers!\r\nBy selling 1 vacuum cleaner(s), you made $40.\r\nYou also earned 1 charisma points. The money has been deposited in your bank account.\r\n\r\nKind regards,\r\nHarry','2020-08-28 12:42:32',NULL);
-INSERT INTO `messages` VALUES (70,53,'sdfsfsfdsfsqfdfs dfssf','2020-09-14 14:49:25',2);
-INSERT INTO `messages` VALUES (71,54,'**dfsqdfsfddsf**\n\n1. **dddd**\n2. **dd**\n3. **dd**\n4. ddddd\n5. *ddddd*','2020-09-14 20:16:01',2);
+INSERT INTO `messages` VALUES (45,26,'How you doing?','2020-05-13 12:27:58',2);
+INSERT INTO `messages` VALUES (46,26,'I&#039;m doing fine :)\n\n*What about you?*','2020-05-13 12:37:20',1);
+INSERT INTO `messages` VALUES (47,27,'Another test message','2020-05-16 21:36:22',2);
+INSERT INTO `messages` VALUES (61,44,'Goddamnit Admin,\r\n                    \r\n                    Did you seriously fail to sell just a single vacuum cleaner.\r\n                    How hard can it be?\r\n                    \r\n                    Kind regards,\r\n                    Harry','2020-08-27 21:57:59',NULL);
+INSERT INTO `messages` VALUES (62,45,'Dear Admin,\\\r\n                \\\r\n                Thank you for working with Harry\'s Hoovers!\\\r\n                By selling 1 vacuum cleaners, you made $40.\\\r\n                You also earned 1 charisma points. The money has been deposited in your bank account.\\\r\n                \\\r\n                Kind regards,\\\r\n                Harry','2020-08-27 21:59:46',NULL);
+INSERT INTO `messages` VALUES (63,46,'Goddamnit Admin,<br/>\r\n                    <br/>\r\n                    Did you seriously fail to sell just a single vacuum cleaner.<br/>\r\n                    How hard can it be?<br/>\r\n                    <br/>\r\n                    Kind regards,<br/>\r\n                    Harry','2020-08-27 22:00:51',NULL);
+INSERT INTO `messages` VALUES (64,47,'Dear Admin,\\n\r\n                \\n\r\n                Thank you for working with Harry\'s Hoovers!\\n\r\n                By selling 1 vacuum cleaners, you made $40.\\n\r\n                You also earned 1 charisma points. The money has been deposited in your bank account.\\n\r\n                <br/>\r\n                Kind regards,<br/>\r\n                Harry','2020-08-27 22:01:44',NULL);
+INSERT INTO `messages` VALUES (65,48,'Goddamnit Admin,  \r\n                      \r\n                    Did you seriously fail to sell just a single vacuum cleaner.  \r\n                    How hard can it be?  \r\n                      \r\n                    Kind regards,  \r\n                    Harry','2020-08-27 22:02:30',NULL);
+INSERT INTO `messages` VALUES (66,49,'Goddamnit Admin,__\r\n                    __\r\n                    Did you seriously fail to sell just a single vacuum cleaner.__\r\n                    How hard can it be?__\r\n                    __\r\n                    Kind regards,__\r\n                    Harry','2020-08-27 22:05:02',NULL);
+INSERT INTO `messages` VALUES (67,50,'Dear Admin,\\r\\n\r\n                \\r\\n\r\n                Thank you for working with Harry\'s Hoovers!\\r\\n\r\n                By selling 1 vacuum cleaner(s), you made $40.\\r\\n\r\n                You also earned 1 charisma points. The money has been deposited in your bank account.\\r\\n\r\n                \\r\\n\r\n                Kind regards,\\r\\n\r\n                Harry','2020-08-27 22:07:00',NULL);
+INSERT INTO `messages` VALUES (68,51,'Goddamnit Admin,\r\n\r\nYou sold no vacuum cleaners at all.\r\nHow hard can it be?\r\n\r\nHarry','2020-08-27 22:10:09',NULL);
+INSERT INTO `messages` VALUES (69,52,'Dear Admin,\r\n\r\nThank you for working with Harry\\\'s Hoovers!\r\nBy selling 1 vacuum cleaner(s), you made $40.\r\nYou also earned 1 charisma points. The money has been deposited in your bank account.\r\n\r\nKind regards,\r\nHarry','2020-08-28 10:42:32',NULL);
+INSERT INTO `messages` VALUES (70,53,'sdfsfsfdsfsqfdfs dfssf','2020-09-14 12:49:25',2);
+INSERT INTO `messages` VALUES (71,54,'**dfsqdfsfddsf**\n\n1. **dddd**\n2. **dd**\n3. **dd**\n4. ddddd\n5. *ddddd*','2020-09-14 18:16:01',2);
 /*!40000 ALTER TABLE `messages` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -548,10 +547,10 @@ CREATE TABLE `notifications` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `userId` int(11) NOT NULL,
   `body` text NOT NULL,
-  `readAt` datetime DEFAULT NULL,
+  `readAt` timestamp NULL DEFAULT NULL,
   `link` varchar(255) NOT NULL DEFAULT '#',
   `class` varchar(20) NOT NULL DEFAULT 'alert-primary',
-  `createdAt` datetime NOT NULL DEFAULT current_timestamp(),
+  `createdAt` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `userId` (`userId`),
   CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -564,19 +563,19 @@ CREATE TABLE `notifications` (
 
 LOCK TABLES `notifications` WRITE;
 /*!40000 ALTER TABLE `notifications` DISABLE KEYS */;
-INSERT INTO `notifications` VALUES (73,2,'The Tax Services have found you were laundering money and have convicted you to imprisonment until 2020-10-16 02:20:03  and a &euro;10000 fine. If you were already in prison, your sentence will be elongated.','2020-10-25 18:22:09','#','alert alert-danger','2020-10-15 22:20:03');
-INSERT INTO `notifications` VALUES (74,2,'As your bank account didn\'t contain enough money. The government confiscated some of your properties (1x Downtown business estate).','2020-10-25 18:22:09','#','alert alert-warning','2020-10-15 22:20:03');
-INSERT INTO `notifications` VALUES (75,2,'The Tax Services have found you were laundering money and have convicted you to imprisonment until 2020-10-24 18:58:00  and a &euro;10000 fine. If you were already in prison, your sentence will be elongated.','2020-10-25 18:22:09','#','alert alert-danger','2020-10-24 18:28:00');
-INSERT INTO `notifications` VALUES (76,2,'As your bank account didn\'t contain enough money. The government confiscated some of your properties (1x House).','2020-10-25 18:22:09','#','alert alert-warning','2020-10-24 18:28:00');
-INSERT INTO `notifications` VALUES (77,2,'While confiscating one of your properties (#18), the police found a Brothel. As such, you\'ve also been arrested for Sex trafficking.','2020-10-25 18:22:09','#','alert alert-danger','2020-10-24 18:28:00');
-INSERT INTO `notifications` VALUES (78,2,'The Tax Services have found you were laundering money and have convicted you to imprisonment until 2020-10-26 15:42:00  and a &euro;5000 fine. If you were already in prison, your sentence will be elongated.','2020-10-25 18:22:09','#','alert alert-danger','2020-10-25 15:42:00');
-INSERT INTO `notifications` VALUES (79,2,'The Tax Services have found you were laundering money and have convicted you to imprisonment until 2020-10-25 20:06:00  and a &euro;1000000 fine. If you were already in prison, your sentence will be elongated.','2020-10-25 18:22:09','#','alert alert-danger','2020-10-25 16:06:00');
-INSERT INTO `notifications` VALUES (80,2,'As your bank account didn\'t contain enough money. The government confiscated some of your properties (1x Villa).','2020-10-25 18:22:09','#','alert alert-warning','2020-10-25 16:06:00');
-INSERT INTO `notifications` VALUES (81,2,'While confiscating one of your properties (#19), the police found a Brothel. As such, you\'ve also been arrested for Sex trafficking.','2020-10-25 18:22:09','#','alert alert-danger','2020-10-25 16:06:00');
-INSERT INTO `notifications` VALUES (82,2,'The Tax Services have found you were laundering money and have convicted you to imprisonment until 2020-10-26 04:43:40  and a &euro;10000 fine. If you were already in prison, your sentence will be elongated.','2020-10-25 18:22:09','#','alert alert-danger','2020-10-25 16:43:40');
-INSERT INTO `notifications` VALUES (83,2,'As your bank account didn\'t contain enough money. The government confiscated some of your properties (1x Villa).','2020-10-25 18:22:09','#','alert alert-warning','2020-10-25 16:43:40');
-INSERT INTO `notifications` VALUES (84,2,'While confiscating one of your properties (#20), the police found a Brothel. As such, you\'ve also been arrested for Sex trafficking.','2020-10-25 18:22:09','#','alert alert-danger','2020-10-25 16:43:40');
-INSERT INTO `notifications` VALUES (85,2,'Jeyp','2020-10-25 18:22:09','/locations/hoovers','','2020-10-25 18:21:44');
+INSERT INTO `notifications` VALUES (73,2,'The Tax Services have found you were laundering money and have convicted you to imprisonment until 2020-10-16 02:20:03  and a &euro;10000 fine. If you were already in prison, your sentence will be elongated.','2020-10-25 17:22:09','#','alert alert-danger','2020-10-15 20:20:03');
+INSERT INTO `notifications` VALUES (74,2,'As your bank account didn\'t contain enough money. The government confiscated some of your properties (1x Downtown business estate).','2020-10-25 17:22:09','#','alert alert-warning','2020-10-15 20:20:03');
+INSERT INTO `notifications` VALUES (75,2,'The Tax Services have found you were laundering money and have convicted you to imprisonment until 2020-10-24 18:58:00  and a &euro;10000 fine. If you were already in prison, your sentence will be elongated.','2020-10-25 17:22:09','#','alert alert-danger','2020-10-24 16:28:00');
+INSERT INTO `notifications` VALUES (76,2,'As your bank account didn\'t contain enough money. The government confiscated some of your properties (1x House).','2020-10-25 17:22:09','#','alert alert-warning','2020-10-24 16:28:00');
+INSERT INTO `notifications` VALUES (77,2,'While confiscating one of your properties (#18), the police found a Brothel. As such, you\'ve also been arrested for Sex trafficking.','2020-10-25 17:22:09','#','alert alert-danger','2020-10-24 16:28:00');
+INSERT INTO `notifications` VALUES (78,2,'The Tax Services have found you were laundering money and have convicted you to imprisonment until 2020-10-26 15:42:00  and a &euro;5000 fine. If you were already in prison, your sentence will be elongated.','2020-10-25 17:22:09','#','alert alert-danger','2020-10-25 14:42:00');
+INSERT INTO `notifications` VALUES (79,2,'The Tax Services have found you were laundering money and have convicted you to imprisonment until 2020-10-25 20:06:00  and a &euro;1000000 fine. If you were already in prison, your sentence will be elongated.','2020-10-25 17:22:09','#','alert alert-danger','2020-10-25 15:06:00');
+INSERT INTO `notifications` VALUES (80,2,'As your bank account didn\'t contain enough money. The government confiscated some of your properties (1x Villa).','2020-10-25 17:22:09','#','alert alert-warning','2020-10-25 15:06:00');
+INSERT INTO `notifications` VALUES (81,2,'While confiscating one of your properties (#19), the police found a Brothel. As such, you\'ve also been arrested for Sex trafficking.','2020-10-25 17:22:09','#','alert alert-danger','2020-10-25 15:06:00');
+INSERT INTO `notifications` VALUES (82,2,'The Tax Services have found you were laundering money and have convicted you to imprisonment until 2020-10-26 04:43:40  and a &euro;10000 fine. If you were already in prison, your sentence will be elongated.','2020-10-25 17:22:09','#','alert alert-danger','2020-10-25 15:43:40');
+INSERT INTO `notifications` VALUES (83,2,'As your bank account didn\'t contain enough money. The government confiscated some of your properties (1x Villa).','2020-10-25 17:22:09','#','alert alert-warning','2020-10-25 15:43:40');
+INSERT INTO `notifications` VALUES (84,2,'While confiscating one of your properties (#20), the police found a Brothel. As such, you\'ve also been arrested for Sex trafficking.','2020-10-25 17:22:09','#','alert alert-danger','2020-10-25 15:43:40');
+INSERT INTO `notifications` VALUES (85,2,'Jeyp','2020-10-25 17:22:09','/locations/hoovers','','2020-10-25 17:21:44');
 /*!40000 ALTER TABLE `notifications` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -592,7 +591,7 @@ CREATE TABLE `posts` (
   `userId` int(11) NOT NULL,
   `title` varchar(255) NOT NULL,
   `body` text NOT NULL,
-  `createdAt` datetime NOT NULL DEFAULT current_timestamp(),
+  `createdAt` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=56 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -603,7 +602,7 @@ CREATE TABLE `posts` (
 
 LOCK TABLES `posts` WRITE;
 /*!40000 ALTER TABLE `posts` DISABLE KEYS */;
-INSERT INTO `posts` VALUES (55,2,'Welcome to RivalGuns','Hoi allemaal,\n\nDit is een nieuwspost.\n\n**Veel plezier!**\n\nWillem','2020-05-13 13:59:11');
+INSERT INTO `posts` VALUES (55,2,'Welcome to RivalGuns','Hoi allemaal,\n\nDit is een nieuwspost.\n\n**Veel plezier!**\n\nWillem','2020-05-13 11:59:11');
 /*!40000 ALTER TABLE `posts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -618,9 +617,9 @@ CREATE TABLE `properties` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `userId` int(11) NOT NULL,
   `businessCategoryId` int(11) DEFAULT NULL,
-  `installingUntil` datetime DEFAULT NULL,
+  `installingUntil` timestamp NULL DEFAULT NULL,
   `propertyCategoryId` int(11) NOT NULL,
-  `createdAt` datetime NOT NULL DEFAULT current_timestamp(),
+  `createdAt` timestamp NOT NULL DEFAULT current_timestamp(),
   `totalProfit` bigint(20) unsigned NOT NULL DEFAULT 0,
   `totalLaundered` bigint(20) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
@@ -639,8 +638,8 @@ CREATE TABLE `properties` (
 
 LOCK TABLES `properties` WRITE;
 /*!40000 ALTER TABLE `properties` DISABLE KEYS */;
-INSERT INTO `properties` VALUES (21,2,3,NULL,4,'2020-10-25 16:47:38',0,0);
-INSERT INTO `properties` VALUES (22,2,3,NULL,4,'2020-10-25 16:47:38',0,0);
+INSERT INTO `properties` VALUES (21,2,3,NULL,4,'2020-10-25 15:47:38',0,0);
+INSERT INTO `properties` VALUES (22,2,3,NULL,4,'2020-10-25 15:47:38',0,0);
 /*!40000 ALTER TABLE `properties` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -717,8 +716,8 @@ CREATE TABLE `punishments` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `userId` int(11) NOT NULL,
   `conversationReportId` int(11) DEFAULT NULL,
-  `createdAt` datetime NOT NULL DEFAULT current_timestamp(),
-  `endsAt` datetime DEFAULT NULL,
+  `createdAt` timestamp NOT NULL DEFAULT current_timestamp(),
+  `endsAt` timestamp NULL DEFAULT NULL,
   `explanation` text NOT NULL,
   `punishmentType` enum('warning','temporaryBan','permanentBan') NOT NULL,
   `punishedById` int(11) DEFAULT NULL,
@@ -753,11 +752,11 @@ CREATE TABLE `sentences` (
   `userId` int(11) NOT NULL,
   `escapedPrison` tinyint(1) NOT NULL DEFAULT 0,
   `timeRemaining` int(11) NOT NULL DEFAULT 0,
-  `createdAt` datetime NOT NULL DEFAULT current_timestamp(),
+  `createdAt` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `userId` (`userId`),
   CONSTRAINT `sentences_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=53 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=59 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -766,7 +765,8 @@ CREATE TABLE `sentences` (
 
 LOCK TABLES `sentences` WRITE;
 /*!40000 ALTER TABLE `sentences` DISABLE KEYS */;
-INSERT INTO `sentences` VALUES (52,2,0,300,'2020-10-25 20:21:15');
+INSERT INTO `sentences` VALUES (57,2,0,0,'2020-10-25 20:13:15');
+INSERT INTO `sentences` VALUES (58,2,0,0,'2020-10-25 20:14:39');
 /*!40000 ALTER TABLE `sentences` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -793,7 +793,7 @@ CREATE TABLE `users` (
   `email` varchar(255) NOT NULL,
   `enduranceSkills` int(9) NOT NULL DEFAULT 0,
   `health` decimal(5,2) unsigned NOT NULL DEFAULT 100.00,
-  `lastCheckedAt` datetime NOT NULL DEFAULT current_timestamp(),
+  `lastCheckedAt` timestamp NOT NULL DEFAULT current_timestamp(),
   `energy` decimal(5,2) NOT NULL DEFAULT 100.00,
   `password` varchar(255) NOT NULL,
   `pistolSkills` int(9) NOT NULL DEFAULT 0,
@@ -802,7 +802,7 @@ CREATE TABLE `users` (
   `robbingSkills` int(9) NOT NULL DEFAULT 0,
   `stealingSkills` int(9) NOT NULL DEFAULT 0,
   `strengthSkills` int(9) NOT NULL DEFAULT 0,
-  `createdAt` datetime NOT NULL DEFAULT current_timestamp(),
+  `createdAt` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `adminrole_id` (`adminRole`),
   CONSTRAINT `id_to_user_adminrole` FOREIGN KEY (`adminRole`) REFERENCES `adminroles` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
@@ -815,9 +815,9 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'testaccount1',NULL,0,0.00000,101,0,0,50.00000,0,0,0,'test1@test.com',0,100.00,'2020-05-15 21:02:02',100.00,'$2y$10$gx/3veekeiaiGWAE8CFE0.dB0GgpHUi/5sV31lc3YSZFTTADp/uUG',0,'',0,0,0,0,'2019-02-16 20:14:36');
-INSERT INTO `users` VALUES (2,'admin',4,10,24117.04861,434,0,0,13818.46759,57,500,0,'admin@test.com',0,100.00,'2020-10-25 20:21:40',100.00,'$2y$10$eX0GEcmxokWdNbhsUpI25.GKpDqvySB1JbvUPS7Q.hS2Fdb/TlAd.',1,'',0,0,0,0,'2019-03-02 21:39:08');
-INSERT INTO `users` VALUES (4,'testaccount2',NULL,0,0.00000,0,0,0,69.00000,5,0,0,'test2@test.com',0,100.00,'2020-05-15 17:09:13',98.70,'$2y$10$kCorgsWvSQczBp16VjbIn.BK7S.nG2T/itHBEjjnVtOg9m94CREnW',0,'a906e303a164fd74e00dbd2a63815bba',0,0,0,0,'2020-03-24 18:56:36');
+INSERT INTO `users` VALUES (1,'testaccount1',NULL,0,0.00000,101,0,0,50.00000,0,0,0,'test1@test.com',0,100.00,'2020-05-15 19:02:02',100.00,'$2y$10$gx/3veekeiaiGWAE8CFE0.dB0GgpHUi/5sV31lc3YSZFTTADp/uUG',0,'',0,0,0,0,'2019-02-16 19:14:36');
+INSERT INTO `users` VALUES (2,'admin',4,10,24248.18287,434,0,0,13818.46759,57,500,0,'admin@test.com',0,100.00,'2020-10-25 20:56:05',100.00,'$2y$10$eX0GEcmxokWdNbhsUpI25.GKpDqvySB1JbvUPS7Q.hS2Fdb/TlAd.',1,'',0,0,0,0,'2019-03-02 20:39:08');
+INSERT INTO `users` VALUES (4,'testaccount2',NULL,0,0.00000,0,0,0,69.00000,5,0,0,'test2@test.com',0,100.00,'2020-05-15 15:09:13',98.70,'$2y$10$kCorgsWvSQczBp16VjbIn.BK7S.nG2T/itHBEjjnVtOg9m94CREnW',0,'a906e303a164fd74e00dbd2a63815bba',0,0,0,0,'2020-03-24 17:56:36');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -975,4 +975,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-10-25 20:37:48
+-- Dump completed on 2020-10-25 21:59:22
