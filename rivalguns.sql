@@ -462,7 +462,6 @@ CREATE TABLE `jobs` (
 
 LOCK TABLES `jobs` WRITE;
 /*!40000 ALTER TABLE `jobs` DISABLE KEYS */;
-INSERT INTO `jobs` VALUES (18,'Hoovers','2020-10-27 21:11:13',2,0,0,'You have sold no vacuum cleaners at all...','alert-warning','/locations/hoovers','2020-10-27 20:56:13');
 /*!40000 ALTER TABLE `jobs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -555,7 +554,7 @@ CREATE TABLE `notifications` (
   PRIMARY KEY (`id`),
   KEY `userId` (`userId`),
   CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=87 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=88 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -564,20 +563,21 @@ CREATE TABLE `notifications` (
 
 LOCK TABLES `notifications` WRITE;
 /*!40000 ALTER TABLE `notifications` DISABLE KEYS */;
-INSERT INTO `notifications` VALUES (73,2,'The Tax Services have found you were laundering money and have convicted you to imprisonment until 2020-10-16 02:20:03  and a &euro;10000 fine. If you were already in prison, your sentence will be elongated.','2020-10-27 15:49:17','#','alert alert-danger','2020-10-15 20:20:03');
-INSERT INTO `notifications` VALUES (74,2,'As your bank account didn\'t contain enough money. The government confiscated some of your properties (1x Downtown business estate).','2020-10-27 15:49:17','#','alert alert-warning','2020-10-15 20:20:03');
-INSERT INTO `notifications` VALUES (75,2,'The Tax Services have found you were laundering money and have convicted you to imprisonment until 2020-10-24 18:58:00  and a &euro;10000 fine. If you were already in prison, your sentence will be elongated.','2020-10-27 15:49:17','#','alert alert-danger','2020-10-24 16:28:00');
-INSERT INTO `notifications` VALUES (76,2,'As your bank account didn\'t contain enough money. The government confiscated some of your properties (1x House).','2020-10-27 15:49:17','#','alert alert-warning','2020-10-24 16:28:00');
-INSERT INTO `notifications` VALUES (77,2,'While confiscating one of your properties (#18), the police found a Brothel. As such, you\'ve also been arrested for Sex trafficking.','2020-10-27 15:49:17','#','alert alert-danger','2020-10-24 16:28:00');
-INSERT INTO `notifications` VALUES (78,2,'The Tax Services have found you were laundering money and have convicted you to imprisonment until 2020-10-26 15:42:00  and a &euro;5000 fine. If you were already in prison, your sentence will be elongated.','2020-10-27 15:49:17','#','alert alert-danger','2020-10-25 14:42:00');
-INSERT INTO `notifications` VALUES (79,2,'The Tax Services have found you were laundering money and have convicted you to imprisonment until 2020-10-25 20:06:00  and a &euro;1000000 fine. If you were already in prison, your sentence will be elongated.','2020-10-27 15:49:17','#','alert alert-danger','2020-10-25 15:06:00');
-INSERT INTO `notifications` VALUES (80,2,'As your bank account didn\'t contain enough money. The government confiscated some of your properties (1x Villa).','2020-10-27 15:49:17','#','alert alert-warning','2020-10-25 15:06:00');
-INSERT INTO `notifications` VALUES (81,2,'While confiscating one of your properties (#19), the police found a Brothel. As such, you\'ve also been arrested for Sex trafficking.','2020-10-27 15:49:17','#','alert alert-danger','2020-10-25 15:06:00');
-INSERT INTO `notifications` VALUES (82,2,'The Tax Services have found you were laundering money and have convicted you to imprisonment until 2020-10-26 04:43:40  and a &euro;10000 fine. If you were already in prison, your sentence will be elongated.','2020-10-27 15:49:17','#','alert alert-danger','2020-10-25 15:43:40');
-INSERT INTO `notifications` VALUES (83,2,'As your bank account didn\'t contain enough money. The government confiscated some of your properties (1x Villa).','2020-10-27 15:49:17','#','alert alert-warning','2020-10-25 15:43:40');
-INSERT INTO `notifications` VALUES (84,2,'While confiscating one of your properties (#20), the police found a Brothel. As such, you\'ve also been arrested for Sex trafficking.','2020-10-27 15:49:17','#','alert alert-danger','2020-10-25 15:43:40');
-INSERT INTO `notifications` VALUES (85,2,'Jeyp','2020-10-27 15:49:17','/locations/hoovers','','2020-10-25 17:21:44');
-INSERT INTO `notifications` VALUES (86,2,'You have sold no vacuum cleaners at all...','2020-10-27 15:49:17','/locations/hoovers','alert-warning','2020-10-27 14:40:45');
+INSERT INTO `notifications` VALUES (73,2,'The Tax Services have found you were laundering money and have convicted you to imprisonment until 2020-10-16 02:20:03  and a &euro;10000 fine. If you were already in prison, your sentence will be elongated.','2020-10-27 21:12:58','#','alert alert-danger','2020-10-15 20:20:03');
+INSERT INTO `notifications` VALUES (74,2,'As your bank account didn\'t contain enough money. The government confiscated some of your properties (1x Downtown business estate).','2020-10-27 21:12:58','#','alert alert-warning','2020-10-15 20:20:03');
+INSERT INTO `notifications` VALUES (75,2,'The Tax Services have found you were laundering money and have convicted you to imprisonment until 2020-10-24 18:58:00  and a &euro;10000 fine. If you were already in prison, your sentence will be elongated.','2020-10-27 21:12:58','#','alert alert-danger','2020-10-24 16:28:00');
+INSERT INTO `notifications` VALUES (76,2,'As your bank account didn\'t contain enough money. The government confiscated some of your properties (1x House).','2020-10-27 21:12:58','#','alert alert-warning','2020-10-24 16:28:00');
+INSERT INTO `notifications` VALUES (77,2,'While confiscating one of your properties (#18), the police found a Brothel. As such, you\'ve also been arrested for Sex trafficking.','2020-10-27 21:12:58','#','alert alert-danger','2020-10-24 16:28:00');
+INSERT INTO `notifications` VALUES (78,2,'The Tax Services have found you were laundering money and have convicted you to imprisonment until 2020-10-26 15:42:00  and a &euro;5000 fine. If you were already in prison, your sentence will be elongated.','2020-10-27 21:12:58','#','alert alert-danger','2020-10-25 14:42:00');
+INSERT INTO `notifications` VALUES (79,2,'The Tax Services have found you were laundering money and have convicted you to imprisonment until 2020-10-25 20:06:00  and a &euro;1000000 fine. If you were already in prison, your sentence will be elongated.','2020-10-27 21:12:58','#','alert alert-danger','2020-10-25 15:06:00');
+INSERT INTO `notifications` VALUES (80,2,'As your bank account didn\'t contain enough money. The government confiscated some of your properties (1x Villa).','2020-10-27 21:12:58','#','alert alert-warning','2020-10-25 15:06:00');
+INSERT INTO `notifications` VALUES (81,2,'While confiscating one of your properties (#19), the police found a Brothel. As such, you\'ve also been arrested for Sex trafficking.','2020-10-27 21:12:58','#','alert alert-danger','2020-10-25 15:06:00');
+INSERT INTO `notifications` VALUES (82,2,'The Tax Services have found you were laundering money and have convicted you to imprisonment until 2020-10-26 04:43:40  and a &euro;10000 fine. If you were already in prison, your sentence will be elongated.','2020-10-27 21:12:58','#','alert alert-danger','2020-10-25 15:43:40');
+INSERT INTO `notifications` VALUES (83,2,'As your bank account didn\'t contain enough money. The government confiscated some of your properties (1x Villa).','2020-10-27 21:12:58','#','alert alert-warning','2020-10-25 15:43:40');
+INSERT INTO `notifications` VALUES (84,2,'While confiscating one of your properties (#20), the police found a Brothel. As such, you\'ve also been arrested for Sex trafficking.','2020-10-27 21:12:58','#','alert alert-danger','2020-10-25 15:43:40');
+INSERT INTO `notifications` VALUES (85,2,'Jeyp','2020-10-27 21:12:58','/locations/hoovers','','2020-10-25 17:21:44');
+INSERT INTO `notifications` VALUES (86,2,'You have sold no vacuum cleaners at all...','2020-10-27 21:12:58','/locations/hoovers','alert-warning','2020-10-27 14:40:45');
+INSERT INTO `notifications` VALUES (87,2,'You have sold no vacuum cleaners at all...','2020-10-27 21:12:58','/locations/hoovers','alert-warning','2020-10-27 21:11:13');
 /*!40000 ALTER TABLE `notifications` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -640,8 +640,8 @@ CREATE TABLE `properties` (
 
 LOCK TABLES `properties` WRITE;
 /*!40000 ALTER TABLE `properties` DISABLE KEYS */;
-INSERT INTO `properties` VALUES (21,2,3,'2020-10-27 21:02:44',4,'2020-10-25 15:47:38',0,0);
-INSERT INTO `properties` VALUES (22,2,2,'2020-10-27 21:00:50',4,'2020-10-25 15:47:38',0,0);
+INSERT INTO `properties` VALUES (21,2,3,NULL,4,'2020-10-25 15:47:38',0,0);
+INSERT INTO `properties` VALUES (22,2,2,NULL,4,'2020-10-25 15:47:38',0,0);
 /*!40000 ALTER TABLE `properties` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -817,7 +817,7 @@ CREATE TABLE `users` (
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 INSERT INTO `users` VALUES (1,'testaccount1',NULL,0,0.00000,101,0,0,50.00000,0,0,0,'test1@test.com',0,100.00,'2020-05-15 19:02:02',100.00,'$2y$10$gx/3veekeiaiGWAE8CFE0.dB0GgpHUi/5sV31lc3YSZFTTADp/uUG',0,'',0,0,0,0,NULL,'2019-02-16 19:14:36');
-INSERT INTO `users` VALUES (2,'admin',4,10,28241.56252,440,0,0,13923.46759,58,500,0,'admin@test.com',0,100.00,'2020-10-27 20:56:23',80.03,'$2y$10$eX0GEcmxokWdNbhsUpI25.GKpDqvySB1JbvUPS7Q.hS2Fdb/TlAd.',1,'',0,0,0,0,NULL,'2019-03-02 20:39:08');
+INSERT INTO `users` VALUES (2,'admin',4,10,28250.35420,440,0,0,13923.46759,58,500,0,'admin@test.com',0,100.00,'2020-10-27 21:12:58',83.34,'$2y$10$eX0GEcmxokWdNbhsUpI25.GKpDqvySB1JbvUPS7Q.hS2Fdb/TlAd.',1,'',0,0,0,0,NULL,'2019-03-02 20:39:08');
 INSERT INTO `users` VALUES (4,'testaccount2',NULL,0,0.00000,0,0,0,69.00000,5,0,0,'test2@test.com',0,100.00,'2020-05-15 15:09:13',98.70,'$2y$10$kCorgsWvSQczBp16VjbIn.BK7S.nG2T/itHBEjjnVtOg9m94CREnW',0,'a906e303a164fd74e00dbd2a63815bba',0,0,0,0,NULL,'2020-03-24 17:56:36');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -976,4 +976,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-10-27 21:56:51
+-- Dump completed on 2020-10-27 22:21:28

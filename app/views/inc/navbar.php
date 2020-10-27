@@ -65,11 +65,16 @@
                             <a class="nav-link dropdown-toggle" href="#" id="locationDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 Locations
                             </a>
-                            <div class="dropdown-menu" aria-labelledby="locationDropdown">
+                            <div class="dropdown-menu dropdown-multicol2" aria-labelledby="locationDropdown">
+                                <div class="dropdown-col">
                                     <a class="dropdown-item" href="<?php echo URLROOT; ?>/locations/bank">Bank</a>
                                     <a class="dropdown-item" href="<?php echo URLROOT; ?>/locations/hospital">Hospital</a>
                                     <a class="dropdown-item" href="<?php echo URLROOT; ?>/locations/hoovers">Harry's Hoovers</a>
-                                    <a class="dropdown-item" href="<?php echo URLROOT; ?>/locations/realEstate">Real Estate Office</a>
+                                    <a class="dropdown-item" href="<?php echo URLROOT; ?>/locations/realEstate">Real Estate Office</a>                                
+                                </div>
+                                <div class="dropdown-col">
+                                    <a class="dropdown-item" href="<?php echo URLROOT; ?>/prison">Prison</a>                                
+                                </div>
                             </div>
                         </li>
                     <?php
