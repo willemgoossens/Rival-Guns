@@ -25,7 +25,7 @@
                     <?php echo MarkdownToHTML($message->body); ?>
                     <p class="card-text">
                         <small class="text-muted pull-left"><?php echo $data['report']->conversationPartners[$message->userId]->name; ?></small>
-                        <small class="text-muted pull-right"><?php echo $message->createdAt; ?></small>
+                        <small class="text-muted pull-right"><?php echo dateTimeFormat( $message->createdAt ); ?></small>
                     </p>
                 </div>
             </div>

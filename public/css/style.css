@@ -65,3 +65,7 @@ div.textarea.form-control.is-valid {
 .table > thead + tbody > tr:first-child > td {
   border-top: 1px solid #ddd;
 }
+
+pre {
+  overflow: none;
+}

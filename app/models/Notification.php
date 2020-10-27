@@ -92,7 +92,7 @@
             }
             
             $now = new \DateTime;
-            $now = $now->format('Y-m-d H:i:s');
+            $now->format('Y-m-d H:i:s');
 
             foreach( $notifications as $notification )
             {

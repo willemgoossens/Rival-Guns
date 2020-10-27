@@ -23,7 +23,7 @@
                         <?php if(isset($conversation->lastMessage->senderName)): ?>
                             <small class="text-muted pull-left"><?php echo $conversation->lastMessage->senderName; ?></small>
                         <?php endif; ?>
-                        <small class="text-muted pull-right"><?php echo $conversation->lastMessage->createdAt; ?></small>
+                        <small class="text-muted pull-right"><?php echo dateTimeFormat( $conversation->lastMessage->createdAt ); ?></small>
                     </p>
                 </div>
             </div>

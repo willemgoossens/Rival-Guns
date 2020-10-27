@@ -126,7 +126,7 @@
             if( $input['punishment'] == "temporaryBan" )
             {
                 $now = new \DateTime;
-                $datePicker = new \DateTime( $input['datePicker'] );
+                $datePicker = new \DateTime( $input['datePicker'], new \DateTimeZone( $_SESSION['userTimeZone'] ) );
                 
                 $lastTempBan = $this->getLastTemporaryBanForUser($input['userId']);
 

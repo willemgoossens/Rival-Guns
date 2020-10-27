@@ -176,7 +176,7 @@
             $imprisonedUntil->modify('+' . $crimeType->jailTime . ' second');
 
             $insertNotificationArray = [
-                'body' => "The Tax Services have found you were laundering money and have convicted you to imprisonment until " . $imprisonedUntil->format( 'Y-m-d H:i:s ') . " and a &euro;" . $futureImprisonment->fine . " fine. If you were already in prison, your sentence will be elongated.",
+                'body' => "The Tax Services have found you were laundering money and have convicted you to imprisonment until " . dateTimeFormat( $imprisonedUntil ) . " and a &euro;" . $futureImprisonment->fine . " fine. If you were already in prison, your sentence will be elongated.",
                 'class' => "alert alert-danger",
                 'userId' => $userId,
                 'createdAt' => $futureImprisonment->imprisonedFrom->format( 'Y-m-d H:i:s ')

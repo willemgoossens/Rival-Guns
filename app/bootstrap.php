@@ -9,6 +9,7 @@
   require_once 'config/game.php';
 
   // Load Helpers
+  require_once 'helpers/datetimeFormatter_helper.php';
   require_once 'helpers/debugging_helper.php';
   require_once 'helpers/editor_helper.php';
   require_once 'helpers/form_helper.php';

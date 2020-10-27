@@ -159,7 +159,7 @@
 
                     $this->userModel->updateById($user->id, $updateUserArray);
 
-                    flash( 'hoovers_work', 'You\'re working until ' . $workingUntil->format('H:i:s') . '!' );
+                    flash( 'hoovers_work', 'You\'re working until ' . dateTimeFormat( $workingUntil, 'H:i:s') . '!' );
                 }
             }
 

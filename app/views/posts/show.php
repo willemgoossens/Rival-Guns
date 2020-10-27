@@ -3,7 +3,7 @@
     <br>
     <h1><?php echo $data['post']->title; ?></h1>
     <div class="bg-secondary text-white p-2 mb-3">
-        Written by <?php echo $data['poster']->name; ?> on <?php echo $data['post']->createdAt; ?>
+        Written by <?php echo $data['poster']->name; ?> on <?php echo dateTimeFormat( $data['post']->createdAt ); ?>
     </div>
 
     <p><?php echo $data['post']->body; ?></p>

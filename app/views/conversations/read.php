@@ -43,7 +43,7 @@
                                                     }
                                             ?>
                                     </small>
-                                    <small class="text-muted pull-right"><?php echo $message->createdAt; ?></small>
+                                    <small class="text-muted pull-right"><?php echo dateTimeFormat( $message->createdAt ); ?></small>
                             </p>
                     </div>
                 </div>
@@ -52,7 +52,7 @@
                     <div class="card-body">
                         <?php echo MarkdownToHTML($message->body); ?>
                         <p class="card-text">
-                            <small class="text-muted pull-right"><?php echo $message->createdAt; ?></small>
+                            <small class="text-muted pull-right"><?php echo dateTimeFormat( $message->createdAt ); ?></small>
                         </p>
                     </div>
                 </div>

@@ -24,7 +24,7 @@
                 <?php 
                     if( $data['existingJob'] )
                     {
-                        echo '<div class="alert alert-info">You\'re working until ' . $data['existingJob']->workingUntil . '</div>';
+                        echo '<div class="alert alert-info">You\'re working until ' . dateTimeFormat( $data['existingJob']->workingUntil ) . '</div>';
                     }
                     else
                     {

@@ -26,7 +26,7 @@
                                     </a>
                                 </td>
                                 <td>
-                                    <?php echo $notification->createdAt; ?>
+                                    <?php echo dateTimeFormat( $notification->createdAt ); ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

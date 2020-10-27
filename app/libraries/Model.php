@@ -701,7 +701,7 @@
         {
             if( 
                 empty( $array )
-                || empty ( $this->dataTimeColums )
+                || empty ( $this->dateTimeColumns )
             ) {
                 return $array;
             }
