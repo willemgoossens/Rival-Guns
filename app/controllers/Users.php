@@ -229,6 +229,7 @@
         public function logout (): void
         {
             unset($_SESSION['userId']);
+            unset($_SESSION['userTimeZone']);
             session_destroy();
             redirect('users/login');
         }
@@ -399,7 +400,8 @@
                 'password' => '',
                 'passwordError' => NULL,
                 'password2' => '',
-                'password2Error' => NULL
+                'password2Error' => NULL,
+                'timeZone' => NULL
             ];
             $this->data = array_merge($this->data, $extraData);
 
@@ -410,6 +412,16 @@
                 {
                     $this->data['email'] = $_POST['email'];
                     $this->data['password'] = $_POST['password'];
+                    $user->timeZone = $_POST['timeZone'] ?? NULL;
+
+                    $timeZoneList = timezone_identifiers_list();
+                    if( 
+                        isset( $user->timeZone )
+                        && ! in_array( $user->timeZone, $timeZoneList ) 
+                    ) {
+                        // The user tried to provide us a false timezone, screw him
+                        redirect('');
+                    }
 
                     if(!filter_var($this->data['email'], FILTER_VALIDATE_EMAIL))
                     {
@@ -435,9 +447,13 @@
                         && empty($this->data['passwordError'])
                     ) {
                         $updateArray = [
-                            'email' => $this->data['email']
+                            'email' => $this->data['email'],
+                            'timeZone' => $user->timeZone
                         ];
                         $this->userModel->updateById($user->id, $updateArray);
+
+                        $_SESSION['userTimeZone'] = $user->timeZone;
+
 
                         $this->data['password'] = '';
                         flash('edit_success', 'Your profile has been edited successfully!');

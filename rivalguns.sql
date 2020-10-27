@@ -339,8 +339,6 @@ CREATE TABLE `criminalrecords` (
 
 LOCK TABLES `criminalrecords` WRITE;
 /*!40000 ALTER TABLE `criminalrecords` DISABLE KEYS */;
-INSERT INTO `criminalrecords` VALUES (175,59,2,3,'2020-10-27 15:49:32');
-INSERT INTO `criminalrecords` VALUES (176,59,2,4,'2020-10-27 15:49:32');
 /*!40000 ALTER TABLE `criminalrecords` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -431,7 +429,6 @@ CREATE TABLE `imprisonments` (
 
 LOCK TABLES `imprisonments` WRITE;
 /*!40000 ALTER TABLE `imprisonments` DISABLE KEYS */;
-INSERT INTO `imprisonments` VALUES (58,2,'minimum','2020-10-27 15:49:52');
 /*!40000 ALTER TABLE `imprisonments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -769,9 +766,6 @@ CREATE TABLE `sentences` (
 
 LOCK TABLES `sentences` WRITE;
 /*!40000 ALTER TABLE `sentences` DISABLE KEYS */;
-INSERT INTO `sentences` VALUES (57,2,0,0,'2020-10-25 20:13:15');
-INSERT INTO `sentences` VALUES (58,2,0,0,'2020-10-25 20:14:39');
-INSERT INTO `sentences` VALUES (59,2,0,330,'2020-10-27 15:49:52');
 /*!40000 ALTER TABLE `sentences` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -807,6 +801,7 @@ CREATE TABLE `users` (
   `robbingSkills` int(9) NOT NULL DEFAULT 0,
   `stealingSkills` int(9) NOT NULL DEFAULT 0,
   `strengthSkills` int(9) NOT NULL DEFAULT 0,
+  `timeZone` varchar(20) DEFAULT NULL,
   `createdAt` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `adminrole_id` (`adminRole`),
@@ -820,9 +815,9 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'testaccount1',NULL,0,0.00000,101,0,0,50.00000,0,0,0,'test1@test.com',0,100.00,'2020-05-15 19:02:02',100.00,'$2y$10$gx/3veekeiaiGWAE8CFE0.dB0GgpHUi/5sV31lc3YSZFTTADp/uUG',0,'',0,0,0,0,'2019-02-16 19:14:36');
-INSERT INTO `users` VALUES (2,'admin',4,10,27825.28937,440,0,0,13923.46759,58,500,0,'admin@test.com',0,100.00,'2020-10-27 15:51:36',94.18,'$2y$10$eX0GEcmxokWdNbhsUpI25.GKpDqvySB1JbvUPS7Q.hS2Fdb/TlAd.',1,'',0,0,0,0,'2019-03-02 20:39:08');
-INSERT INTO `users` VALUES (4,'testaccount2',NULL,0,0.00000,0,0,0,69.00000,5,0,0,'test2@test.com',0,100.00,'2020-05-15 15:09:13',98.70,'$2y$10$kCorgsWvSQczBp16VjbIn.BK7S.nG2T/itHBEjjnVtOg9m94CREnW',0,'a906e303a164fd74e00dbd2a63815bba',0,0,0,0,'2020-03-24 17:56:36');
+INSERT INTO `users` VALUES (1,'testaccount1',NULL,0,0.00000,101,0,0,50.00000,0,0,0,'test1@test.com',0,100.00,'2020-05-15 19:02:02',100.00,'$2y$10$gx/3veekeiaiGWAE8CFE0.dB0GgpHUi/5sV31lc3YSZFTTADp/uUG',0,'',0,0,0,0,NULL,'2019-02-16 19:14:36');
+INSERT INTO `users` VALUES (2,'admin',4,10,27878.22921,440,0,0,13923.46759,58,500,0,'admin@test.com',0,100.00,'2020-10-27 16:29:43',100.00,'$2y$10$eX0GEcmxokWdNbhsUpI25.GKpDqvySB1JbvUPS7Q.hS2Fdb/TlAd.',1,'',0,0,0,0,NULL,'2019-03-02 20:39:08');
+INSERT INTO `users` VALUES (4,'testaccount2',NULL,0,0.00000,0,0,0,69.00000,5,0,0,'test2@test.com',0,100.00,'2020-05-15 15:09:13',98.70,'$2y$10$kCorgsWvSQczBp16VjbIn.BK7S.nG2T/itHBEjjnVtOg9m94CREnW',0,'a906e303a164fd74e00dbd2a63815bba',0,0,0,0,NULL,'2020-03-24 17:56:36');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -980,4 +975,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-10-27 16:54:45
+-- Dump completed on 2020-10-27 17:30:14

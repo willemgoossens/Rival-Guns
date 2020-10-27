@@ -220,6 +220,8 @@
         public function createUserSession (Object $user): Void
         {
             $_SESSION['userId'] = $user->id;
+            $_SESSION['userTimeZone'] = $user->timeZone;
+
             redirect('');
         }
 

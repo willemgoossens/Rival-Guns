@@ -10,6 +10,14 @@
                         <tbody>
                             <tr>
                                 <th scope="row">
+                                    Clock:
+                                </th>
+                                <td>
+                                    <?php echo dateTimeFormat( new \DateTime, 'H:i:s' ); ?>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">
                                     Name:
                                 </th>
                                 <td>
