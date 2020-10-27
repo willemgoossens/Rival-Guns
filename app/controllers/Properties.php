@@ -145,7 +145,7 @@
             $currentlyInstallingUntil = $property->installingUntil;
             $now = new \DateTime;
             $property->underConstruction = $currentlyInstallingUntil > $now ? true : false;
-            $property->underConstructionSeconds = $currentlyInstallingUntil->getTimestamp() - $now->getTimestamp();
+            $property->underConstructionSeconds = $currentlyInstallingUntil ? $currentlyInstallingUntil->getTimestamp() - $now->getTimestamp() : 0 ;
 
             $this->data['property'] = $property;
             $this->data['propertyCategory'] = $this->propertyCategoryModel->getSingleById( $property->propertyCategoryId );

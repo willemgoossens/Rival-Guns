@@ -224,19 +224,22 @@
          */
         public function getFutureImprisonmentTimestampsForUser( Int $userId ): ?Array 
         {
-            $futureImprisonment = $this->getSingleByUserId( $userId );
+            $futureImprisonments = $this->getByUserId( $userId );
 
-            if( ! $futureImprisonment )
+            if( ! $futureImprisonments )
             {
                 return null;
             }
             $timestamps = [];
 
-            array_push( $timestamps, $futureImprisonment->imprisonedFrom );
-
-            $crimeType = $this->crimeTypeModel->getSingleById( $futureImprisonment->crimeTypeId );
-            $futureImprisonment->imprisonedFrom->modify('+' . $crimeType->jailTime . ' second');
-            array_push( $timestamps, $futureImprisonment->imprisonedFrom );
+            foreach( $futureImprisonments as $futureImprisonment)
+            {
+                array_push( $timestamps, $futureImprisonment->imprisonedFrom );
+    
+                $crimeType = $this->crimeTypeModel->getSingleById( $futureImprisonment->crimeTypeId );
+                $futureImprisonment->imprisonedFrom->modify('+' . $crimeType->jailTime . ' second');
+                array_push( $timestamps, $futureImprisonment->imprisonedFrom );
+            }
 
             return $timestamps;
         }

@@ -295,11 +295,11 @@
         {
             $timestamps = [];
 
-            $installationTimes = $this->propertyModel->getFlaggedUniqueByUserIdAndNotInstallingUntil( $userId, NULL, 'installingUntil' );
+            $installationTimes = $this->propertyModel->getByUserIdAndNotInstallingUntil( $userId, NULL, 'installingUntil' );
             if( ! empty($installationTimes) )
             {
-                $installationTimes = array_map( function($val){ return strtotime($val->installingUntil); }, $installationTimes);
-                array_push( $timestamps, ...$installationTimes );
+                $installationTimes = array_column( $installationTimes, "installingUntil" );
+                $timestamps = array_merge( $timestamps, $installationTimes );
             }
             
             $futureImprisonmentTimes = $this->futureImprisonmentModel->getFutureImprisonmentTimestampsForUser( $userId );
@@ -328,7 +328,7 @@
 
             $now = new \DateTime;
             array_push( $timestamps, $now );
-
+            
             sort($timestamps);
 
             return $timestamps;
