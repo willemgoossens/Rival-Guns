@@ -407,31 +407,4 @@
 
             $this->userModel->updateById( $user->id, $updateArray );
         }
-
-
-        /**
-         * 
-         * 
-         * calculateReleaseDateForUser
-         * @param Int userId
-         * @return Null|Datetime
-         * 
-         * 
-         */
-        public function calculateReleaseDateForUser( Int $userId ): ?\DateTime
-        {
-            $sentences = $this->sentenceModel->getByUserId( $userId );
-
-            if( empty( $sentences ) )
-            {
-                return null;
-            }
-
-            $totaltime = array_sum( array_column( $sentences, "timeRemaining") );
-
-            $imprisonment = $this->imprisonmentModel->getSingleByUserId( $userId );
-            $imprisonedUntil = $imprisonment->createdAt->modify('+' . $totaltime . ' second');
-
-            return $imprisonedUntil;
-        }
     }

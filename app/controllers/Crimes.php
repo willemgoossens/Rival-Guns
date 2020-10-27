@@ -143,7 +143,7 @@
                 $this->userModel->arrest( $user->id );
 
                 $this->data['sentences'] = $this->sentenceModel->getSentencesForUser( $user->id );                
-                $user->prisonReleaseDate = $this->userModel->calculateReleaseDateForUser( $user->id );
+                $user->prisonReleaseDate = $this->userModel->getEndOfImprisonmentForUser( $user->id );
             }
 
             
