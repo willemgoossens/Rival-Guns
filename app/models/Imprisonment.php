@@ -85,6 +85,6 @@
             $totalTimeRemaining = array_sum( array_column( $sentences, "timeRemaining" ) );
 
             $imprisonment->createdAt->modify('+' . $totalTimeRemaining . ' second');
-            return $imprisonment->createdAt->getTimestamp();
+            return $imprisonment->createdAt;
         }
     }
